@@ -1082,10 +1082,10 @@ function renderSchedule(){
   `;
 
   // تحديث readonly banner + الأزرار
-  const readonly = past && !today;
-  $("readonlyBanner").style.display = readonly ? "flex" : "none";
-  $("addTaskBtn").disabled = readonly;
-  $("resetDayBtn").disabled = readonly;
+const readonly = false; // 🔓 كل الأيام قابلة للتعديل
+$("readonlyBanner").style.display = "none";
+$("addTaskBtn").disabled = false;
+$("resetDayBtn").disabled = false;
 
   const tasks = getTasksForDate(currentDate);
 
@@ -1117,22 +1117,20 @@ function renderSchedule(){
       <div class="task-title">${escapeHtml(task.title)}</div>
       <div class="task-actions">
         <label class="check-label">
-          <input type="checkbox" data-index="${index}" ${isDone ? "checked" : ""} ${readonly ? "disabled" : ""}>
-          <span>${isDone ? "تم ✔️" : "لم يتم"}</span>
+<input type="checkbox" data-index="${index}" ${isDone ? "checked" : ""}>
+<span>${isDone ? "تم ✔️" : "لم يتم"}</span>
         </label>
         <div class="card-actions">
-          <button class="icon-btn edit" title="تعديل" ${readonly ? "disabled" : ""}>✏️</button>
-          <button class="icon-btn delete" title="حذف" ${readonly ? "disabled" : ""}>🗑️</button>
+<button class="icon-btn edit" title="تعديل">✏️</button>
+<button class="icon-btn delete" title="حذف">🗑️</button>
         </div>
       </div>
     `;
 
     const cb = card.querySelector('input[type="checkbox"]');
-    if (!readonly){
-      cb.addEventListener("change", e => toggleTask(index, e.target.checked));
-      card.querySelector(".edit").addEventListener("click", () => openModal("edit", index));
-      card.querySelector(".delete").addEventListener("click", () => openConfirmDelete(index));
-    }
+cb.addEventListener("change", e => toggleTask(index, e.target.checked));
+card.querySelector(".edit").addEventListener("click", () => openModal("edit", index));
+card.querySelector(".delete").addEventListener("click", () => openConfirmDelete(index));
     grid.appendChild(card);
   });
   updateDailyProgress();
@@ -1142,12 +1140,33 @@ function renderSchedule(){
 async function toggleTask(index, isDone){
   const key = dateKey(currentDate);
   const taskKey = `${key}-${index}`;
-  if (isDone){ completedTasks[taskKey] = true; celebrateIfComplete(); }
-  else { delete completedTasks[taskKey]; }
-  await saveAll();
-  renderSchedule();
+  if (isDone){
+    completedTasks[taskKey] = true;
+  } else {
+    delete completedTasks[taskKey];
+  }
+  
+  // ⚡ تحديث الواجهة فوراً (optimistic update) قبل الحفظ
+  updateCardState(index, isDone);
   updateProgress();
   updateStreak();
+  
+  // 💾 الحفظ في الخلفية
+  await saveAll();
+  
+  // 🎉 الاحتفال بعد الحفظ
+  if (isDone) celebrateIfComplete();
+}
+
+// تحديث كارت واحد فقط بدون إعادة رسم كامل
+function updateCardState(index, isDone){
+  const cards = document.querySelectorAll(".task-card");
+  // العثور على الكارت المناسب عن طريق الترتيب
+  const card = cards[index];
+  if (!card) return;
+  card.classList.toggle("done", isDone);
+  const label = card.querySelector(".check-label span");
+  if (label) label.textContent = isDone ? "تم ✔️" : "لم يتم";
 }
 
 function celebrateIfComplete(){
