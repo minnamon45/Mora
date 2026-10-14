@@ -6,9 +6,6 @@
   <title>✨ جدول مهرائيل الدراسي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    /* ===============================
-       Reset & Base
-       =============================== */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -44,9 +41,6 @@
       position: relative;
     }
 
-    /* ===============================
-       Animated Background
-       =============================== */
     .animated-bg {
       position: fixed;
       inset: 0;
@@ -73,9 +67,6 @@
       66% { transform: translate(-40px, 60px) scale(0.95); }
     }
 
-    /* ===============================
-       Loader
-       =============================== */
     .loader {
       position: fixed;
       inset: 0;
@@ -103,6 +94,264 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ===============================
+       Auth Screen
+       =============================== */
+    .auth-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 500;
+      overflow-y: auto;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      animation: fadeInUp 0.6s ease-out;
+      margin: auto;
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-logo .logo-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 10px;
+      animation: bounce 2s ease infinite;
+    }
+
+    .auth-logo h1 {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .auth-logo h1 .gradient-text {
+      background: linear-gradient(135deg, #4b5fd4, #b78aff, #ff8fd0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% 200%;
+      animation: gradientShift 4s ease infinite;
+    }
+
+    .auth-logo p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .auth-title {
+      text-align: center;
+      font-weight: 800;
+      color: var(--primary-dark);
+      padding: 11px;
+      font-size: 1rem;
+      background: #f0f4ff;
+      border-radius: 40px;
+      margin-bottom: 22px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .auth-field label {
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .auth-field input {
+      padding: 14px 16px;
+      border: 2px solid #e5ecff;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fafbff;
+      color: var(--text);
+      transition: all 0.25s ease;
+    }
+
+    .auth-field input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(110, 142, 255, 0.12);
+    }
+
+    .auth-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 1.05rem;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 22px -8px rgba(110, 142, 255, 0.7);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .auth-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 28px -8px rgba(110, 142, 255, 0.85);
+    }
+
+    .auth-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .auth-btn .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .auth-forgot {
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .auth-forgot button {
+      background: transparent;
+      border: none;
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .auth-forgot button:hover {
+      background: #eef3ff;
+    }
+
+    .auth-error {
+      background: #ffe6ec;
+      color: #c2334f;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: none;
+      border-right: 3px solid var(--danger);
+    }
+
+    .auth-error.show { display: block; }
+
+    /* ===============================
+       User Bar
+       =============================== */
+    .user-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px);
+      border-radius: 40px;
+      padding: 8px 8px 8px 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #eef2ff;
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      min-width: 0;
+    }
+
+    .user-info .email {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
+    }
+
+    .user-info .label {
+      font-size: 0.68rem;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      background: #fff0f3;
+      border: none;
+      color: var(--danger);
+      padding: 10px 14px;
+      border-radius: 40px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .logout-btn:hover {
+      background: var(--danger);
+      color: white;
+      transform: scale(1.05);
+    }
+
+    /* ===============================
        Container
        =============================== */
     .container {
@@ -116,9 +365,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===============================
-       Header
-       =============================== */
     .header {
       display: flex;
       flex-wrap: wrap;
@@ -199,9 +445,6 @@
     .stat-number { font-weight: 900; font-size: 1.2rem; color: var(--primary-dark); }
     .stat-label { font-size: 0.75rem; color: var(--text-light); font-weight: 600; }
 
-    /* ===============================
-       Motivation Banner
-       =============================== */
     .motivation-banner {
       background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
       border-radius: var(--radius-sm);
@@ -245,9 +488,6 @@
 
     .motivation-text.fade { opacity: 0; transform: translateY(-10px); }
 
-    /* ===============================
-       Progress (Weekly)
-       =============================== */
     .progress-wrapper {
       background: white;
       border-radius: var(--radius-sm);
@@ -297,9 +537,6 @@
       100% { transform: translateX(100%); }
     }
 
-    /* ===============================
-       Daily Progress Ring
-       =============================== */
     .daily-progress {
       background: white;
       border-radius: var(--radius);
@@ -333,9 +570,7 @@
       stroke-linecap: round;
     }
 
-    .progress-ring .bg-circle {
-      stroke: #eaf0ff;
-    }
+    .progress-ring .bg-circle { stroke: #eaf0ff; }
 
     .progress-ring .progress-circle {
       stroke: url(#ringGradient);
@@ -356,21 +591,10 @@
       pointer-events: none;
     }
 
-    .progress-ring-text .percent {
-      font-size: 1.6rem;
-      line-height: 1;
-    }
+    .progress-ring-text .percent { font-size: 1.6rem; line-height: 1; }
+    .progress-ring-text .label { font-size: 0.65rem; color: var(--text-light); margin-top: 3px; }
 
-    .progress-ring-text .label {
-      font-size: 0.65rem;
-      color: var(--text-light);
-      margin-top: 3px;
-    }
-
-    .daily-info {
-      flex: 1;
-      min-width: 200px;
-    }
+    .daily-info { flex: 1; min-width: 200px; }
 
     .daily-info h3 {
       font-size: 1.2rem;
@@ -401,10 +625,7 @@
       border-radius: 20px;
     }
 
-    .daily-stat strong {
-      color: var(--primary-dark);
-      font-size: 1rem;
-    }
+    .daily-stat strong { color: var(--primary-dark); font-size: 1rem; }
 
     .daily-message {
       margin-top: 10px;
@@ -430,9 +651,6 @@
       border-right-color: var(--accent);
     }
 
-    /* ===============================
-       Days Nav
-       =============================== */
     .days-nav {
       display: flex;
       flex-wrap: wrap;
@@ -472,9 +690,6 @@
       transform: scale(1.05);
     }
 
-    /* ===============================
-       Toolbar
-       =============================== */
     .toolbar {
       display: flex;
       justify-content: space-between;
@@ -533,9 +748,6 @@
     .btn-reset:hover { border-color: var(--accent); color: #d68a2b; }
     .btn-reset-all:hover { border-color: var(--danger); color: var(--danger); }
 
-    /* ===============================
-       Task Grid
-       =============================== */
     .schedule-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -696,9 +908,6 @@
       font-weight: 600;
     }
 
-    /* ===============================
-       Modal
-       =============================== */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -823,9 +1032,6 @@
 
     .btn-danger:hover { transform: translateY(-2px); }
 
-    /* ===============================
-       Time Picker
-       =============================== */
     .time-picker {
       display: grid;
       grid-template-columns: 1fr 1fr auto;
@@ -897,9 +1103,7 @@
       gap: 6px;
     }
 
-    .time-preview strong {
-      color: var(--primary-dark);
-    }
+    .time-preview strong { color: var(--primary-dark); }
 
     .time-row-group {
       display: flex;
@@ -950,9 +1154,6 @@
       cursor: pointer;
     }
 
-    /* ===============================
-       Toast
-       =============================== */
     .toast {
       position: fixed;
       bottom: 30px;
@@ -978,9 +1179,6 @@
     .toast.error { background: linear-gradient(135deg, var(--danger), #e64e70); }
     .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
 
-    /* ===============================
-       Confetti
-       =============================== */
     .confetti-container {
       position: fixed;
       inset: 0;
@@ -1001,9 +1199,6 @@
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
 
-    /* ===============================
-       Responsive
-       =============================== */
     @media (max-width: 720px) {
       body { padding: 16px 12px; }
       .header { flex-direction: column; align-items: flex-start; padding: 20px; }
@@ -1019,25 +1214,60 @@
       .progress-ring-text .percent { font-size: 1.3rem; }
       .time-picker { grid-template-columns: 1fr 1fr; }
       .time-ampm { grid-column: 1 / -1; justify-content: center; }
+      .user-bar { padding: 6px 6px 6px 12px; }
+      .user-info .email { max-width: 110px; font-size: 0.78rem; }
+      .auth-card { padding: 30px 22px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- خلفية متحركة -->
   <div class="animated-bg">
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
   </div>
 
-  <!-- شاشة التحميل -->
   <div id="loader" class="loader">
     <div class="loader-ring"></div>
-    <p>جاري تحميل الجدول...</p>
+    <p>جاري التحميل...</p>
   </div>
 
-  <!-- SVG Gradient للدائرة -->
+  <!-- شاشة تسجيل الدخول -->
+  <div class="auth-screen" id="authScreen" style="display:none;">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <span class="logo-icon">👑</span>
+        <h1>جدول <span class="gradient-text">مهرائيل</span></h1>
+        <p>سجّلي دخولك للمتابعة</p>
+      </div>
+
+      <div class="auth-title">🔐 تسجيل الدخول</div>
+
+      <div class="auth-error" id="authError"></div>
+
+      <form class="auth-form" id="authForm">
+        <div class="auth-field">
+          <label>📧 البريد الإلكتروني</label>
+          <input type="email" id="authEmail" placeholder=" " required autocomplete="email">
+        </div>
+
+        <div class="auth-field">
+          <label>🔒 كلمة المرور</label>
+          <input type="password" id="authPassword" placeholder=" " required minlength="6" autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="auth-btn" id="authSubmit">
+          <span id="authBtnText">🔓 تسجيل الدخول</span>
+        </button>
+
+        <div class="auth-forgot">
+          <button type="button" id="forgotBtn">🔑 نسيتِ كلمة المرور؟</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <svg width="0" height="0" style="position:absolute;">
     <defs>
       <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1050,7 +1280,6 @@
 
   <div class="container" id="mainContainer" style="display:none;">
 
-    <!-- الترويسة -->
     <header class="header">
       <div class="title-section">
         <h1>
@@ -1079,13 +1308,22 @@
       </div>
     </header>
 
-    <!-- جملة تحفيزية -->
+    <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+      <div class="user-bar">
+        <div class="user-avatar" id="userAvatar">م</div>
+        <div class="user-info">
+          <span class="email" id="userEmail">--</span>
+          <span class="label">مرحباً بكِ 🌸</span>
+        </div>
+        <button class="logout-btn" id="logoutBtn">🚪 خروج</button>
+      </div>
+    </div>
+
     <div class="motivation-banner">
       <div class="motivation-icon">💫</div>
       <p class="motivation-text" id="motivationText">ابدئي يومك بنية صادقة وستصلين بإذن الله</p>
     </div>
 
-    <!-- شريط التقدم الأسبوعي -->
     <div class="progress-wrapper">
       <div class="progress-header">
         <span>📊 تقدمك الأسبوعي</span>
@@ -1098,7 +1336,6 @@
       </div>
     </div>
 
-    <!-- التقدم اليومي -->
     <div class="daily-progress" id="dailyProgress">
       <div class="progress-ring-wrapper">
         <svg class="progress-ring" viewBox="0 0 100 100">
@@ -1121,10 +1358,8 @@
       </div>
     </div>
 
-    <!-- أزرار الأيام -->
     <nav class="days-nav" id="daysNav"></nav>
 
-    <!-- شريط الأدوات -->
     <div class="toolbar">
       <h2 class="day-title" id="dayTitle">الجمعة</h2>
       <div class="toolbar-actions">
@@ -1134,7 +1369,6 @@
       </div>
     </div>
 
-    <!-- شبكة المهام -->
     <div class="schedule-grid" id="scheduleGrid"></div>
 
   </div>
@@ -1219,15 +1453,9 @@
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
-
-  <!-- Confetti -->
   <div class="confetti-container" id="confetti"></div>
 
-  <!-- ============================================
-       JavaScript - Firebase + App
-       ============================================ -->
   <script type="module">
     // ========================================
     // 🔥 Firebase Imports
@@ -1240,6 +1468,13 @@
       setDoc, 
       onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut,
+      sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     // ========================================
     // 🔑 Firebase Config
@@ -1257,9 +1492,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const COLLECTION_NAME = "mahraiel_schedule";
-    const USER_DOC_ID = "mahraiel";
 
     // ========================================
     // 📝 Constants
@@ -1288,7 +1523,7 @@
     };
 
     const DAY_EMOJIS = {
-      "الجمعة": "☀️", "السبت": "🌤️", "الأحد": "☀️",
+      "الجمعة": "🕌", "السبت": "🌤️", "الأحد": "☀️",
       "الاثنين": "🌙", "الثلاثاء": "📖", "الأربعاء": "📝", "الخميس": "🎯"
     };
 
@@ -1297,6 +1532,7 @@
     // ========================================
     // 📦 State
     // ========================================
+    let currentUser = null;
     let scheduleData = {};
     let completedTasks = {};
     let currentDay = DAYS[0];
@@ -1401,11 +1637,123 @@
     }
 
     // ========================================
-    // 🔥 Firebase Operations
+    // 🔐 Auth Functions
     // ========================================
-    async function loadData() {
+    function showAuthError(message) {
+      const el = $("authError");
+      el.textContent = "⚠️ " + message;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 6000);
+    }
+
+    function clearAuthError() {
+      $("authError").classList.remove("show");
+    }
+
+    function translateAuthError(code) {
+      const map = {
+        "auth/invalid-email": "البريد الإلكتروني غير صحيح",
+        "auth/user-disabled": "هذا الحساب معطّل",
+        "auth/user-not-found": "لا يوجد حساب بهذا البريد",
+        "auth/wrong-password": "كلمة المرور غير صحيحة",
+        "auth/invalid-credential": "البريد أو كلمة المرور غير صحيحة",
+        "auth/too-many-requests": "محاولات كثيرة، انتظري قليلاً",
+        "auth/network-request-failed": "تحققي من الاتصال بالإنترنت",
+        "auth/operation-not-allowed": "طريقة الدخول غير مفعّلة في Firebase"
+      };
+      return map[code] || "حدث خطأ غير متوقع، حاولي مرة أخرى";
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      clearAuthError();
+
+      const email = $("authEmail").value.trim();
+      const password = $("authPassword").value;
+      const btn = $("authSubmit");
+      const btnText = $("authBtnText");
+
+      if (!email || !password) {
+        showAuthError("يرجى ملء جميع الحقول");
+        return;
+      }
+
+      btn.disabled = true;
+      const originalText = btnText.textContent;
+      btnText.innerHTML = '<div class="spinner"></div>';
+
       try {
-        const docRef = doc(db, COLLECTION_NAME, USER_DOC_ID);
+        await signInWithEmailAndPassword(auth, email, password);
+        // onAuthStateChanged هيتصرف
+      } catch (err) {
+        console.error("Auth error:", err);
+        showAuthError(translateAuthError(err.code));
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = originalText;
+      }
+    }
+
+    async function handleForgotPassword() {
+      clearAuthError();
+      const email = $("authEmail").value.trim();
+      if (!email) {
+        showAuthError("اكتبي بريدك أولاً ثم اضغطي نسيت كلمة المرور");
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showToast("📧 تم إرسال رابط إعادة التعيين لبريدك", "success");
+      } catch (err) {
+        console.error(err);
+        showAuthError(translateAuthError(err.code));
+      }
+    }
+
+    async function handleLogout() {
+      if (unsubscribe) {
+        unsubscribe();
+        unsubscribe = null;
+      }
+      try {
+        await signOut(auth);
+        showToast("👋 تم تسجيل الخروج", "info");
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ========================================
+    // 🚦 Auth State Flow
+    // ========================================
+    function handleAuthState(user) {
+      if (user) {
+        currentUser = user;
+        $("authScreen").style.display = "none";
+        $("loader").style.display = "none";
+        $("mainContainer").style.display = "block";
+        $("userEmail").textContent = user.email || "";
+        $("userAvatar").textContent = (user.email || "؟").charAt(0).toUpperCase();
+
+        loadUserData(user.uid).then(() => {
+          listenToChanges(user.uid);
+        });
+      } else {
+        currentUser = null;
+        $("loader").style.display = "none";
+        $("mainContainer").style.display = "none";
+        $("authScreen").style.display = "flex";
+        $("authPassword").value = "";
+        clearAuthError();
+      }
+    }
+
+    // ========================================
+    // 🔥 Firestore Operations
+    // ========================================
+    async function loadUserData(uid) {
+      try {
+        const docRef = doc(db, COLLECTION_NAME, uid);
         const snap = await getDoc(docRef);
 
         if (snap.exists()) {
@@ -1423,22 +1771,17 @@
         });
 
         renderAll();
-        hideLoader();
+        startMotivationRotation();
       } catch (err) {
         console.error("خطأ في تحميل البيانات:", err);
-        showToast("حدث خطأ، سيتم استخدام بيانات افتراضية", "error");
-        scheduleData = getDefaultSchedule();
-        DAYS.forEach(day => {
-          if (!scheduleData[day]) scheduleData[day] = [];
-        });
-        renderAll();
-        hideLoader();
+        showToast("حدث خطأ في تحميل البيانات", "error");
       }
     }
 
     async function saveAll() {
+      if (!currentUser) return;
       try {
-        const docRef = doc(db, COLLECTION_NAME, USER_DOC_ID);
+        const docRef = doc(db, COLLECTION_NAME, currentUser.uid);
         await setDoc(docRef, {
           schedule: scheduleData,
           completed: completedTasks,
@@ -1446,28 +1789,28 @@
         }, { merge: true });
       } catch (err) {
         console.error("خطأ في الحفظ:", err);
-        showToast("تعذر حفظ البيانات، تحقق من الاتصال", "error");
+        showToast("تعذر حفظ البيانات، تحققي من الاتصال", "error");
       }
     }
 
-    function listenToChanges() {
-      const docRef = doc(db, COLLECTION_NAME, USER_DOC_ID);
+    function listenToChanges(uid) {
+      if (unsubscribe) unsubscribe();
+      const docRef = doc(db, COLLECTION_NAME, uid);
       unsubscribe = onSnapshot(docRef, (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.schedule && JSON.stringify(data.schedule) !== JSON.stringify(scheduleData)) {
-            scheduleData = data.schedule;
-            DAYS.forEach(day => {
-              if (!scheduleData[day]) scheduleData[day] = [];
-            });
-            renderSchedule();
-            updateProgress();
-          }
-          if (data.completed && JSON.stringify(data.completed) !== JSON.stringify(completedTasks)) {
-            completedTasks = data.completed;
-            renderSchedule();
-            updateProgress();
-          }
+        if (!snap.exists()) return;
+        const data = snap.data();
+        if (data.schedule && JSON.stringify(data.schedule) !== JSON.stringify(scheduleData)) {
+          scheduleData = data.schedule;
+          DAYS.forEach(day => {
+            if (!scheduleData[day]) scheduleData[day] = [];
+          });
+          renderSchedule();
+          updateProgress();
+        }
+        if (data.completed && JSON.stringify(data.completed) !== JSON.stringify(completedTasks)) {
+          completedTasks = data.completed;
+          renderSchedule();
+          updateProgress();
         }
       }, (err) => {
         console.warn("Live sync error:", err);
@@ -1589,7 +1932,7 @@
       const allDone = tasks.length > 0 && tasks.every((_, i) => completedTasks[`${currentDay}-${i}`]);
       if (allDone) {
         fireConfetti();
-        showToast("🎉 رائع يا مهرائيل! أنجزتِ كل مهام اليوم!", "success");
+        showToast("🎉 رائع! أنجزتِ كل مهام اليوم!", "success");
         showMotivation("أنجزتِ يومك بالكامل، فخورة بكِ! 🌟");
       }
     }
@@ -1692,7 +2035,6 @@
       const remaining = total - done;
       const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
-      // Ring
       const ring = $("dailyRing");
       const circumference = 2 * Math.PI * 45;
       const offset = circumference - (percent / 100) * circumference;
@@ -2060,17 +2402,6 @@
       return div.innerHTML;
     }
 
-    function hideLoader() {
-      const loader = $("loader");
-      const main = $("mainContainer");
-      loader.style.opacity = "0";
-      loader.style.transition = "opacity 0.4s ease";
-      setTimeout(() => {
-        loader.style.display = "none";
-        main.style.display = "block";
-      }, 400);
-    }
-
     function animateDayChange() {
       const grid = $("scheduleGrid");
       grid.style.opacity = "0";
@@ -2087,6 +2418,10 @@
     // 🎛️ Events
     // ========================================
     function bindEvents() {
+      $("authForm").addEventListener("submit", handleAuthSubmit);
+      $("forgotBtn").addEventListener("click", handleForgotPassword);
+      $("logoutBtn").addEventListener("click", handleLogout);
+
       $("addTaskBtn").addEventListener("click", () => openModal("add"));
       $("resetDayBtn").addEventListener("click", resetDay);
       $("resetAllBtn").addEventListener("click", () => {
@@ -2126,14 +2461,11 @@
     // ========================================
     // 🚀 Init
     // ========================================
-    async function init() {
-      bindEvents();
-      startMotivationRotation();
-      await loadData();
-      listenToChanges();
-    }
+    bindEvents();
 
-    init();
+    onAuthStateChanged(auth, (user) => {
+      handleAuthState(user);
+    });
   </script>
 </body>
 </html>
