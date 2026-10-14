@@ -762,13 +762,44 @@ function getDefaultTemplate(){
   };
 }
 
+// ⏰ تحويل الوقت إلى دقائق من بداية اليوم
+function parseTimeToMinutes(timeStr){
+  if (!timeStr) return 9999;
+  const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(ص|م)?/);
+  if (!match) return 9999;
+  
+  let hour = parseInt(match[1]);
+  const minute = parseInt(match[2]);
+  const ampm = match[3] || "ص";
+  
+  if (ampm === "ص"){
+    if (hour === 12) hour = 0;
+  } else {
+    if (hour !== 12) hour += 12;
+  }
+  
+  return hour * 60 + minute;
+}
+
+// 🔀 ترتيب المهام حسب الوقت
+function sortTasksByTime(tasks){
+  if (!Array.isArray(tasks)) return [];
+  return tasks.slice().sort((a, b) => {
+    return parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time);
+  });
+}
+
+// 📋 المهام لليوم (مرتبة دايماً)
 function getTasksForDate(date){
   const key = dateKey(date);
+  let tasks;
   if (overrides[key] && overrides[key].tasks){
-    return overrides[key].tasks;
+    tasks = overrides[key].tasks;
+  } else {
+    const dayName = getDayNameAr(date);
+    tasks = template[dayName] || [];
   }
-  const dayName = getDayNameAr(date);
-  return template[dayName] || [];
+  return sortTasksByTime(tasks);
 }
 
 // ============ Auth ============
@@ -865,7 +896,18 @@ async function loadUserData(uid){
       completedTasks = {};
       await saveAll();
     }
-    DAYS.forEach(d => { if (!template[d]) template[d] = []; });
+    
+    // ⏰ ترتيب القالب عند التحميل
+    DAYS.forEach(d => {
+      if (!template[d]) template[d] = [];
+      template[d] = sortTasksByTime(template[d]);
+    });
+    // ⏰ ترتيب overrides عند التحميل
+    Object.keys(overrides).forEach(k => {
+      if (overrides[k] && overrides[k].tasks){
+        overrides[k].tasks = sortTasksByTime(overrides[k].tasks);
+      }
+    });
 
     const today = new Date();
     currentDate = today;
@@ -881,12 +923,10 @@ async function loadUserData(uid){
   }
 }
 
-// ⚡ الحل الجذري: حفظ كامل بدون merge
 async function saveAll(){
   if (!currentUser) return;
   try {
     const ref = doc(db, COLLECTION_NAME, currentUser.uid);
-    // 🔑 بدون merge → يستبدل كل حقل، فالحذف ينفذ صح
     await setDoc(ref, {
       template: template,
       overrides: overrides,
@@ -899,7 +939,6 @@ async function saveAll(){
   }
 }
 
-// ⚡ تجاهل أول snapshot + مقارنة دقيقة
 function listenToChanges(uid){
   if (unsubscribe) unsubscribe();
   const ref = doc(db, COLLECTION_NAME, uid);
@@ -922,7 +961,10 @@ function listenToChanges(uid){
     }
     if (data.template && JSON.stringify(data.template) !== JSON.stringify(template)){
       template = data.template;
-      DAYS.forEach(d => { if (!template[d]) template[d] = []; });
+      DAYS.forEach(d => {
+        if (!template[d]) template[d] = [];
+        template[d] = sortTasksByTime(template[d]);
+      });
       needsRender = true;
     }
     if (needsRender) renderAll();
@@ -1083,7 +1125,7 @@ function renderSchedule(){
   updateDailyProgress();
 }
 
-// ⚡ الحل الجذري: toggle مع optimistic update + كائن جديد عند الحذف
+// ============ Task Actions ============
 async function toggleTask(index, isDone){
   const key = dateKey(currentDate);
   const taskKey = `${key}-${index}`;
@@ -1091,7 +1133,6 @@ async function toggleTask(index, isDone){
   if (isDone){
     completedTasks[taskKey] = true;
   } else {
-    // 🔑 نسخة جديدة من الكائن بدون المفتاح ده
     const newCompleted = {};
     Object.keys(completedTasks).forEach(k => {
       if (k !== taskKey) newCompleted[k] = completedTasks[k];
@@ -1099,15 +1140,12 @@ async function toggleTask(index, isDone){
     completedTasks = newCompleted;
   }
   
-  // ⚡ تحديث فوري للواجهة
   renderSchedule();
   updateProgress();
   updateStreak();
   
-  // 💾 الحفظ
   await saveAll();
   
-  // 🎉 الاحتفال
   if (isDone) celebrateIfComplete();
 }
 
@@ -1126,6 +1164,7 @@ function shouldSyncToTemplate(){
   return isToday(currentDate);
 }
 
+// ⚡ إضافة/تعديل مهمة مع ترتيب تلقائي
 async function saveTaskAt(index, taskData){
   const key = dateKey(currentDate);
   const dayName = getDayNameAr(currentDate);
@@ -1137,41 +1176,73 @@ async function saveTaskAt(index, taskData){
     existing[index] = taskData;
   }
 
-  overrides[key] = { day: dayName, tasks: existing };
-  if (shouldSyncToTemplate()){
-    template[dayName] = existing.slice();
-  }
+  // 🔀 رتّب حسب الوقت
+  const sorted = sortTasksByTime(existing);
 
-  await saveAll();
-  renderSchedule();
-  updateProgress();
-}
-
-async function deleteTaskAt(index){
-  const key = dateKey(currentDate);
-  const dayName = getDayNameAr(currentDate);
-  const existing = getTasksForDate(currentDate).slice();
-  existing.splice(index, 1);
-
-  // إعادة ترتيب completedTasks
+  // ⚠️ أعد بناء completedTasks حسب الترتيب الجديد
   const newCompleted = {};
   Object.keys(completedTasks).forEach(k => {
-    // k = "2026-10-14-3"
     const parts = k.split("-");
     const dayPart = parts.slice(0, 3).join("-");
     const idx = parseInt(parts[3]);
     if (dayPart === key){
-      if (idx < index) newCompleted[k] = true;
-      else if (idx > index) newCompleted[`${key}-${idx - 1}`] = true;
+      const oldTask = existing[idx];
+      if (oldTask && completedTasks[k]){
+        const newIdx = sorted.indexOf(oldTask);
+        if (newIdx !== -1){
+          newCompleted[`${key}-${newIdx}`] = true;
+        }
+      }
     } else {
       newCompleted[k] = true;
     }
   });
   completedTasks = newCompleted;
 
-  overrides[key] = { day: dayName, tasks: existing };
+  overrides[key] = { day: dayName, tasks: sorted };
   if (shouldSyncToTemplate()){
-    template[dayName] = existing.slice();
+    template[dayName] = sorted.slice();
+  }
+
+  await saveAll();
+  renderSchedule();
+  updateProgress();
+  updateStreak();
+}
+
+// 🗑️ حذف مع إعادة ترتيب
+async function deleteTaskAt(index){
+  const key = dateKey(currentDate);
+  const dayName = getDayNameAr(currentDate);
+  const existing = getTasksForDate(currentDate).slice();
+  
+  const taskToDelete = existing[index];
+  existing.splice(index, 1);
+
+  const sorted = sortTasksByTime(existing);
+
+  const newCompleted = {};
+  Object.keys(completedTasks).forEach(k => {
+    const parts = k.split("-");
+    const dayPart = parts.slice(0, 3).join("-");
+    if (dayPart === key){
+      const oldIdx = parseInt(parts[3]);
+      const oldTask = getTasksForDate(currentDate)[oldIdx];
+      if (oldTask && oldTask !== taskToDelete){
+        const newIdx = sorted.indexOf(oldTask);
+        if (newIdx !== -1){
+          newCompleted[`${key}-${newIdx}`] = true;
+        }
+      }
+    } else {
+      newCompleted[k] = true;
+    }
+  });
+  completedTasks = newCompleted;
+
+  overrides[key] = { day: dayName, tasks: sorted };
+  if (shouldSyncToTemplate()){
+    template[dayName] = sorted.slice();
   }
 
   await saveAll();
