@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ جدول مهرائيل الدراسي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===============================
+       Reset & Base
+       =============================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --primary: #6e8eff;
+      --primary-dark: #4b5fd4;
+      --secondary: #b78aff;
+      --accent: #ffb56b;
+      --success: #4acf8b;
+      --danger: #ff6b8a;
+      --text: #1e2b4f;
+      --text-light: #6b7a9e;
+      --bg: #f4f7ff;
+      --card: #ffffff;
+      --shadow-sm: 0 4px 12px rgba(60, 90, 180, 0.08);
+      --shadow-md: 0 12px 28px -8px rgba(60, 90, 180, 0.18);
+      --shadow-lg: 0 24px 48px -12px rgba(60, 90, 180, 0.28);
+      --radius: 24px;
+      --radius-sm: 14px;
+    }
+
+    body {
+      font-family: 'Cairo', 'Tajawal', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      padding: 24px 16px;
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ===============================
+       Animated Background
+       =============================== */
+    .animated-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background: linear-gradient(145deg, #eef3ff 0%, #e0e8ff 50%, #f0e6ff 100%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.55;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .orb-1 { width: 400px; height: 400px; background: #6e8eff; top: -100px; right: -100px; }
+    .orb-2 { width: 350px; height: 350px; background: #b78aff; bottom: -100px; left: -80px; animation-delay: -7s; }
+    .orb-3 { width: 300px; height: 300px; background: #ffb56b; top: 50%; left: 40%; animation-delay: -14s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(60px, -40px) scale(1.1); }
+      66% { transform: translate(-40px, 60px) scale(0.95); }
+    }
+
+    /* ===============================
+       Loader
+       =============================== */
+    .loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: rgba(244, 247, 255, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .loader-ring {
+      width: 70px;
+      height: 70px;
+      border: 5px solid #dde5ff;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===============================
+       Container
+       =============================== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      animation: fadeInUp 0.7s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===============================
+       Header
+       =============================== */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      margin-bottom: 20px;
+    }
+
+    .title-section h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #4b5fd4, #b78aff, #ff8fd0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% 200%;
+      animation: gradientShift 4s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .crown, .sparkle {
+      font-size: 0.85em;
+      animation: bounce 2s ease infinite;
+    }
+    .sparkle { animation-delay: 0.5s; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #eef2ff;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-icon { font-size: 1.6rem; }
+    .stat-info { display: flex; flex-direction: column; line-height: 1.2; }
+    .stat-number { font-weight: 900; font-size: 1.2rem; color: var(--primary-dark); }
+    .stat-label { font-size: 0.75rem; color: var(--text-light); font-weight: 600; }
+
+    /* ===============================
+       Motivation Banner
+       =============================== */
+    .motivation-banner {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+      border-radius: var(--radius-sm);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      border-right: 5px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .motivation-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(110, 142, 255, 0.06), transparent);
+      animation: shimmer 3s ease infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .motivation-icon { font-size: 1.6rem; animation: pulse 1.8s ease infinite; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .motivation-text {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 1.05rem;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .motivation-text.fade { opacity: 0; transform: translateY(-10px); }
+
+    /* ===============================
+       Progress (Weekly)
+       =============================== */
+    .progress-wrapper {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 16px 22px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .progress-bar-bg {
+      height: 14px;
+      background: #eaf0ff;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6e8eff, #b78aff, #ffb56b);
+      background-size: 200% 200%;
+      border-radius: 20px;
+      transition: width 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
+      position: relative;
+      animation: gradientShift 3s ease infinite;
+      box-shadow: 0 0 12px rgba(110, 142, 255, 0.5);
+    }
+
+    .progress-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: shine 2s ease infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* ===============================
+       Daily Progress Ring
+       =============================== */
+    .daily-progress {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px 26px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      border-right: 5px solid var(--primary);
+      animation: fadeInUp 0.5s ease;
+    }
+
+    .progress-ring-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+      width: 100px;
+      height: 100px;
+    }
+
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 9;
+      stroke-linecap: round;
+    }
+
+    .progress-ring .bg-circle {
+      stroke: #eaf0ff;
+    }
+
+    .progress-ring .progress-circle {
+      stroke: url(#ringGradient);
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.9s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+
+    .progress-ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: var(--primary-dark);
+      pointer-events: none;
+    }
+
+    .progress-ring-text .percent {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .progress-ring-text .label {
+      font-size: 0.65rem;
+      color: var(--text-light);
+      margin-top: 3px;
+    }
+
+    .daily-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .daily-info h3 {
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .daily-info .daily-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .daily-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-light);
+      background: #f5f8ff;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .daily-stat strong {
+      color: var(--primary-dark);
+      font-size: 1rem;
+    }
+
+    .daily-message {
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f0fdf6, #e8f9f0);
+      color: #2a7d54;
+      border-right: 3px solid var(--success);
+      display: inline-block;
+    }
+
+    .daily-message.empty {
+      background: #f5f8ff;
+      color: var(--text-light);
+      border-right-color: #d5e0ff;
+    }
+
+    .daily-message.encourage {
+      background: linear-gradient(135deg, #fff7e8, #ffeccf);
+      color: #b5761f;
+      border-right-color: var(--accent);
+    }
+
+    /* ===============================
+       Days Nav
+       =============================== */
+    .days-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+      justify-content: center;
+    }
+
+    .day-btn {
+      background: white;
+      border: 1px solid #e5ecff;
+      padding: 12px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .day-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    .day-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 12px 22px -6px rgba(110, 142, 255, 0.6);
+      transform: scale(1.05);
+    }
+
+    /* ===============================
+       Toolbar
+       =============================== */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .day-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 11px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--success), #34b87c);
+      color: white;
+      box-shadow: 0 8px 18px -6px rgba(74, 207, 139, 0.5);
+    }
+
+    .btn-add:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 22px -6px rgba(74, 207, 139, 0.6);
+    }
+
+    .btn-reset, .btn-reset-all {
+      background: white;
+      color: var(--text);
+      border: 1px solid #e5ecff;
+    }
+
+    .btn-reset:hover { border-color: var(--accent); color: #d68a2b; }
+    .btn-reset-all:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ===============================
+       Task Grid
+       =============================== */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .task-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #eef2ff;
+      transition: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: cardIn 0.5s ease backwards;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .task-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      height: 100%;
+      background: var(--type-color, var(--primary));
+      border-radius: 5px 0 0 5px;
+    }
+
+    .task-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: #d5e0ff;
+    }
+
+    .task-card.done {
+      background: linear-gradient(135deg, #f0fdf6, #e8f9f0);
+      border-color: #b8e0c8;
+    }
+
+    .task-card.done::before { background: var(--success); }
+
+    .task-card[data-type="study"] { --type-color: #6e8eff; }
+    .task-card[data-type="lesson"] { --type-color: #b78aff; }
+    .task-card[data-type="homework"] { --type-color: #ff8fd0; }
+    .task-card[data-type="meal"] { --type-color: #ffb56b; }
+    .task-card[data-type="rest"] { --type-color: #6dd4d4; }
+    .task-card[data-type="church"] { --type-color: #d4a96d; }
+    .task-card[data-type="other"] { --type-color: #a0a9c4; }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .task-time {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: #eef3ff;
+      padding: 5px 12px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .task-type-icon { font-size: 1.4rem; opacity: 0.85; }
+
+    .task-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+      transition: all 0.3s ease;
+    }
+
+    .task-card.done .task-title {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+
+    .task-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      gap: 8px;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 30px;
+      background: #f5f8ff;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+
+    .check-label:hover {
+      background: #e6ecff;
+      border-color: #c6d6ff;
+    }
+
+    .check-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success);
+      cursor: pointer;
+    }
+
+    .card-actions { display: flex; gap: 6px; }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .icon-btn:hover { background: #eef3ff; transform: scale(1.15); }
+    .icon-btn.delete:hover { background: #ffe6ec; }
+
+    .empty-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: var(--radius);
+      font-size: 1.2rem;
+      color: var(--text-light);
+      box-shadow: var(--shadow-sm);
+      border: 2px dashed #d5e0ff;
+      font-weight: 600;
+    }
+
+    /* ===============================
+       Modal
+       =============================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 43, 79, 0.45);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+      overflow: hidden;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+    .modal-small { max-width: 380px; }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid #eef2ff;
+    }
+
+    .modal-header h3 { font-weight: 900; font-size: 1.15rem; color: var(--text); }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-light);
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover { background: #ffe6ec; color: var(--danger); }
+
+    .modal-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .modal-body label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .modal-body input,
+    .modal-body select {
+      padding: 12px 16px;
+      border: 2px solid #e5ecff;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.25s ease;
+      background: #fafbff;
+      color: var(--text);
+    }
+
+    .modal-body input:focus,
+    .modal-body select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(110, 142, 255, 0.12);
+    }
+
+    .modal-footer {
+      padding: 16px 24px 22px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid #eef2ff;
+    }
+
+    .btn-cancel { background: #f0f4ff; color: var(--text); }
+    .btn-cancel:hover { background: #e0e8ff; }
+
+    .btn-save {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 8px 18px -6px rgba(110, 142, 255, 0.5);
+    }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px -6px rgba(110, 142, 255, 0.6);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #e64e70);
+      color: white;
+    }
+
+    .btn-danger:hover { transform: translateY(-2px); }
+
+    /* ===============================
+       Time Picker
+       =============================== */
+    .time-picker {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .time-picker select {
+      padding: 12px 10px;
+      border: 2px solid #e5ecff;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      background: #fafbff;
+      color: var(--text);
+      transition: all 0.25s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7a9e' stroke-width='2.5'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: left 10px center;
+      background-size: 16px;
+      padding-left: 32px;
+    }
+
+    .time-picker select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: white;
+      box-shadow: 0 0 0 4px rgba(110, 142, 255, 0.12);
+    }
+
+    .time-ampm {
+      display: flex;
+      gap: 4px;
+      background: #f0f4ff;
+      border-radius: 30px;
+      padding: 4px;
+    }
+
+    .time-ampm button {
+      background: transparent;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .time-ampm button.active {
+      background: white;
+      color: var(--primary-dark);
+      box-shadow: 0 4px 10px rgba(110, 142, 255, 0.2);
+    }
+
+    .time-preview {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .time-preview strong {
+      color: var(--primary-dark);
+    }
+
+    .time-row-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      background: #f8faff;
+      border-radius: var(--radius-sm);
+      border: 1px dashed #d5e0ff;
+    }
+
+    .time-row-group > label {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .toggle-end-time {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      user-select: none;
+      flex-direction: row !important;
+    }
+
+    .toggle-end-time input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    select#inputType {
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7a9e' stroke-width='2.5'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: left 14px center;
+      background-size: 18px;
+      padding-left: 42px;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    /* ===============================
+       Toast
+       =============================== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--text);
+      color: white;
+      padding: 14px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(150%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 90vw;
+    }
+
+    .toast.show { transform: translateY(0); }
+    .toast.success { background: linear-gradient(135deg, var(--success), #34b87c); }
+    .toast.error { background: linear-gradient(135deg, var(--danger), #e64e70); }
+    .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+
+    /* ===============================
+       Confetti
+       =============================== */
+    .confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1050;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      animation: confettiFall 3s linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ===============================
+       Responsive
+       =============================== */
+    @media (max-width: 720px) {
+      body { padding: 16px 12px; }
+      .header { flex-direction: column; align-items: flex-start; padding: 20px; }
+      .header-stats { width: 100%; justify-content: space-between; }
+      .stat-card { flex: 1; padding: 10px 12px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-actions { justify-content: center; }
+      .schedule-grid { grid-template-columns: 1fr; }
+      .toast { right: 12px; left: 12px; bottom: 12px; }
+      .daily-progress { padding: 16px; gap: 16px; }
+      .progress-ring-wrapper,
+      .progress-ring { width: 80px; height: 80px; }
+      .progress-ring-text .percent { font-size: 1.3rem; }
+      .time-picker { grid-template-columns: 1fr 1fr; }
+      .time-ampm { grid-column: 1 / -1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- خلفية متحركة -->
+  <div class="animated-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- شاشة التحميل -->
+  <div id="loader" class="loader">
+    <div class="loader-ring"></div>
+    <p>جاري تحميل الجدول...</p>
+  </div>
+
+  <!-- SVG Gradient للدائرة -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6e8eff"/>
+        <stop offset="50%" stop-color="#b78aff"/>
+        <stop offset="100%" stop-color="#ffb56b"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="container" id="mainContainer" style="display:none;">
+
+    <!-- الترويسة -->
+    <header class="header">
+      <div class="title-section">
+        <h1>
+          <span class="crown">👑</span>
+          جدول <span class="gradient-text">مهرائيل</span>
+          <span class="sparkle">✨</span>
+        </h1>
+        <p class="subtitle">رحلة النجاح تبدأ بخطوة منظمة</p>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <span class="stat-number" id="completedCount">0/0</span>
+            <span class="stat-label">المهام المكتملة</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-info">
+            <span class="stat-number" id="streakCount">0</span>
+            <span class="stat-label">أيام مكتملة</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- جملة تحفيزية -->
+    <div class="motivation-banner">
+      <div class="motivation-icon">💫</div>
+      <p class="motivation-text" id="motivationText">ابدئي يومك بنية صادقة وستصلين بإذن الله</p>
+    </div>
+
+    <!-- شريط التقدم الأسبوعي -->
+    <div class="progress-wrapper">
+      <div class="progress-header">
+        <span>📊 تقدمك الأسبوعي</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-fill" id="progressFill">
+          <div class="progress-shine"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- التقدم اليومي -->
+    <div class="daily-progress" id="dailyProgress">
+      <div class="progress-ring-wrapper">
+        <svg class="progress-ring" viewBox="0 0 100 100">
+          <circle class="bg-circle" cx="50" cy="50" r="45"/>
+          <circle class="progress-circle" id="dailyRing" cx="50" cy="50" r="45"/>
+        </svg>
+        <div class="progress-ring-text">
+          <span class="percent" id="dailyPercent">0%</span>
+          <span class="label">اليوم</span>
+        </div>
+      </div>
+      <div class="daily-info">
+        <h3>🎯 تقدم اليوم — <span id="dailyDayName">الجمعة</span></h3>
+        <div class="daily-stats">
+          <div class="daily-stat">✅ مكتمل: <strong id="dailyDone">0</strong></div>
+          <div class="daily-stat">⏳ متبقي: <strong id="dailyRemaining">0</strong></div>
+          <div class="daily-stat">📋 الإجمالي: <strong id="dailyTotal">0</strong></div>
+        </div>
+        <div class="daily-message empty" id="dailyMessage">ابدئي بإنجاز أول مهمة 💪</div>
+      </div>
+    </div>
+
+    <!-- أزرار الأيام -->
+    <nav class="days-nav" id="daysNav"></nav>
+
+    <!-- شريط الأدوات -->
+    <div class="toolbar">
+      <h2 class="day-title" id="dayTitle">الجمعة</h2>
+      <div class="toolbar-actions">
+        <button class="btn btn-add" id="addTaskBtn"><span>➕</span> إضافة مهمة</button>
+        <button class="btn btn-reset" id="resetDayBtn"><span>🔄</span> تصفير اليوم</button>
+        <button class="btn btn-reset-all" id="resetAllBtn"><span>🗑️</span> تصفير الكل</button>
+      </div>
+    </div>
+
+    <!-- شبكة المهام -->
+    <div class="schedule-grid" id="scheduleGrid"></div>
+
+  </div>
+
+  <!-- Modal إضافة/تعديل -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">إضافة مهمة جديدة</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="time-row-group">
+          <label>🕐 وقت البداية</label>
+          <div class="time-picker">
+            <select id="startHour"></select>
+            <select id="startMinute"></select>
+            <div class="time-ampm" id="startAmPm">
+              <button type="button" data-value="ص" class="active">ص</button>
+              <button type="button" data-value="م">م</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-row-group">
+          <label class="toggle-end-time">
+            <input type="checkbox" id="hasEndTime">
+            <span>➕ إضافة وقت نهاية (اختياري)</span>
+          </label>
+          <div id="endTimeSection" style="display:none;">
+            <div class="time-picker" style="margin-top:10px;">
+              <select id="endHour"></select>
+              <select id="endMinute"></select>
+              <div class="time-ampm" id="endAmPm">
+                <button type="button" data-value="ص" class="active">ص</button>
+                <button type="button" data-value="م">م</button>
+              </div>
+            </div>
+          </div>
+          <div class="time-preview" id="timePreview">⏰ <strong>7:00 ص</strong></div>
+        </div>
+
+        <label>
+          <span>📚 المهمة / الدرس</span>
+          <input type="text" id="inputTitle" placeholder="مثال: مذاكرة رياضيات">
+        </label>
+
+        <label>
+          <span>🎨 النوع</span>
+          <select id="inputType">
+            <option value="study">📖 مذاكرة</option>
+            <option value="lesson">🎓 درس</option>
+            <option value="homework">📝 واجب</option>
+            <option value="meal">🍽️ وجبة</option>
+            <option value="rest">😴 راحة</option>
+            <option value="church">⛪ كنيسة</option>
+            <option value="other">📌 أخرى</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="modalCancel">إلغاء</button>
+        <button class="btn btn-save" id="modalSave">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal تأكيد الحذف -->
+  <div class="modal-overlay" id="confirmOverlay">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h3>⚠️ تأكيد الحذف</h3>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage">هل أنت متأكدة من الحذف؟</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="confirmCancel">إلغاء</button>
+        <button class="btn btn-danger" id="confirmOk">نعم، احذف</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Confetti -->
+  <div class="confetti-container" id="confetti"></div>
+
+  <!-- ============================================
+       JavaScript - Firebase + App
+       ============================================ -->
+  <script type="module">
+    // ========================================
+    // 🔥 Firebase Imports
+    // ========================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc,
+      setDoc, 
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ========================================
+    // 🔑 Firebase Config
+    // ========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBKVKEIg_K5n2XbpuMaqLZpU77wiq1oAb0",
+      authDomain: "mina-445e6.firebaseapp.com",
+      databaseURL: "https://mina-445e6-default-rtdb.firebaseio.com",
+      projectId: "mina-445e6",
+      storageBucket: "mina-445e6.firebasestorage.app",
+      messagingSenderId: "233263887171",
+      appId: "1:233263887171:web:8f0308ed1bd8e765e835f6",
+      measurementId: "G-YDECP6WN7P"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const COLLECTION_NAME = "mahraiel_schedule";
+    const USER_DOC_ID = "mahraiel";
+
+    // ========================================
+    // 📝 Constants
+    // ========================================
+    const MOTIVATIONS = [
+      "ابدئي يومك بنية صادقة وستصلين بإذن الله 🌟",
+      "كل دقيقة مذاكرة اليوم = نجاح أكبر غداً 💪",
+      "يا مهرائيل، أنتِ أقوى مما تتصورين ✨",
+      "المثابرة هي سر النجاح، استمري 👑",
+      "النجاح ليس صدفة، بل نتيجة اجتهاد يومي 🎯",
+      "اجعلي كل لحظة مذاكرة خطوة نحو حلمك 🌈",
+      "أنتِ تستحقين الأفضل، فاعملي من أجله 💫",
+      "تذكري: كل عالم كان طالباً مجتهداً 📚",
+      "التركيز اليوم = تفوق غداً 🚀",
+      "لا تتوقفي، فأنتِ على الطريق الصحيح 🔥",
+      "ربنا معاكِ، ثقي في نفسك وقدراتك 🤍",
+      "الطموح يبدأ بخطوة، فاختاري خطوتك الآن ⭐",
+      "التعب اليوم راحة غداً 🌸",
+      "اجعلي من كل تحدٍ فرصة للتعلم 💎",
+      "أنتِ قادرة على تحقيق كل ما تحلمين به 🦋"
+    ];
+
+    const TYPE_ICONS = {
+      study: "📖", lesson: "🎓", homework: "📝", meal: "🍽️",
+      rest: "😴", church: "⛪", other: "📌"
+    };
+
+    const DAY_EMOJIS = {
+      "الجمعة": "☀️", "السبت": "🌤️", "الأحد": "☀️",
+      "الاثنين": "🌙", "الثلاثاء": "📖", "الأربعاء": "📝", "الخميس": "🎯"
+    };
+
+    const DAYS = ["الجمعة", "السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس"];
+
+    // ========================================
+    // 📦 State
+    // ========================================
+    let scheduleData = {};
+    let completedTasks = {};
+    let currentDay = DAYS[0];
+    let editingTask = null;
+    let pendingDelete = null;
+    let unsubscribe = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    // ========================================
+    // 🗂️ Default Data
+    // ========================================
+    function getDefaultSchedule() {
+      return {
+        "الجمعة": [
+          { time: "7:00–8:00 ص", title: "مذاكرة رياضيات", type: "study" },
+          { time: "8:00–9:00 ص", title: "مذاكرة إنجليزي", type: "study" },
+          { time: "9:00–9:30 ص", title: "الإفطار", type: "meal" },
+          { time: "10:00–11:30 ص", title: "درس علوم", type: "lesson" },
+          { time: "12:00–2:00 م", title: "اجتماع الكنيسة", type: "church" },
+          { time: "2:00–3:00 م", title: "درس علوم ثانٍ", type: "lesson" },
+          { time: "3:00–4:00 م", title: "درس عربي", type: "lesson" },
+          { time: "4:00–4:30 م", title: "الغداء", type: "meal" },
+          { time: "4:30–5:00 م", title: "راحة", type: "rest" },
+          { time: "5:00–6:00 م", title: "مذاكرة دراسات", type: "study" },
+          { time: "6:15–7:15 م", title: "مذاكرة تكنولوجيا", type: "study" },
+          { time: "8:00–8:30 م", title: "العشاء", type: "meal" },
+          { time: "9:30 م", title: "الاستعداد للنوم", type: "rest" }
+        ],
+        "السبت": [
+          { time: "8:00–9:00 ص", title: "مذاكرة عربي", type: "study" },
+          { time: "9:15–10:15 ص", title: "مذاكرة رياضيات", type: "study" },
+          { time: "10:15–10:45 ص", title: "الإفطار", type: "meal" },
+          { time: "10:45 ص–12:15 م", title: "راحة ووقت حر", type: "rest" },
+          { time: "12:15–12:45 م", title: "الغداء", type: "meal" },
+          { time: "1:00–2:00 م", title: "درس إنجليزي", type: "lesson" },
+          { time: "2:00–3:00 م", title: "راحة بعد الدرس", type: "rest" },
+          { time: "3:00–4:00 م", title: "مذاكرة علوم", type: "study" },
+          { time: "4:15–5:15 م", title: "مذاكرة دين", type: "study" },
+          { time: "7:00–7:30 م", title: "العشاء", type: "meal" }
+        ],
+        "الأحد": [
+          { time: "7:00–8:00 ص", title: "مذاكرة عربي", type: "study" },
+          { time: "8:00–9:00 ص", title: "مذاكرة إنجليزي", type: "study" },
+          { time: "9:00–9:30 ص", title: "الإفطار", type: "meal" },
+          { time: "10:00 ص–12:00 م", title: "درس رياضيات", type: "lesson" },
+          { time: "12:00–1:00 م", title: "راحة", type: "rest" },
+          { time: "1:00–2:00 م", title: "الغداء والاستعداد للدرس", type: "meal" },
+          { time: "2:00–3:00 م", title: "درس علوم", type: "lesson" },
+          { time: "4:00–5:00 م", title: "مذاكرة دراسات", type: "study" },
+          { time: "5:15–6:15 م", title: "مذاكرة تكنولوجيا", type: "study" },
+          { time: "7:30–8:00 م", title: "العشاء", type: "meal" }
+        ],
+        "الاثنين": [
+          { time: "8:00–9:00 ص", title: "مذاكرة رياضيات", type: "study" },
+          { time: "9:15–10:15 ص", title: "مذاكرة علوم", type: "study" },
+          { time: "10:15–10:45 ص", title: "الإفطار", type: "meal" },
+          { time: "11:00 ص–12:00 م", title: "مذاكرة عربي", type: "study" },
+          { time: "12:15–1:15 م", title: "مذاكرة إنجليزي", type: "study" },
+          { time: "1:15–2:00 م", title: "الغداء", type: "meal" },
+          { time: "2:00–4:30 م", title: "راحة ووقت حر", type: "rest" },
+          { time: "5:00–6:00 م", title: "درس دراسات", type: "lesson" },
+          { time: "7:00–7:30 م", title: "العشاء", type: "meal" }
+        ],
+        "الثلاثاء": [
+          { time: "8:00–9:00 ص", title: "مذاكرة رياضيات وحل مسائل", type: "study" },
+          { time: "9:15–10:15 ص", title: "مذاكرة عربي وقواعد", type: "study" },
+          { time: "10:15–10:45 ص", title: "الإفطار", type: "meal" },
+          { time: "11:00 ص–12:00 م", title: "مذاكرة علوم وحل تدريبات", type: "study" },
+          { time: "12:15–1:15 م", title: "مذاكرة دراسات وخرائط", type: "study" },
+          { time: "1:15–2:00 م", title: "الغداء", type: "meal" },
+          { time: "2:00–4:00 م", title: "راحة ووقت حر", type: "rest" },
+          { time: "4:00–5:00 م", title: "مراجعة إنجليزي وحل تدريبات", type: "study" },
+          { time: "7:00–7:30 م", title: "العشاء", type: "meal" }
+        ],
+        "الأربعاء": [
+          { time: "7:00–8:00 ص", title: "مذاكرة إنجليزي", type: "study" },
+          { time: "8:00–9:00 ص", title: "مذاكرة علوم", type: "study" },
+          { time: "9:00–9:30 ص", title: "الإفطار", type: "meal" },
+          { time: "10:00 ص–12:00 م", title: "درس رياضيات", type: "lesson" },
+          { time: "12:30–1:00 م", title: "الغداء", type: "meal" },
+          { time: "1:00–2:30 م", title: "راحة", type: "rest" },
+          { time: "3:00–4:00 م", title: "مذاكرة عربي", type: "study" },
+          { time: "4:15–5:15 م", title: "مذاكرة دين", type: "study" },
+          { time: "7:00–7:30 م", title: "العشاء", type: "meal" }
+        ],
+        "الخميس": [
+          { time: "8:00–9:00 ص", title: "مذاكرة رياضيات", type: "study" },
+          { time: "9:00–10:00 ص", title: "مذاكرة عربي", type: "study" },
+          { time: "10:00–10:30 ص", title: "الإفطار", type: "meal" },
+          { time: "10:30–11:30 ص", title: "مذاكرة تكنولوجيا", type: "study" },
+          { time: "11:30 ص–1:00 م", title: "راحة ووقت حر", type: "rest" },
+          { time: "1:00–1:30 م", title: "الغداء", type: "meal" },
+          { time: "2:00–3:00 م", title: "درس إنجليزي", type: "lesson" },
+          { time: "3:00–4:00 م", title: "راحة وانتقال للدرس التالي", type: "rest" },
+          { time: "4:00–5:00 م", title: "درس علوم", type: "lesson" },
+          { time: "5:00–6:00 م", title: "درس دراسات", type: "lesson" },
+          { time: "6:15–6:45 م", title: "العشاء", type: "meal" },
+          { time: "7:00–8:00 م", title: "مذاكرة دين", type: "study" }
+        ]
+      };
+    }
+
+    // ========================================
+    // 🔥 Firebase Operations
+    // ========================================
+    async function loadData() {
+      try {
+        const docRef = doc(db, COLLECTION_NAME, USER_DOC_ID);
+        const snap = await getDoc(docRef);
+
+        if (snap.exists()) {
+          const data = snap.data();
+          scheduleData = data.schedule || {};
+          completedTasks = data.completed || {};
+        } else {
+          scheduleData = getDefaultSchedule();
+          completedTasks = {};
+          await saveAll();
+        }
+
+        DAYS.forEach(day => {
+          if (!scheduleData[day]) scheduleData[day] = [];
+        });
+
+        renderAll();
+        hideLoader();
+      } catch (err) {
+        console.error("خطأ في تحميل البيانات:", err);
+        showToast("حدث خطأ، سيتم استخدام بيانات افتراضية", "error");
+        scheduleData = getDefaultSchedule();
+        DAYS.forEach(day => {
+          if (!scheduleData[day]) scheduleData[day] = [];
+        });
+        renderAll();
+        hideLoader();
+      }
+    }
+
+    async function saveAll() {
+      try {
+        const docRef = doc(db, COLLECTION_NAME, USER_DOC_ID);
+        await setDoc(docRef, {
+          schedule: scheduleData,
+          completed: completedTasks,
+          lastUpdated: new Date().toISOString()
+        }, { merge: true });
+      } catch (err) {
+        console.error("خطأ في الحفظ:", err);
+        showToast("تعذر حفظ البيانات، تحقق من الاتصال", "error");
+      }
+    }
+
+    function listenToChanges() {
+      const docRef = doc(db, COLLECTION_NAME, USER_DOC_ID);
+      unsubscribe = onSnapshot(docRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.schedule && JSON.stringify(data.schedule) !== JSON.stringify(scheduleData)) {
+            scheduleData = data.schedule;
+            DAYS.forEach(day => {
+              if (!scheduleData[day]) scheduleData[day] = [];
+            });
+            renderSchedule();
+            updateProgress();
+          }
+          if (data.completed && JSON.stringify(data.completed) !== JSON.stringify(completedTasks)) {
+            completedTasks = data.completed;
+            renderSchedule();
+            updateProgress();
+          }
+        }
+      }, (err) => {
+        console.warn("Live sync error:", err);
+      });
+    }
+
+    // ========================================
+    // 🎨 Render Functions
+    // ========================================
+    function renderAll() {
+      renderDaysNav();
+      renderSchedule();
+      updateProgress();
+      updateStreak();
+    }
+
+    function renderDaysNav() {
+      const nav = $("daysNav");
+      nav.innerHTML = "";
+      DAYS.forEach(day => {
+        const btn = document.createElement("button");
+        btn.className = `day-btn ${day === currentDay ? "active" : ""}`;
+        btn.innerHTML = `<span>${DAY_EMOJIS[day] || "📅"}</span> ${day}`;
+        btn.addEventListener("click", () => {
+          if (currentDay !== day) {
+            currentDay = day;
+            renderDaysNav();
+            renderSchedule();
+            updateProgress();
+            animateDayChange();
+          }
+        });
+        nav.appendChild(btn);
+      });
+    }
+
+    function renderSchedule() {
+      const grid = $("scheduleGrid");
+      grid.innerHTML = "";
+      $("dayTitle").textContent = `${DAY_EMOJIS[currentDay] || "📅"} ${currentDay}`;
+
+      const tasks = scheduleData[currentDay] || [];
+
+      if (tasks.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-message">
+            ✨ لا توجد مهام لهذا اليوم ✨<br>
+            <span style="font-size:0.9rem; display:block; margin-top:10px;">
+              اضغطي "إضافة مهمة" لبناء جدولك
+            </span>
+          </div>`;
+        updateDailyProgress();
+        return;
+      }
+
+      tasks.forEach((task, index) => {
+        const key = `${currentDay}-${index}`;
+        const isDone = !!completedTasks[key];
+        const card = document.createElement("div");
+        card.className = `task-card ${isDone ? "done" : ""}`;
+        card.dataset.type = task.type || "other";
+        card.style.animationDelay = `${index * 0.04}s`;
+
+        card.innerHTML = `
+          <div class="task-header">
+            <div class="task-time">⏰ ${escapeHtml(task.time)}</div>
+            <div class="task-type-icon">${TYPE_ICONS[task.type] || "📌"}</div>
+          </div>
+          <div class="task-title">${escapeHtml(task.title)}</div>
+          <div class="task-actions">
+            <label class="check-label">
+              <input type="checkbox" data-index="${index}" ${isDone ? "checked" : ""}>
+              <span>${isDone ? "تم ✔️" : "لم يتم"}</span>
+            </label>
+            <div class="card-actions">
+              <button class="icon-btn edit" title="تعديل">✏️</button>
+              <button class="icon-btn delete" title="حذف">🗑️</button>
+            </div>
+          </div>
+        `;
+
+        card.querySelector('input[type="checkbox"]').addEventListener("change", (e) => {
+          toggleTask(index, e.target.checked);
+        });
+
+        card.querySelector(".edit").addEventListener("click", () => {
+          openModal("edit", { day: currentDay, index });
+        });
+
+        card.querySelector(".delete").addEventListener("click", () => {
+          openConfirmDelete(currentDay, index);
+        });
+
+        grid.appendChild(card);
+      });
+
+      updateDailyProgress();
+    }
+
+    // ========================================
+    // 🎯 Actions
+    // ========================================
+    async function toggleTask(index, isDone) {
+      const key = `${currentDay}-${index}`;
+      if (isDone) {
+        completedTasks[key] = true;
+        celebrateIfComplete();
+      } else {
+        delete completedTasks[key];
+      }
+      await saveAll();
+      renderSchedule();
+      updateProgress();
+      updateStreak();
+    }
+
+    function celebrateIfComplete() {
+      const tasks = scheduleData[currentDay] || [];
+      const allDone = tasks.length > 0 && tasks.every((_, i) => completedTasks[`${currentDay}-${i}`]);
+      if (allDone) {
+        fireConfetti();
+        showToast("🎉 رائع يا مهرائيل! أنجزتِ كل مهام اليوم!", "success");
+        showMotivation("أنجزتِ يومك بالكامل، فخورة بكِ! 🌟");
+      }
+    }
+
+    async function saveTask(day, index, taskData) {
+      if (index === null || index === undefined) {
+        if (!scheduleData[day]) scheduleData[day] = [];
+        scheduleData[day].push(taskData);
+      } else {
+        scheduleData[day][index] = taskData;
+      }
+      await saveAll();
+      renderSchedule();
+      updateProgress();
+    }
+
+    async function deleteTask(day, index) {
+      if (!scheduleData[day]) return;
+      scheduleData[day].splice(index, 1);
+
+      const newCompleted = {};
+      Object.keys(completedTasks).forEach(key => {
+        const [kDay, kIdx] = key.split("-");
+        const idx = parseInt(kIdx);
+        if (kDay === day) {
+          if (idx < index) newCompleted[key] = true;
+          else if (idx > index) newCompleted[`${kDay}-${idx - 1}`] = true;
+        } else {
+          newCompleted[key] = true;
+        }
+      });
+      completedTasks = newCompleted;
+
+      await saveAll();
+      renderSchedule();
+      updateProgress();
+      updateStreak();
+    }
+
+    async function resetDay() {
+      if (!scheduleData[currentDay]) return;
+      scheduleData[currentDay].forEach((_, index) => {
+        delete completedTasks[`${currentDay}-${index}`];
+      });
+      await saveAll();
+      renderSchedule();
+      updateProgress();
+      updateStreak();
+      showToast(`تم تصفير مهام ${currentDay}`, "info");
+    }
+
+    async function resetAll() {
+      completedTasks = {};
+      await saveAll();
+      renderSchedule();
+      updateProgress();
+      updateStreak();
+      showToast("تم تصفير جميع المهام", "info");
+    }
+
+    // ========================================
+    // 📊 Progress
+    // ========================================
+    function updateProgress() {
+      let total = 0, done = 0;
+      DAYS.forEach(day => {
+        const tasks = scheduleData[day] || [];
+        total += tasks.length;
+        tasks.forEach((_, i) => {
+          if (completedTasks[`${day}-${i}`]) done++;
+        });
+      });
+
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+      $("progressFill").style.width = percent + "%";
+      $("progressPercent").textContent = percent + "%";
+      $("completedCount").textContent = `${done}/${total}`;
+
+      updateDailyProgress();
+    }
+
+    function updateStreak() {
+      let streak = 0;
+      DAYS.forEach(day => {
+        const tasks = scheduleData[day] || [];
+        if (tasks.length > 0 && tasks.every((_, i) => completedTasks[`${day}-${i}`])) {
+          streak++;
+        }
+      });
+      $("streakCount").textContent = streak;
+    }
+
+    function updateDailyProgress() {
+      const tasks = scheduleData[currentDay] || [];
+      const total = tasks.length;
+      let done = 0;
+      tasks.forEach((_, i) => {
+        if (completedTasks[`${currentDay}-${i}`]) done++;
+      });
+      const remaining = total - done;
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+      // Ring
+      const ring = $("dailyRing");
+      const circumference = 2 * Math.PI * 45;
+      const offset = circumference - (percent / 100) * circumference;
+      ring.style.strokeDasharray = circumference;
+      ring.style.strokeDashoffset = offset;
+
+      $("dailyPercent").textContent = percent + "%";
+      $("dailyDayName").textContent = currentDay;
+      $("dailyDone").textContent = done;
+      $("dailyRemaining").textContent = remaining;
+      $("dailyTotal").textContent = total;
+
+      const msg = $("dailyMessage");
+      msg.classList.remove("empty", "encourage");
+
+      if (total === 0) {
+        msg.textContent = "لا توجد مهام بعد — ابدئي بإضافتها ✨";
+        msg.classList.add("empty");
+      } else if (percent === 100) {
+        msg.textContent = "🎉 رائعة! أنجزتِ كل مهام اليوم بنجاح!";
+      } else if (percent >= 75) {
+        msg.textContent = "🔥 اقتربتِ جداً من الإنجاز، بقيت خطوة!";
+        msg.classList.add("encourage");
+      } else if (percent >= 50) {
+        msg.textContent = "💪 منتصف الطريق، استمري بهذا الحماس!";
+        msg.classList.add("encourage");
+      } else if (percent >= 25) {
+        msg.textContent = "🌟 بداية قوية، واصلي التقدم!";
+        msg.classList.add("encourage");
+      } else if (done > 0) {
+        msg.textContent = `💫 أنجزتِ ${done} مهمة، استمري!`;
+        msg.classList.add("encourage");
+      } else {
+        msg.textContent = "ابدئي بإنجاز أول مهمة 💪";
+        msg.classList.add("empty");
+      }
+    }
+
+    // ========================================
+    // 💬 Motivation
+    // ========================================
+    let motivationInterval = null;
+
+    function startMotivationRotation() {
+      if (motivationInterval) clearInterval(motivationInterval);
+      motivationInterval = setInterval(() => {
+        showMotivation(MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)]);
+      }, 8000);
+    }
+
+    function showMotivation(text) {
+      const el = $("motivationText");
+      el.classList.add("fade");
+      setTimeout(() => {
+        el.textContent = text;
+        el.classList.remove("fade");
+      }, 500);
+    }
+
+    // ========================================
+    // ⏰ Time Picker
+    // ========================================
+    function setupTimePickers() {
+      const hours = [];
+      for (let h = 1; h <= 12; h++) hours.push(h);
+
+      const minutes = [];
+      for (let m = 0; m < 60; m += 5) minutes.push(m);
+
+      const fillSelect = (selectEl, values, formatter) => {
+        selectEl.innerHTML = "";
+        values.forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = formatter(v);
+          selectEl.appendChild(opt);
+        });
+      };
+
+      fillSelect($("startHour"), hours, h => h);
+      fillSelect($("startMinute"), minutes, m => String(m).padStart(2, "0"));
+      fillSelect($("endHour"), hours, h => h);
+      fillSelect($("endMinute"), minutes, m => String(m).padStart(2, "0"));
+
+      setupAmPmButtons("startAmPm");
+      setupAmPmButtons("endAmPm");
+
+      ["startHour", "startMinute", "endHour", "endMinute"].forEach(id => {
+        $(id).addEventListener("change", updateTimePreview);
+      });
+
+      resetTimePickers();
+    }
+
+    function setupAmPmButtons(containerId) {
+      const container = $(containerId);
+      container.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          container.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          updateTimePreview();
+        });
+      });
+    }
+
+    function getSelectedTime(prefix) {
+      const h = $(prefix + "Hour").value;
+      const m = $(prefix + "Minute").value;
+      const ampmEl = $(prefix + "AmPm").querySelector("button.active");
+      const ampm = ampmEl ? ampmEl.dataset.value : "ص";
+      return { hour: h, minute: String(m).padStart(2, "0"), ampm };
+    }
+
+    function formatTime(t) {
+      return `${t.hour}:${t.minute} ${t.ampm}`;
+    }
+
+    function updateTimePreview() {
+      const start = getSelectedTime("start");
+      const preview = $("timePreview");
+      if ($("hasEndTime").checked) {
+        const end = getSelectedTime("end");
+        preview.innerHTML = `⏰ <strong>${formatTime(start)}</strong> — <strong>${formatTime(end)}</strong>`;
+      } else {
+        preview.innerHTML = `⏰ <strong>${formatTime(start)}</strong>`;
+      }
+    }
+
+    function resetTimePickers() {
+      $("startHour").value = "7";
+      $("startMinute").value = "0";
+      $("endHour").value = "8";
+      $("endMinute").value = "0";
+      $("hasEndTime").checked = false;
+      $("endTimeSection").style.display = "none";
+      $("startAmPm").querySelectorAll("button").forEach((b, i) => {
+        b.classList.toggle("active", i === 0);
+      });
+      $("endAmPm").querySelectorAll("button").forEach((b, i) => {
+        b.classList.toggle("active", i === 0);
+      });
+      updateTimePreview();
+    }
+
+    function parseTimeString(timeStr) {
+      const result = {
+        hasEnd: false,
+        startHour: "7", startMinute: "00", startAmPm: "ص",
+        endHour: "8", endMinute: "00", endAmPm: "ص"
+      };
+      if (!timeStr) return result;
+
+      const normalized = timeStr.replace(/[–—-]/g, "|");
+      const parts = normalized.split("|").map(s => s.trim());
+
+      const parseOne = (str, defaultAmPm) => {
+        const m = str.match(/(\d{1,2}):(\d{2})\s*(ص|م)?/);
+        if (!m) return null;
+        return {
+          hour: m[1],
+          minute: m[2],
+          ampm: m[3] || defaultAmPm
+        };
+      };
+
+      const lastAmPmMatch = timeStr.match(/(ص|م)\s*$/);
+      const lastAmPm = lastAmPmMatch ? lastAmPmMatch[1] : "ص";
+
+      if (parts.length >= 2) {
+        const start = parseOne(parts[0], lastAmPm);
+        const end = parseOne(parts[1], lastAmPm);
+        if (start) {
+          result.startHour = start.hour;
+          result.startMinute = start.minute;
+          result.startAmPm = start.ampm;
+        }
+        if (end) {
+          result.hasEnd = true;
+          result.endHour = end.hour;
+          result.endMinute = end.minute;
+          result.endAmPm = end.ampm;
+        }
+      } else {
+        const start = parseOne(parts[0], lastAmPm);
+        if (start) {
+          result.startHour = start.hour;
+          result.startMinute = start.minute;
+          result.startAmPm = start.ampm;
+        }
+      }
+      return result;
+    }
+
+    function loadTimeIntoPicker(timeStr) {
+      const parsed = parseTimeString(timeStr);
+
+      const setSelectValue = (selectEl, value) => {
+        let found = false;
+        for (const opt of selectEl.options) {
+          if (opt.value === value) { found = true; break; }
+        }
+        if (!found) {
+          const opt = document.createElement("option");
+          opt.value = value;
+          opt.textContent = String(value).padStart(2, "0");
+          selectEl.appendChild(opt);
+          const opts = Array.from(selectEl.options).sort((a, b) => Number(a.value) - Number(b.value));
+          selectEl.innerHTML = "";
+          opts.forEach(o => selectEl.appendChild(o));
+        }
+        selectEl.value = value;
+      };
+
+      setSelectValue($("startHour"), parsed.startHour);
+      setSelectValue($("startMinute"), parsed.startMinute);
+
+      const setAmPm = (containerId, value) => {
+        $(containerId).querySelectorAll("button").forEach(b => {
+          b.classList.toggle("active", b.dataset.value === value);
+        });
+      };
+      setAmPm("startAmPm", parsed.startAmPm);
+
+      if (parsed.hasEnd) {
+        setSelectValue($("endHour"), parsed.endHour);
+        setSelectValue($("endMinute"), parsed.endMinute);
+        setAmPm("endAmPm", parsed.endAmPm);
+        $("hasEndTime").checked = true;
+        $("endTimeSection").style.display = "block";
+      } else {
+        $("hasEndTime").checked = false;
+        $("endTimeSection").style.display = "none";
+      }
+
+      updateTimePreview();
+    }
+
+    function buildTimeString() {
+      const start = getSelectedTime("start");
+      let result = formatTime(start);
+      if ($("hasEndTime").checked) {
+        const end = getSelectedTime("end");
+        result = `${formatTime(start)}–${formatTime(end)}`;
+      }
+      return result;
+    }
+
+    // ========================================
+    // 🪟 Modal
+    // ========================================
+    function openModal(mode, payload = null) {
+      const modal = $("modalOverlay");
+      const title = $("modalTitle");
+      const inputTitle = $("inputTitle");
+      const inputType = $("inputType");
+
+      if (mode === "edit" && payload) {
+        editingTask = payload;
+        const task = scheduleData[payload.day][payload.index];
+        title.textContent = "تعديل المهمة";
+        inputTitle.value = task.title || "";
+        inputType.value = task.type || "study";
+        loadTimeIntoPicker(task.time || "");
+      } else {
+        editingTask = null;
+        title.textContent = "إضافة مهمة جديدة";
+        inputTitle.value = "";
+        inputType.value = "study";
+        resetTimePickers();
+      }
+
+      modal.classList.add("active");
+      setTimeout(() => inputTitle.focus(), 300);
+    }
+
+    function closeModal() {
+      $("modalOverlay").classList.remove("active");
+      editingTask = null;
+    }
+
+    async function handleSave() {
+      const title = $("inputTitle").value.trim();
+      const type = $("inputType").value;
+      const time = buildTimeString();
+
+      if (!title) {
+        showToast("يرجى إدخال اسم المهمة", "error");
+        return;
+      }
+
+      const taskData = { time, title, type };
+
+      if (editingTask) {
+        await saveTask(editingTask.day, editingTask.index, taskData);
+        showToast("تم تحديث المهمة بنجاح ✅", "success");
+      } else {
+        await saveTask(currentDay, null, taskData);
+        showToast("تمت إضافة المهمة بنجاح ✨", "success");
+      }
+
+      closeModal();
+    }
+
+    // ========================================
+    // 🗑️ Confirm Delete
+    // ========================================
+    function openConfirmDelete(day, index) {
+      pendingDelete = { day, index };
+      const task = scheduleData[day][index];
+      $("confirmMessage").textContent = `هل تريد حذف "${task.title}"؟`;
+      $("confirmOverlay").classList.add("active");
+    }
+
+    async function handleDeleteConfirm() {
+      if (!pendingDelete) return;
+      await deleteTask(pendingDelete.day, pendingDelete.index);
+      showToast("تم حذف المهمة", "info");
+      pendingDelete = null;
+      $("confirmOverlay").classList.remove("active");
+    }
+
+    // ========================================
+    // 📢 Toast
+    // ========================================
+    let toastTimer = null;
+    function showToast(message, type = "info") {
+      const toast = $("toast");
+      const icons = { success: "✅", error: "⚠️", info: "ℹ️" };
+      toast.innerHTML = `<span>${icons[type] || "ℹ️"}</span> ${escapeHtml(message)}`;
+      toast.className = `toast ${type}`;
+      void toast.offsetWidth;
+      toast.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    // ========================================
+    // 🎉 Confetti
+    // ========================================
+    function fireConfetti() {
+      const container = $("confetti");
+      const colors = ["#6e8eff", "#b78aff", "#ffb56b", "#4acf8b", "#ff6b8a", "#ffd93b"];
+      for (let i = 0; i < 60; i++) {
+        const el = document.createElement("div");
+        el.className = "confetti";
+        el.style.left = Math.random() * 100 + "%";
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDelay = Math.random() * 0.5 + "s";
+        el.style.animationDuration = (2 + Math.random() * 1.5) + "s";
+        el.style.width = (6 + Math.random() * 8) + "px";
+        el.style.height = (6 + Math.random() * 8) + "px";
+        el.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+      }
+    }
+
+    // ========================================
+    // 🛠️ Helpers
+    // ========================================
+    function escapeHtml(str) {
+      if (!str) return "";
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function hideLoader() {
+      const loader = $("loader");
+      const main = $("mainContainer");
+      loader.style.opacity = "0";
+      loader.style.transition = "opacity 0.4s ease";
+      setTimeout(() => {
+        loader.style.display = "none";
+        main.style.display = "block";
+      }, 400);
+    }
+
+    function animateDayChange() {
+      const grid = $("scheduleGrid");
+      grid.style.opacity = "0";
+      grid.style.transform = "translateY(15px)";
+      grid.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+      setTimeout(() => {
+        grid.style.opacity = "1";
+        grid.style.transform = "translateY(0)";
+        updateDailyProgress();
+      }, 50);
+    }
+
+    // ========================================
+    // 🎛️ Events
+    // ========================================
+    function bindEvents() {
+      $("addTaskBtn").addEventListener("click", () => openModal("add"));
+      $("resetDayBtn").addEventListener("click", resetDay);
+      $("resetAllBtn").addEventListener("click", () => {
+        if (confirm("هل تريد تصفير جميع المهام المكتملة؟")) resetAll();
+      });
+
+      $("modalClose").addEventListener("click", closeModal);
+      $("modalCancel").addEventListener("click", closeModal);
+      $("modalSave").addEventListener("click", handleSave);
+
+      $("confirmCancel").addEventListener("click", () => {
+        pendingDelete = null;
+        $("confirmOverlay").classList.remove("active");
+      });
+      $("confirmOk").addEventListener("click", handleDeleteConfirm);
+
+      $("hasEndTime").addEventListener("change", (e) => {
+        $("endTimeSection").style.display = e.target.checked ? "block" : "none";
+        updateTimePreview();
+      });
+
+      $("modalOverlay").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.tagName !== "SELECT") handleSave();
+        if (e.key === "Escape") closeModal();
+      });
+
+      $("confirmOverlay").addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          pendingDelete = null;
+          $("confirmOverlay").classList.remove("active");
+        }
+      });
+
+      setupTimePickers();
+    }
+
+    // ========================================
+    // 🚀 Init
+    // ========================================
+    async function init() {
+      bindEvents();
+      startMotivationRotation();
+      await loadData();
+      listenToChanges();
+    }
+
+    init();
+  </script>
+</body>
+</html>
