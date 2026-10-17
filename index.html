@@ -544,25 +544,9 @@ select#inputType{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg x
 <div class="confetti-container" id="confetti"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDqo_VNM7sf5XWVDaWlBLTd6XIGnEn8nBA",
-  authDomain: "literacy-program.firebaseapp.com",
-  projectId: "literacy-program",
-  storageBucket: "literacy-program.firebasestorage.app",
-  messagingSenderId: "649016779724",
-  appId: "1:649016779724:web:578ddf84c615c4e67f3369",
-  measurementId: "G-G1WGZ9PLMM"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const SCHEDULE_COLLECTION = "mahraiel_schedule";
-const USERS_COLLECTION = "users";
+import { db, auth, USERS_COLLECTION, SCHEDULE_COLLECTION } from "./firebase-init.js";
+import { doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const MOTIVATIONS = [
   "ابدأ يومك بنية صادقة وستصل بإذن الله 🌟",
