@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔐 تسجيل الدخول</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#6e8eff;--primary-dark:#4b5fd4;--secondary:#b78aff;
+  --text:#1e2b4f;--text-light:#6b7a9e;--bg:#f4f7ff;
+  --shadow-lg:0 24px 48px -12px rgba(60,90,180,.28);--radius:24px;--radius-sm:14px;
+}
+body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:20px;color:var(--text);position:relative;overflow:hidden}
+
+.animated-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:linear-gradient(145deg,#eef3ff 0%,#e0e8ff 50%,#f0e6ff 100%)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:float 20s ease-in-out infinite}
+.orb-1{width:400px;height:400px;background:#6e8eff;top:-100px;right:-100px}
+.orb-2{width:350px;height:350px;background:#b78aff;bottom:-100px;left:-80px;animation-delay:-7s}
+.orb-3{width:300px;height:300px;background:#ffb56b;top:50%;left:40%;animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.1)}66%{transform:translate(-40px,60px) scale(.95)}}
+
+.auth-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:var(--radius);
+  padding:40px 36px;width:100%;max-width:440px;box-shadow:var(--shadow-lg);
+  border:1px solid rgba(255,255,255,.9);animation:fadeInUp .6s ease-out;margin:auto;position:relative;z-index:10}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo .logo-icon{font-size:3rem;display:block;margin-bottom:10px;animation:bounce 2s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.auth-logo h1{font-size:1.7rem;font-weight:900;color:var(--text);margin-bottom:6px}
+.gradient-text{background:linear-gradient(135deg,#4b5fd4,#b78aff,#ff8fd0);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 200%;animation:gradientShift 4s ease infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.auth-logo p{color:var(--text-light);font-size:.95rem;font-weight:500}
+
+.auth-title{text-align:center;font-weight:800;color:var(--primary-dark);padding:11px;font-size:1rem;background:#f0f4ff;border-radius:40px;margin-bottom:22px}
+.auth-form{display:flex;flex-direction:column;gap:14px}
+.auth-field{display:flex;flex-direction:column;gap:6px}
+.auth-field label{font-weight:800;font-size:.88rem;color:var(--text);display:flex;align-items:center;gap:6px}
+.auth-field input{padding:14px 16px;border:2px solid #e5ecff;border-radius:var(--radius-sm);font-size:1rem;font-family:inherit;background:#fafbff;color:var(--text);transition:all .25s ease}
+.auth-field input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 4px rgba(110,142,255,.12)}
+
+.auth-btn{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;
+  padding:15px 20px;border-radius:var(--radius-sm);font-size:1.05rem;font-weight:800;font-family:inherit;
+  cursor:pointer;transition:all .3s ease;box-shadow:0 10px 22px -8px rgba(110,142,255,.7);margin-top:6px;
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.auth-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 16px 28px -8px rgba(110,142,255,.85)}
+.auth-btn:disabled{opacity:.6;cursor:not-allowed}
+.spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.auth-error{background:#ffe6ec;color:#c2334f;padding:12px 16px;border-radius:var(--radius-sm);font-weight:700;font-size:.88rem;display:none;border-right:3px solid #ff6b8a}
+.auth-error.show{display:block}
+
+/* التجاوب مع الشاشات الصغيرة */
+@media (max-width: 480px) {
+  body { padding: 16px; }
+  .auth-card { padding: 30px 22px; border-radius: 20px; }
+  .auth-logo .logo-icon { font-size: 2.5rem; }
+  .auth-logo h1 { font-size: 1.5rem; }
+  .auth-title { font-size: 0.9rem; }
+  .auth-field input { padding: 12px 14px; font-size: 0.95rem; }
+  .auth-btn { padding: 13px 18px; font-size: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="animated-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="auth-card">
+  <div class="auth-logo">
+    <span class="logo-icon">👑</span>
+    <h1>جدول <span class="gradient-text">الطالب</span></h1>
+    <p>سجّل دخولك للمتابعة</p>
+  </div>
+  <div class="auth-title">🔐 تسجيل الدخول</div>
+  <div class="auth-error" id="authError"></div>
+  <form class="auth-form" id="authForm">
+    <div class="auth-field">
+      <label>📧 البريد الإلكتروني</label>
+      <input type="email" id="authEmail" placeholder="" required autocomplete="email">
+    </div>
+    <div class="auth-field">
+      <label>🔒 كلمة المرور</label>
+      <input type="password" id="authPassword" placeholder="" required minlength="6" autocomplete="current-password">
+    </div>
+    <button type="submit" class="auth-btn" id="authSubmit">
+      <span id="authBtnText">🔓 تسجيل الدخول</span>
+    </button>
+  </form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDqo_VNM7sf5XWVDaWlBLTd6XIGnEn8nBA",
+  authDomain: "literacy-program.firebaseapp.com",
+  projectId: "literacy-program",
+  storageBucket: "literacy-program.firebasestorage.app",
+  messagingSenderId: "649016779724",
+  appId: "1:649016779724:web:578ddf84c615c4e67f3369",
+  measurementId: "G-G1WGZ9PLMM"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const USERS_COLLECTION = "users";
+const $ = (id) => document.getElementById(id);
+
+function showAuthError(msg){
+  const el = $("authError");
+  el.textContent = "⚠️ " + msg;
+  el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 6000);
+}
+function clearAuthError(){ $("authError").classList.remove("show"); }
+
+function translateAuthError(code){
+  const map = {
+    "auth/invalid-email":"البريد الإلكتروني غير صحيح",
+    "auth/user-disabled":"هذا الحساب معطّل",
+    "auth/user-not-found":"لا يوجد حساب بهذا البريد",
+    "auth/wrong-password":"كلمة المرور غير صحيحة",
+    "auth/invalid-credential":"البريد أو كلمة المرور غير صحيحة",
+    "auth/too-many-requests":"محاولات كثيرة، انتظر قليلاً",
+    "auth/network-request-failed":"تحقق من الاتصال بالإنترنت"
+  };
+  return map[code] || "حدث خطأ غير متوقع";
+}
+
+async function handleAuthSubmit(e){
+  e.preventDefault();
+  clearAuthError();
+  const email = $("authEmail").value.trim();
+  const password = $("authPassword").value;
+  const btn = $("authSubmit");
+  const btnText = $("authBtnText");
+  if (!email || !password){ showAuthError("يرجى ملء جميع الحقول"); return; }
+
+  btn.disabled = true;
+  const orig = btnText.textContent;
+  btnText.innerHTML = '<div class="spinner"></div>';
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    // التوجيه يتم تلقائياً عبر onAuthStateChanged
+  } catch(err){
+    showAuthError(translateAuthError(err.code));
+    btn.disabled = false;
+    btnText.textContent = orig;
+  }
+}
+
+$("authForm").addEventListener("submit", handleAuthSubmit);
+
+// التوجيه التلقائي
+onAuthStateChanged(auth, async (user) => {
+  if (user){
+    try {
+      const userRef = doc(db, USERS_COLLECTION, user.uid);
+      const snap = await getDoc(userRef);
+      
+      if (!snap.exists()){
+        // لو مش مسجل في users
+        await auth.signOut();
+        showAuthError("حسابك غير مسجل في النظام");
+        return;
+      }
+      
+      const profile = snap.data();
+      // توجيه حسب الدور
+      if (profile.role === "admin"){
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
+    } catch(err){
+      console.error(err);
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ لوحة تحكم الأدمن</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --primary:#6e8eff;--primary-dark:#4b5fd4;--secondary:#b78aff;--accent:#ffb56b;
+  --success:#4acf8b;--danger:#ff6b8a;--warning:#f6c23e;
+  --text:#1e2b4f;--text-light:#6b7a9e;--bg:#f4f7ff;
+  --shadow-sm:0 4px 12px rgba(60,90,180,.08);
+  --shadow-md:0 12px 28px -8px rgba(60,90,180,.18);
+  --shadow-lg:0 24px 48px -12px rgba(60,90,180,.28);
+  --radius:24px;--radius-sm:14px;
+}
+body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:100vh;
+  padding:24px 16px;color:var(--text);overflow-x:hidden;position:relative}
+
+.animated-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:linear-gradient(145deg,#eef3ff 0%,#e0e8ff 50%,#f0e6ff 100%)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;
+  animation:float 20s ease-in-out infinite}
+.orb-1{width:400px;height:400px;background:#6e8eff;top:-100px;right:-100px}
+.orb-2{width:350px;height:350px;background:#b78aff;bottom:-100px;left:-80px;animation-delay:-7s}
+.orb-3{width:300px;height:300px;background:#ffb56b;top:50%;left:40%;animation-delay:-14s}
+@keyframes float{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(60px,-40px) scale(1.1)}
+  66%{transform:translate(-40px,60px) scale(.95)}
+}
+
+.loader{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:20px;background:rgba(244,247,255,.9);
+  backdrop-filter:blur(10px);z-index:999;font-weight:700;color:var(--primary-dark)}
+.loader-ring{width:70px;height:70px;border:5px solid #dde5ff;border-top-color:var(--primary);
+  border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.container{max-width:1400px;margin:0 auto;animation:fadeInUp .7s ease-out}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
+  gap:20px;background:rgba(255,255,255,.75);backdrop-filter:blur(20px);
+  border-radius:var(--radius);padding:24px 32px;box-shadow:var(--shadow-md);
+  border:1px solid rgba(255,255,255,.9);margin-bottom:20px}
+.title-section h1{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gradient-text{background:linear-gradient(135deg,#4b5fd4,#b78aff,#ff8fd0);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% 200%;animation:gradientShift 4s ease infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.subtitle{color:var(--text-light);font-size:.95rem;margin-top:6px;font-weight:500}
+.logout-icon-btn{background:#fff;border:1px solid #eef2ff;width:48px;height:48px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.3rem;transition:all .25s ease;
+  box-shadow:var(--shadow-sm)}
+.logout-icon-btn:hover{background:var(--danger);border-color:var(--danger);
+  transform:scale(1.1) rotate(-5deg)}
+
+.tabs-nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(20px);
+  border-radius:var(--radius);padding:8px;box-shadow:var(--shadow-sm);
+  border:1px solid rgba(255,255,255,.9)}
+.tab-btn{flex:1;min-width:140px;background:transparent;border:none;
+  padding:14px 20px;border-radius:var(--radius-sm);font-weight:800;
+  font-size:.95rem;color:var(--text-light);cursor:pointer;
+  transition:all .3s ease;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.tab-btn:hover{background:#f0f4ff;color:var(--primary-dark)}
+.tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;box-shadow:0 8px 18px -6px rgba(110,142,255,.6)}
+
+.tab-content{display:none;animation:fadeInUp .5s ease}
+.tab-content.active{display:block}
+
+.section-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+  border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow-md);
+  border:1px solid rgba(255,255,255,.9);margin-bottom:20px}
+.section-header{display:flex;justify-content:space-between;align-items:center;
+  gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.section-header h2{font-size:1.3rem;font-weight:900;color:var(--text);
+  display:flex;align-items:center;gap:10px}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.stat-box{background:linear-gradient(135deg,#fff 0%,#f0f4ff 100%);
+  border-radius:var(--radius-sm);padding:22px 24px;box-shadow:var(--shadow-sm);
+  border:1px solid #eef2ff;display:flex;align-items:center;gap:16px;
+  transition:transform .3s ease}
+.stat-box:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.stat-box .icon{font-size:2.4rem;flex-shrink:0}
+.stat-box .data{display:flex;flex-direction:column;line-height:1.3}
+.stat-box .num{font-size:2rem;font-weight:900;color:var(--primary-dark)}
+.stat-box .lbl{font-size:.85rem;color:var(--text-light);font-weight:700}
+
+.btn{border:none;padding:11px 20px;border-radius:40px;font-weight:700;
+  font-size:.9rem;cursor:pointer;transition:all .25s ease;
+  font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;box-shadow:0 8px 18px -6px rgba(110,142,255,.5)}
+.btn-primary:hover{transform:translateY(-2px);
+  box-shadow:0 12px 22px -6px rgba(110,142,255,.6)}
+.btn-success{background:linear-gradient(135deg,var(--success),#34b87c);color:#fff;
+  box-shadow:0 8px 18px -6px rgba(74,207,139,.5)}
+.btn-success:hover{transform:translateY(-2px);
+  box-shadow:0 12px 22px -6px rgba(74,207,139,.6)}
+.btn-danger{background:linear-gradient(135deg,var(--danger),#e64e70);color:#fff}
+.btn-danger:hover{transform:translateY(-2px)}
+.btn-secondary{background:#f0f4ff;color:var(--text)}
+.btn-secondary:hover{background:#e0e8ff}
+.btn-warning{background:linear-gradient(135deg,var(--warning),#d4a017);color:#fff}
+.btn-warning:hover{transform:translateY(-2px)}
+.btn-sm{padding:8px 14px;font-size:.82rem}
+
+.users-table-wrapper{overflow-x:auto;border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-sm)}
+.users-table{width:100%;border-collapse:separate;border-spacing:0;
+  background:#fff;min-width:800px}
+.users-table thead{background:linear-gradient(135deg,#f0f4ff 0%,#e8f0ff 100%)}
+.users-table th{padding:16px 18px;text-align:right;font-weight:900;
+  font-size:.9rem;color:var(--text);border-bottom:2px solid #e5ecff}
+.users-table td{padding:14px 18px;border-bottom:1px solid #f0f4ff;
+  font-weight:600;font-size:.92rem;color:var(--text)}
+.users-table tr:last-child td{border-bottom:none}
+.users-table tr:hover td{background:#fafbff}
+.users-table .user-name{font-weight:900;color:var(--primary-dark)}
+.users-table .user-email{font-size:.85rem;color:var(--text-light);
+  font-family:monospace}
+.role-badge{display:inline-flex;align-items:center;gap:4px;
+  padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:800}
+.role-badge.admin{background:#fff0f3;color:#c2334f}
+.role-badge.user{background:#e8f9f0;color:#2a7d54}
+.status-badge{display:inline-flex;align-items:center;gap:4px;
+  padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:800}
+.status-badge.active{background:#e8f9f0;color:#2a7d54}
+.status-badge.inactive{background:#ffe6ec;color:#c2334f}
+.actions-cell{display:flex;gap:6px;justify-content:flex-end}
+.icon-btn{background:transparent;border:none;width:36px;height:36px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1rem;transition:all .25s ease}
+.icon-btn:hover{background:#eef3ff;transform:scale(1.15)}
+.icon-btn.delete:hover{background:#ffe6ec}
+.icon-btn.preview:hover{background:#e8f9f0}
+.icon-btn.toggle:hover{background:#fff7e8}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-light);
+  font-weight:700;font-size:1.1rem}
+.empty-state .big-icon{font-size:3.5rem;margin-bottom:16px;
+  display:block;opacity:.6}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(30,43,79,.45);
+  backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+  z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
+.modal-overlay.active{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:var(--radius);width:100%;max-width:520px;
+  box-shadow:var(--shadow-lg);transform:scale(.9) translateY(20px);
+  transition:transform .35s cubic-bezier(.34,1.4,.64,1);overflow:hidden;
+  max-height:92vh;display:flex;flex-direction:column}
+.modal-overlay.active .modal{transform:scale(1) translateY(0)}
+.modal-small{max-width:400px}
+.modal-large{max-width:900px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;
+  padding:20px 24px;border-bottom:1px solid #eef2ff}
+.modal-header h3{font-weight:900;font-size:1.15rem;color:var(--text)}
+.modal-close{background:transparent;border:none;width:34px;height:34px;
+  border-radius:50%;cursor:pointer;font-size:1rem;color:var(--text-light);
+  transition:all .2s ease}
+.modal-close:hover{background:#ffe6ec;color:var(--danger)}
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;
+  gap:14px;overflow-y:auto}
+.modal-body label{display:flex;flex-direction:column;gap:6px;
+  font-weight:700;font-size:.9rem;color:var(--text)}
+.modal-body input,.modal-body select{padding:12px 16px;border:2px solid #e5ecff;
+  border-radius:var(--radius-sm);font-size:1rem;font-family:inherit;
+  transition:all .25s ease;background:#fafbff;color:var(--text);width:100%}
+.modal-body input:focus,.modal-body select:focus{outline:none;
+  border-color:var(--primary);background:#fff;
+  box-shadow:0 0 0 4px rgba(110,142,255,.12)}
+.modal-footer{padding:16px 24px 22px;display:flex;justify-content:flex-end;
+  gap:10px;border-top:1px solid #eef2ff}
+.info-box{background:#f0f4ff;border-radius:var(--radius-sm);padding:14px 18px;
+  font-size:.88rem;color:var(--text);border-right:4px solid var(--primary);
+  line-height:1.7}
+.info-box strong{color:var(--primary-dark)}
+.info-box code{background:#fff;padding:2px 8px;border-radius:6px;
+  font-family:monospace;color:#c2334f;font-weight:700;
+  border:1px solid #e5ecff;display:inline-block;direction:ltr}
+
+.alert{background:#fff7e8;color:#b5761f;padding:14px 18px;
+  border-radius:var(--radius-sm);font-weight:700;font-size:.9rem;
+  border-right:4px solid var(--accent);margin-bottom:16px;
+  display:flex;align-items:flex-start;gap:10px;line-height:1.6}
+
+.user-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;margin-top:16px}
+.preview-task{background:#f8faff;border-radius:var(--radius-sm);
+  padding:14px 16px;border-right:4px solid var(--primary);position:relative}
+.preview-task.done{background:linear-gradient(135deg,#f0fdf6,#e8f9f0);
+  border-right-color:var(--success)}
+.preview-task .pt-time{font-size:.78rem;color:var(--text-light);
+  font-weight:700;margin-bottom:4px}
+.preview-task .pt-title{font-weight:900;color:var(--text);font-size:.95rem}
+.preview-task.done .pt-title{text-decoration:line-through;
+  color:var(--text-light)}
+.preview-days-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.preview-day-btn{background:#fff;border:1px solid #e5ecff;padding:10px 14px;
+  border-radius:40px;font-weight:700;font-size:.85rem;color:var(--text);
+  cursor:pointer;transition:all .25s ease;font-family:inherit}
+.preview-day-btn:hover{border-color:var(--primary);color:var(--primary-dark)}
+.preview-day-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#fff;border-color:transparent}
+
+.loading-inline{display:inline-block;width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite}
+
+.toast{position:fixed;bottom:30px;right:30px;background:var(--text);color:#fff;
+  padding:14px 22px;border-radius:var(--radius-sm);font-weight:700;
+  font-size:.95rem;box-shadow:var(--shadow-lg);transform:translateY(150%);
+  transition:transform .4s cubic-bezier(.34,1.4,.64,1);z-index:1100;
+  display:flex;align-items:center;gap:10px;max-width:90vw}
+.toast.show{transform:translateY(0)}
+.toast.success{background:linear-gradient(135deg,var(--success),#34b87c)}
+.toast.error{background:linear-gradient(135deg,var(--danger),#e64e70)}
+.toast.info{background:linear-gradient(135deg,var(--primary),var(--primary-dark))}
+.toast.warning{background:linear-gradient(135deg,var(--warning),#d4a017)}
+
+@media(max-width:720px){
+  body{padding:16px 12px}
+  .header{flex-direction:column;align-items:flex-start;padding:20px}
+  .section-card{padding:18px 16px}
+  .stat-box{padding:16px}
+  .stat-box .num{font-size:1.5rem}
+  .tabs-nav{flex-direction:column}
+  .toast{right:12px;left:12px;bottom:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="animated-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div id="loader" class="loader">
+  <div class="loader-ring"></div>
+  <p>جاري التحميل...</p>
+</div>
+
+<div class="container" id="mainContainer" style="display:none;">
+
+  <header class="header">
+    <div class="title-section">
+      <h1>
+        <span>⚙️</span>
+        لوحة <span class="gradient-text">تحكم الأدمن</span>
+      </h1>
+      <p class="subtitle">إدارة المستخدمين والجداول بكل سهولة</p>
+    </div>
+    <button class="logout-icon-btn" id="logoutBtn" title="تسجيل الخروج">🚪</button>
+  </header>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn active" data-tab="overview">📊 نظرة عامة</button>
+    <button class="tab-btn" data-tab="users">👥 إدارة المستخدمين</button>
+    <button class="tab-btn" data-tab="schedules">📅 الجداول</button>
+  </nav>
+
+  <!-- TAB: Overview -->
+  <div class="tab-content active" id="tab-overview">
+    <div class="section-card">
+      <div class="section-header">
+        <h2>📊 إحصائيات عامة</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="icon">👥</div>
+          <div class="data">
+            <span class="num" id="statTotalUsers">0</span>
+            <span class="lbl">إجمالي المستخدمين</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="icon">🎓</div>
+          <div class="data">
+            <span class="num" id="statStudents">0</span>
+            <span class="lbl">الطلاب</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="icon">🛡️</div>
+          <div class="data">
+            <span class="num" id="statAdmins">0</span>
+            <span class="lbl">الأدمن</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="icon">📋</div>
+          <div class="data">
+            <span class="num" id="statTasks">0</span>
+            <span class="lbl">إجمالي المهام</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Users -->
+  <div class="tab-content" id="tab-users">
+    <div class="section-card">
+      <div class="section-header">
+        <h2>👥 إدارة المستخدمين</h2>
+        <button class="btn btn-success" id="addUserBtn">➕ إضافة مستخدم جديد</button>
+      </div>
+
+      <div class="alert">
+        <span>💡</span>
+        <span>لإضافة مستخدم: أضف الإيميل والباسورد من Firebase Console (Authentication) أولاً، ثم انسخ الـ UID وأضفه هنا.</span>
+      </div>
+
+      <div id="usersTableWrapper">
+        <div class="empty-state">
+          <span class="big-icon">⏳</span>
+          جاري تحميل المستخدمين...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Schedules -->
+  <div class="tab-content" id="tab-schedules">
+    <div class="section-card">
+      <div class="section-header">
+        <h2>📅 جداول المستخدمين</h2>
+      </div>
+      <div id="schedulesList">
+        <div class="empty-state">
+          <span class="big-icon">⏳</span>
+          جاري التحميل...
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal: Add/Edit User -->
+<div class="modal-overlay" id="userModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="userModalTitle">إضافة مستخدم جديد</h3>
+      <button class="modal-close" id="userModalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box" id="uidInfoBox">
+        <strong>⚠️ مهم:</strong> أضف الحساب أولاً من
+        <strong>Firebase Console → Authentication → Add user</strong>
+        (بريد + باسورد)، ثم انسخ الـ UID والصقه هنا.
+      </div>
+      <label>
+        <span>🆔 UID المستخدم (من Firebase Auth)</span>
+        <input type="text" id="inputUid" placeholder="مثال: hLdu1RAHdve19agwqWQqHZELzgj2" dir="ltr">
+      </label>
+      <label>
+        <span>📧 البريد الإلكتروني (نفسه في Firebase Auth)</span>
+        <input type="email" id="inputEmail" placeholder="student@example.com" dir="ltr">
+      </label>
+      <label>
+        <span>👤 اسم المستخدم (يظهر في الجدول)</span>
+        <input type="text" id="inputUsername" placeholder="مثال: مهرائيل">
+      </label>
+      <label>
+        <span>🎓 الصف (اختياري)</span>
+        <input type="text" id="inputGrade" placeholder="مثال: الثالث الإعدادي - 3/1">
+      </label>
+      <label>
+        <span>🛡️ الدور</span>
+        <select id="inputRole">
+          <option value="user">👤 طالب</option>
+          <option value="admin">🛡️ أدمن</option>
+        </select>
+      </label>
+      <label>
+        <span>📌 الحالة</span>
+        <select id="inputStatus">
+          <option value="active">✅ نشط</option>
+          <option value="inactive">🚫 معطل</option>
+        </select>
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="userModalCancel">إلغاء</button>
+      <button class="btn btn-primary" id="userModalSave">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Preview Schedule -->
+<div class="modal-overlay" id="previewModalOverlay">
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <h3 id="previewModalTitle">معاينة الجدول</h3>
+      <button class="modal-close" id="previewModalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="previewContent">
+        <div class="empty-state">
+          <span class="big-icon">⏳</span>
+          جاري التحميل...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Confirm -->
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal modal-small">
+    <div class="modal-header">
+      <h3>⚠️ تأكيد</h3>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessage">هل أنت متأكد؟</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="confirmCancel">إلغاء</button>
+      <button class="btn btn-danger" id="confirmOk">نعم، احذف</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDqo_VNM7sf5XWVDaWlBLTd6XIGnEn8nBA",
+  authDomain: "literacy-program.firebaseapp.com",
+  projectId: "literacy-program",
+  storageBucket: "literacy-program.firebasestorage.app",
+  messagingSenderId: "649016779724",
+  appId: "1:649016779724:web:578ddf84c615c4e67f3369",
+  measurementId: "G-G1WGZ9PLMM"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const USERS_COLLECTION = "users";
+const SCHEDULE_COLLECTION = "mahraiel_schedule";
+
+const MONTHS_AR = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+const DAY_EMOJIS = { "الجمعة":"🕌", "السبت":"🌤️", "الأحد":"☀️", "الاثنين":"🌙", "الثلاثاء":"📖", "الأربعاء":"📝", "الخميس":"🎯" };
+
+let currentAdmin = null;
+let usersCache = [];
+let editingUserUid = null;
+let pendingDeleteUid = null;
+let previewUser = null;
+let previewDate = null;
+let previewSchedule = null;
+
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(s){ if(!s) return ""; const div=document.createElement("div"); div.textContent=s; return div.innerHTML; }
+function pad(n){ return String(n).padStart(2,"0"); }
+function dateKey(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function getDayNameAr(d){
+  const names = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  return names[d.getDay()];
+}
+function formatDateAr(d){ return `${d.getDate()} ${MONTHS_AR[d.getMonth()]}`; }
+function parseTimeToMinutes(str){
+  if (!str) return 9999;
+  const m = str.match(/(\d{1,2}):(\d{2})\s*(ص|م)?/);
+  if (!m) return 9999;
+  let h = parseInt(m[1]); const min = parseInt(m[2]); const ap = m[3] || "ص";
+  if (ap === "ص"){ if (h === 12) h = 0; } else { if (h !== 12) h += 12; }
+  return h * 60 + min;
+}
+function sortTasksByTime(tasks){
+  if (!Array.isArray(tasks)) return [];
+  return tasks.slice().sort((a,b) => parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time));
+}
+
+// ============ Auth Check ============
+async function handleAuthState(user){
+  if (!user){
+    window.location.href = "login.html";
+    return;
+  }
+  try {
+    const userRef = doc(db, USERS_COLLECTION, user.uid);
+    const snap = await getDoc(userRef);
+    
+    if (!snap.exists()){
+      $("loader").style.display = "none";
+      document.body.innerHTML = `
+        <div style="max-width:500px;margin:60px auto;padding:30px;
+          background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);
+          text-align:center;font-family:Cairo,sans-serif">
+          <div style="font-size:3rem;margin-bottom:16px">⚠️</div>
+          <h2 style="color:#1e2b4f;margin-bottom:12px">بيانات الأدمن غير موجودة</h2>
+          <p style="color:#6b7a9e;line-height:1.7;margin-bottom:20px">
+            المستند <code>users/${user.uid}</code> غير موجود في Firestore.
+            <br>يرجى إضافته يدوياً من Firebase Console مع حقل <strong>role = admin</strong>.
+          </p>
+          <button onclick="window.location.href='login.html'"
+            style="padding:12px 24px;border:none;border-radius:12px;
+            background:linear-gradient(135deg,#6e8eff,#4b5fd4);color:#fff;
+            font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit">
+            🚪 العودة لتسجيل الدخول
+          </button>
+        </div>
+      `;
+      return;
+    }
+    
+    const userData = snap.data();
+    if (userData.role !== "admin"){
+      window.location.href = "index.html";
+      return;
+    }
+    
+    currentAdmin = user;
+    $("loader").style.display = "none";
+    $("mainContainer").style.display = "block";
+    await loadUsers();
+  } catch(err){
+    console.error(err);
+    $("loader").style.display = "none";
+    document.body.innerHTML = `
+      <div style="max-width:500px;margin:60px auto;padding:30px;
+        background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);
+        text-align:center;font-family:Cairo,sans-serif">
+        <div style="font-size:3rem;margin-bottom:16px">❌</div>
+        <h2 style="color:#1e2b4f;margin-bottom:12px">خطأ في تحميل البيانات</h2>
+        <p style="color:#6b7a9e;line-height:1.7;margin-bottom:20px">${err.message || err.code || "خطأ غير معروف"}</p>
+        <button onclick="window.location.href='login.html'"
+          style="padding:12px 24px;border:none;border-radius:12px;
+          background:linear-gradient(135deg,#6e8eff,#4b5fd4);color:#fff;
+          font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit">
+          🏠 العودة
+        </button>
+      </div>
+    `;
+  }
+}
+
+async function handleLogout(){
+  try { await signOut(auth); window.location.href = "login.html"; }
+  catch(err){ console.error(err); }
+}
+
+// ============ Load Users ============
+async function loadUsers(){
+  try {
+    const usersRef = collection(db, USERS_COLLECTION);
+    const snap = await getDocs(usersRef);
+    usersCache = [];
+    snap.forEach(d => {
+      usersCache.push({ uid: d.id, ...d.data() });
+    });
+    usersCache.sort((a, b) => {
+      if (a.role === "admin" && b.role !== "admin") return -1;
+      if (b.role === "admin" && a.role !== "admin") return 1;
+      return (a.username || "").localeCompare(b.username || "", "ar");
+    });
+    renderUsersTable();
+    renderStats();
+    renderSchedulesList();
+  } catch(err){
+    console.error("Load users error:", err);
+    showToast("تعذر تحميل المستخدمين", "error");
+  }
+}
+
+function renderStats(){
+  const total = usersCache.length;
+  const students = usersCache.filter(u => u.role === "user").length;
+  const admins = usersCache.filter(u => u.role === "admin").length;
+  $("statTotalUsers").textContent = total;
+  $("statStudents").textContent = students;
+  $("statAdmins").textContent = admins;
+  $("statTasks").textContent = "—"; // يمكن حسابها من الجداول لاحقاً
+}
+
+function renderUsersTable(){
+  const wrapper = $("usersTableWrapper");
+  if (usersCache.length === 0){
+    wrapper.innerHTML = `<div class="empty-state">
+      <span class="big-icon">👥</span>
+      لا يوجد مستخدمون بعد. اضغط "إضافة مستخدم جديد" للبدء.
+    </div>`;
+    return;
+  }
+
+  let html = `<div class="users-table-wrapper">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>👤 الاسم</th>
+          <th>📧 البريد</th>
+          <th>🎓 الصف</th>
+          <th>🛡️ الدور</th>
+          <th>📌 الحالة</th>
+          <th style="text-align:center">الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  usersCache.forEach(u => {
+    const roleLabel = u.role === "admin" ? "🛡️ أدمن" : "👤 طالب";
+    const roleClass = u.role === "admin" ? "admin" : "user";
+    const statusLabel = u.status === "inactive" ? "🚫 معطل" : "✅ نشط";
+    const statusClass = u.status === "inactive" ? "inactive" : "active";
+    const isSelf = u.uid === currentAdmin.uid;
+    
+    html += `<tr>
+      <td class="user-name">${escapeHtml(u.username || "—")}</td>
+      <td class="user-email">${escapeHtml(u.email || "—")}</td>
+      <td>${escapeHtml(u.grade || "—")}</td>
+      <td><span class="role-badge ${roleClass}">${roleLabel}</span></td>
+      <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+      <td>
+        <div class="actions-cell">
+          ${!isSelf && u.role === "user" ? `<button class="icon-btn preview" data-action="preview" data-uid="${u.uid}" title="معاينة الجدول">👁️</button>` : ""}
+          ${!isSelf ? `
+            <button class="icon-btn toggle" data-action="toggle" data-uid="${u.uid}" title="تغيير الحالة">${u.status === "inactive" ? "✅" : "🚫"}</button>
+            <button class="icon-btn" data-action="edit" data-uid="${u.uid}" title="تعديل">✏️</button>
+            <button class="icon-btn delete" data-action="delete" data-uid="${u.uid}" title="حذف">🗑️</button>
+          ` : '<span style="font-size:.8rem;color:var(--text-light)">أنت</span>'}
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  wrapper.innerHTML = html;
+
+  wrapper.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      const uid = btn.dataset.uid;
+      if (action === "edit") openUserModal(uid);
+      else if (action === "delete") openConfirmDelete(uid);
+      else if (action === "preview") openPreview(uid);
+      else if (action === "toggle") toggleUserStatus(uid);
+    });
+  });
+}
+
+function renderSchedulesList(){
+  const container = $("schedulesList");
+  const students = usersCache.filter(u => u.role === "user");
+  if (students.length === 0){
+    container.innerHTML = `<div class="empty-state">
+      <span class="big-icon">📅</span>
+      لا يوجد طلاب لعرض جداولهم.
+    </div>`;
+    return;
+  }
+
+  let html = `<div class="stats-grid">`;
+  students.forEach(s => {
+    html += `<div class="stat-box" style="flex-direction:column;align-items:stretch;gap:10px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="icon">👤</div>
+        <div class="data">
+          <span class="num" style="font-size:1.2rem">${escapeHtml(s.username || "—")}</span>
+          <span class="lbl">${escapeHtml(s.grade || "بدون صف")}</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" data-preview-uid="${s.uid}" style="justify-content:center">
+        👁️ معاينة الجدول
+      </button>
+    </div>`;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+
+  container.querySelectorAll('[data-preview-uid]').forEach(btn => {
+    btn.addEventListener('click', () => openPreview(btn.dataset.previewUid));
+  });
+}
+
+// ============ Modal: User ============
+function openUserModal(uid = null){
+  editingUserUid = uid;
+  const modal = $("userModalOverlay");
+  const title = $("userModalTitle");
+  const uidInput = $("inputUid");
+  const emailInput = $("inputEmail");
+  const usernameInput = $("inputUsername");
+  const gradeInput = $("inputGrade");
+  const roleInput = $("inputRole");
+  const statusInput = $("inputStatus");
+  const infoBox = $("uidInfoBox");
+
+  if (uid){
+    title.textContent = "تعديل بيانات المستخدم";
+    const u = usersCache.find(x => x.uid === uid);
+    uidInput.value = u.uid;
+    uidInput.disabled = true;
+    emailInput.value = u.email || "";
+    usernameInput.value = u.username || "";
+    gradeInput.value = u.grade || "";
+    roleInput.value = u.role || "user";
+    statusInput.value = u.status || "active";
+    infoBox.style.display = "none";
+  } else {
+    title.textContent = "إضافة مستخدم جديد";
+    uidInput.value = "";
+    uidInput.disabled = false;
+    emailInput.value = "";
+    usernameInput.value = "";
+    gradeInput.value = "";
+    roleInput.value = "user";
+    statusInput.value = "active";
+    infoBox.style.display = "block";
+  }
+
+  modal.classList.add("active");
+  setTimeout(() => (uid ? usernameInput : uidInput).focus(), 300);
+}
+
+function closeUserModal(){
+  $("userModalOverlay").classList.remove("active");
+  editingUserUid = null;
+}
+
+async function handleUserSave(){
+  const uid = $("inputUid").value.trim();
+  const email = $("inputEmail").value.trim();
+  const username = $("inputUsername").value.trim();
+  const grade = $("inputGrade").value.trim();
+  const role = $("inputRole").value;
+  const status = $("inputStatus").value;
+
+  if (!uid || !email || !username){
+    showToast("يرجى ملء الحقول الأساسية (UID، البريد، الاسم)", "error");
+    return;
+  }
+  if (!email.includes("@")){
+    showToast("البريد الإلكتروني غير صحيح", "error");
+    return;
+  }
+
+  const saveBtn = $("userModalSave");
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<div class="loading-inline"></div>';
+
+  try {
+    if (editingUserUid){
+      const userRef = doc(db, USERS_COLLECTION, editingUserUid);
+      await updateDoc(userRef, { email, username, grade, role, status });
+      showToast("تم تحديث بيانات المستخدم ✅", "success");
+    } else {
+      // إضافة جديدة
+      const existingRef = doc(db, USERS_COLLECTION, uid);
+      const existingSnap = await getDoc(existingRef);
+      if (existingSnap.exists()){
+        showToast("هذا الـ UID مسجل بالفعل", "error");
+        saveBtn.disabled = false;
+        saveBtn.textContent = "💾 حفظ";
+        return;
+      }
+
+      if (usersCache.some(u => u.email === email)){
+        showToast("هذا البريد مسجل بالفعل لمستخدم آخر", "error");
+        saveBtn.disabled = false;
+        saveBtn.textContent = "💾 حفظ";
+        return;
+      }
+
+      await setDoc(doc(db, USERS_COLLECTION, uid), {
+        email, username, grade, role, status,
+        createdAt: new Date().toISOString(),
+        createdBy: currentAdmin.uid
+      });
+
+      await setDoc(doc(db, SCHEDULE_COLLECTION, uid), {
+        template: {},
+        overrides: {},
+        completed: {},
+        lastUpdated: new Date().toISOString(),
+        lastEditedBy: currentAdmin.uid
+      }, { merge: false });
+
+      showToast("تمت إضافة المستخدم بنجاح ✨", "success");
+    }
+    closeUserModal();
+    await loadUsers();
+  } catch(err){
+    console.error("Save user error:", err);
+    showToast("تعذر حفظ البيانات: " + (err.code || err.message), "error");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "💾 حفظ";
+  }
+}
+
+// ============ Toggle Status ============
+async function toggleUserStatus(uid){
+  const u = usersCache.find(x => x.uid === uid);
+  if (!u) return;
+  const newStatus = u.status === "inactive" ? "active" : "inactive";
+  try {
+    await updateDoc(doc(db, USERS_COLLECTION, uid), { status: newStatus });
+    showToast(`تم ${newStatus === "active" ? "تفعيل" : "تعطيل"} المستخدم`, "success");
+    await loadUsers();
+  } catch(err){
+    console.error(err);
+    showToast("تعذر تغيير الحالة", "error");
+  }
+}
+
+// ============ Delete User ============
+function openConfirmDelete(uid){
+  const u = usersCache.find(x => x.uid === uid);
+  if (!u) return;
+  if (u.uid === currentAdmin.uid){
+    showToast("لا يمكنك حذف حسابك الحالي", "error");
+    return;
+  }
+  pendingDeleteUid = uid;
+  $("confirmMessage").innerHTML = `
+    هل تريد حذف المستخدم <strong>${escapeHtml(u.username)}</strong> (${escapeHtml(u.email)})؟<br><br>
+    ⚠️ <strong>ملاحظة:</strong> سيتم حذف بياناته من Firestore فقط.<br>
+    لحذف الحساب من Firebase Authentication، احذفه يدوياً من Firebase Console.
+  `;
+  $("confirmOverlay").classList.add("active");
+}
+
+async function handleDeleteConfirm(){
+  if (!pendingDeleteUid) return;
+  try {
+    await deleteDoc(doc(db, USERS_COLLECTION, pendingDeleteUid));
+    await deleteDoc(doc(db, SCHEDULE_COLLECTION, pendingDeleteUid));
+    showToast("تم حذف المستخدم وبياناته من Firestore", "info");
+    pendingDeleteUid = null;
+    $("confirmOverlay").classList.remove("active");
+    await loadUsers();
+  } catch(err){
+    console.error("Delete error:", err);
+    showToast("تعذر الحذف: " + (err.code || err.message), "error");
+  }
+}
+
+// ============ Preview Schedule ============
+async function openPreview(uid){
+  const u = usersCache.find(x => x.uid === uid);
+  if (!u) return;
+  previewUser = u;
+  previewDate = new Date();
+  $("previewModalTitle").textContent = `📅 جدول ${u.username || "—"}`;
+  $("previewModalOverlay").classList.add("active");
+
+  const content = $("previewContent");
+  content.innerHTML = `<div class="empty-state"><span class="big-icon">⏳</span> جاري التحميل...</div>`;
+
+  try {
+    const snap = await getDoc(doc(db, SCHEDULE_COLLECTION, uid));
+    previewSchedule = snap.exists() ? snap.data() : { template: {}, overrides: {}, completed: {} };
+    renderPreview();
+  } catch(err){
+    console.error(err);
+    content.innerHTML = `<div class="empty-state"><span class="big-icon">⚠️</span> تعذر تحميل الجدول</div>`;
+  }
+}
+
+function renderPreview(){
+  const content = $("previewContent");
+  const data = previewSchedule || { template: {}, overrides: {}, completed: {} };
+  const today = new Date();
+  const baseDate = previewDate || today;
+
+  const startOfWeek = new Date(baseDate);
+  startOfWeek.setDate(baseDate.getDate() - baseDate.getDay());
+
+  let navHtml = `<div class="preview-days-nav">`;
+  for (let i = 0; i < 7; i++){
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    const dayName = getDayNameAr(d);
+    const isActive = d.toDateString() === baseDate.toDateString();
+    const isToday = d.toDateString() === today.toDateString();
+    navHtml += `<button class="preview-day-btn ${isActive ? "active" : ""}" data-date="${d.toISOString()}">
+      ${dayName} ${d.getDate()}${isToday ? " ✨" : ""}
+    </button>`;
+  }
+  navHtml += `</div>`;
+
+  const key = dateKey(baseDate);
+  let tasks = [];
+  if (data.overrides && data.overrides[key] && data.overrides[key].tasks){
+    tasks = data.overrides[key].tasks;
+  } else {
+    const dayName = getDayNameAr(baseDate);
+    tasks = (data.template && data.template[dayName]) || [];
+  }
+  tasks = sortTasksByTime(tasks);
+
+  let tasksHtml = "";
+  if (tasks.length === 0){
+    tasksHtml = `<div class="empty-state" style="padding:40px 20px">
+      <span class="big-icon">📭</span>
+      لا توجد مهام لهذا اليوم
+    </div>`;
+  } else {
+    tasksHtml = `<div class="user-preview-grid">`;
+    tasks.forEach((t, i) => {
+      const taskKey = `${key}-${i}`;
+      const isDone = !!(data.completed && data.completed[taskKey]);
+      tasksHtml += `<div class="preview-task ${isDone ? "done" : ""}">
+        <div class="pt-time">⏰ ${escapeHtml(t.time)} ${isDone ? "✅" : ""}</div>
+        <div class="pt-title">${escapeHtml(t.title)}</div>
+      </div>`;
+    });
+    tasksHtml += `</div>`;
+  }
+
+  content.innerHTML = `
+    <div style="margin-bottom:12px;padding:12px 16px;background:#f0f4ff;border-radius:12px">
+      <strong>👤 ${escapeHtml(previewUser.username || "—")}</strong>
+      ${previewUser.grade ? ` — 🎓 ${escapeHtml(previewUser.grade)}` : ""}
+      <br><span style="font-size:.85rem;color:var(--text-light)">
+        📧 ${escapeHtml(previewUser.email || "—")}
+      </span>
+    </div>
+    ${navHtml}
+    <div style="margin-bottom:12px;font-weight:800;font-size:1.05rem;color:var(--text)">
+      ${getDayNameAr(baseDate)} — ${formatDateAr(baseDate)}
+    </div>
+    ${tasksHtml}
+  `;
+
+  content.querySelectorAll('[data-date]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      previewDate = new Date(btn.dataset.date);
+      renderPreview();
+    });
+  });
+}
+
+function closePreview(){
+  $("previewModalOverlay").classList.remove("active");
+  previewUser = null;
+  previewSchedule = null;
+}
+
+// ============ Tabs ============
+function initTabs(){
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.dataset.tab;
+      $("tab-" + tab).classList.add("active");
+    });
+  });
+}
+
+// ============ Toast ============
+let toastTimer = null;
+function showToast(msg, type = "info"){
+  const t = $("toast");
+  const icons = { success:"✅", error:"⚠️", info:"ℹ️", warning:"⏳" };
+  t.innerHTML = `<span>${icons[type]||"ℹ️"}</span> ${escapeHtml(msg)}`;
+  t.className = `toast ${type}`;
+  void t.offsetWidth;
+  t.classList.add("show");
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+// ============ Events ============
+function bindEvents(){
+  $("logoutBtn").addEventListener("click", handleLogout);
+  $("addUserBtn").addEventListener("click", () => openUserModal(null));
+  $("userModalClose").addEventListener("click", closeUserModal);
+  $("userModalCancel").addEventListener("click", closeUserModal);
+  $("userModalSave").addEventListener("click", handleUserSave);
+  $("previewModalClose").addEventListener("click", closePreview);
+  $("confirmCancel").addEventListener("click", () => {
+    pendingDeleteUid = null;
+    $("confirmOverlay").classList.remove("active");
+  });
+  $("confirmOk").addEventListener("click", handleDeleteConfirm);
+  initTabs();
+}
+
+bindEvents();
+onAuthStateChanged(auth, handleAuthState);
+</script>
+</body>
+</html>
