@@ -19,22 +19,18 @@
 body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:100vh;
   padding:24px 16px;color:var(--text);overflow-x:hidden;position:relative}
 
+/* ===== خلفية محسّنة: بدون blur ثقيل ولا أنيميشن مستمر ===== */
 .animated-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
   background:linear-gradient(145deg,#eef3ff 0%,#e0e8ff 50%,#f0e6ff 100%)}
-.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;
-  animation:float 20s ease-in-out infinite}
-.orb-1{width:400px;height:400px;background:#6e8eff;top:-100px;right:-100px}
-.orb-2{width:350px;height:350px;background:#b78aff;bottom:-100px;left:-80px;animation-delay:-7s}
-.orb-3{width:300px;height:300px;background:#ffb56b;top:50%;left:40%;animation-delay:-14s}
-@keyframes float{
-  0%,100%{transform:translate(0,0) scale(1)}
-  33%{transform:translate(60px,-40px) scale(1.1)}
-  66%{transform:translate(-40px,60px) scale(.95)}
-}
+.orb{position:absolute;border-radius:50%;filter:blur(40px);opacity:.5;
+  animation:none;will-change:auto}
+.orb-1{width:350px;height:350px;background:#6e8eff;top:-100px;right:-100px}
+.orb-2{width:300px;height:300px;background:#b78aff;bottom:-100px;left:-80px}
+.orb-3{width:260px;height:260px;background:#ffb56b;top:50%;left:40%}
 
 .loader{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:20px;background:rgba(244,247,255,.9);
-  backdrop-filter:blur(10px);z-index:999;font-weight:700;color:var(--primary-dark)}
+  justify-content:center;gap:20px;background:rgba(244,247,255,.97);
+  z-index:999;font-weight:700;color:var(--primary-dark)}
 .loader-ring{width:70px;height:70px;border:5px solid #dde5ff;border-top-color:var(--primary);
   border-radius:50%;animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -42,8 +38,9 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .container{max-width:1400px;margin:0 auto;animation:fadeInUp .7s ease-out}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
+/* ===== الهيدر: بدون backdrop-filter ===== */
 .header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
-  gap:20px;background:rgba(255,255,255,.75);backdrop-filter:blur(20px);
+  gap:20px;background:rgba(255,255,255,.94);
   border-radius:var(--radius);padding:24px 32px;box-shadow:var(--shadow-md);
   border:1px solid rgba(255,255,255,.9);margin-bottom:20px}
 .title-section h1{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;
@@ -55,19 +52,20 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .subtitle{color:var(--text-light);font-size:.95rem;margin-top:6px;font-weight:500}
 .logout-icon-btn{background:#fff;border:1px solid #eef2ff;width:48px;height:48px;
   border-radius:50%;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:1.3rem;transition:all .25s ease;
+  cursor:pointer;font-size:1.3rem;transition:background-color .25s ease, transform .25s ease, border-color .25s ease;
   box-shadow:var(--shadow-sm)}
 .logout-icon-btn:hover{background:var(--danger);border-color:var(--danger);
   transform:scale(1.1) rotate(-5deg)}
 
+/* ===== التابات: بدون backdrop-filter ===== */
 .tabs-nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;
-  background:rgba(255,255,255,.85);backdrop-filter:blur(20px);
+  background:rgba(255,255,255,.95);
   border-radius:var(--radius);padding:8px;box-shadow:var(--shadow-sm);
   border:1px solid rgba(255,255,255,.9)}
 .tab-btn{flex:1;min-width:140px;background:transparent;border:none;
   padding:14px 20px;border-radius:var(--radius-sm);font-weight:800;
   font-size:.95rem;color:var(--text-light);cursor:pointer;
-  transition:all .3s ease;font-family:inherit;
+  transition:background-color .3s ease, color .3s ease, box-shadow .3s ease;font-family:inherit;
   display:flex;align-items:center;justify-content:center;gap:8px}
 .tab-btn:hover{background:#f0f4ff;color:var(--primary-dark)}
 .tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));
@@ -76,7 +74,8 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .tab-content{display:none;animation:fadeInUp .5s ease}
 .tab-content.active{display:block}
 
-.section-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+/* ===== الكروت: بدون backdrop-filter ===== */
+.section-card{background:rgba(255,255,255,.97);
   border-radius:var(--radius);padding:24px 28px;box-shadow:var(--shadow-md);
   border:1px solid rgba(255,255,255,.9);margin-bottom:20px}
 .section-header{display:flex;justify-content:space-between;align-items:center;
@@ -88,7 +87,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .stat-box{background:linear-gradient(135deg,#fff 0%,#f0f4ff 100%);
   border-radius:var(--radius-sm);padding:22px 24px;box-shadow:var(--shadow-sm);
   border:1px solid #eef2ff;display:flex;align-items:center;gap:16px;
-  transition:transform .3s ease}
+  transition:transform .3s ease, box-shadow .3s ease}
 .stat-box:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
 .stat-box .icon{font-size:2.4rem;flex-shrink:0}
 .stat-box .data{display:flex;flex-direction:column;line-height:1.3}
@@ -96,7 +95,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .stat-box .lbl{font-size:.85rem;color:var(--text-light);font-weight:700}
 
 .btn{border:none;padding:11px 20px;border-radius:40px;font-weight:700;
-  font-size:.9rem;cursor:pointer;transition:all .25s ease;
+  font-size:.9rem;cursor:pointer;transition:transform .25s ease, box-shadow .25s ease, background-color .25s ease;
   font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:#fff;box-shadow:0 8px 18px -6px rgba(110,142,255,.5)}
@@ -139,7 +138,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .actions-cell{display:flex;gap:6px;justify-content:flex-end}
 .icon-btn{background:transparent;border:none;width:36px;height:36px;
   border-radius:50%;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:1rem;transition:all .25s ease}
+  cursor:pointer;font-size:1rem;transition:background-color .25s ease, transform .25s ease}
 .icon-btn:hover{background:#eef3ff;transform:scale(1.15)}
 .icon-btn.delete:hover{background:#ffe6ec}
 .icon-btn.preview:hover{background:#e8f9f0}
@@ -150,13 +149,14 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .empty-state .big-icon{font-size:3.5rem;margin-bottom:16px;
   display:block;opacity:.6}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(30,43,79,.45);
-  backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+/* ===== المودالات: بدون backdrop-filter على الـ overlay ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(30,43,79,.55);
+  display:flex;align-items:center;justify-content:center;
   z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
 .modal-overlay.active{opacity:1;pointer-events:all}
 .modal{background:#fff;border-radius:var(--radius);width:100%;max-width:520px;
   box-shadow:var(--shadow-lg);transform:scale(.9) translateY(20px);
-  transition:transform .35s cubic-bezier(.34,1.4,.64,1);overflow:hidden;
+  transition:transform .35s ease;overflow:hidden;
   max-height:92vh;display:flex;flex-direction:column}
 .modal-overlay.active .modal{transform:scale(1) translateY(0)}
 .modal-small{max-width:400px}
@@ -166,7 +166,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .modal-header h3{font-weight:900;font-size:1.15rem;color:var(--text)}
 .modal-close{background:transparent;border:none;width:34px;height:34px;
   border-radius:50%;cursor:pointer;font-size:1rem;color:var(--text-light);
-  transition:all .2s ease}
+  transition:background-color .2s ease, color .2s ease}
 .modal-close:hover{background:#ffe6ec;color:var(--danger)}
 .modal-body{padding:20px 24px;display:flex;flex-direction:column;
   gap:14px;overflow-y:auto}
@@ -174,7 +174,8 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
   font-weight:700;font-size:.9rem;color:var(--text)}
 .modal-body input,.modal-body select{padding:12px 16px;border:2px solid #e5ecff;
   border-radius:var(--radius-sm);font-size:1rem;font-family:inherit;
-  transition:all .25s ease;background:#fafbff;color:var(--text);width:100%}
+  transition:border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
+  background:#fafbff;color:var(--text);width:100%}
 .modal-body input:focus,.modal-body select:focus{outline:none;
   border-color:var(--primary);background:#fff;
   box-shadow:0 0 0 4px rgba(110,142,255,.12)}
@@ -196,7 +197,8 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .user-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:14px;margin-top:16px}
 .preview-task{background:#f8faff;border-radius:var(--radius-sm);
-  padding:14px 16px;border-right:4px solid var(--primary);position:relative}
+  padding:14px 16px;border-right:4px solid var(--primary);position:relative;
+  content-visibility:auto;contain-intrinsic-size:80px}
 .preview-task.done{background:linear-gradient(135deg,#f0fdf6,#e8f9f0);
   border-right-color:var(--success)}
 .preview-task .pt-time{font-size:.78rem;color:var(--text-light);
@@ -207,7 +209,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .preview-days-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .preview-day-btn{background:#fff;border:1px solid #e5ecff;padding:10px 14px;
   border-radius:40px;font-weight:700;font-size:.85rem;color:var(--text);
-  cursor:pointer;transition:all .25s ease;font-family:inherit}
+  cursor:pointer;transition:border-color .25s ease, color .25s ease, background-color .25s ease;font-family:inherit}
 .preview-day-btn:hover{border-color:var(--primary);color:var(--primary-dark)}
 .preview-day-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));
   color:#fff;border-color:transparent}
@@ -219,13 +221,18 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .toast{position:fixed;bottom:30px;right:30px;background:var(--text);color:#fff;
   padding:14px 22px;border-radius:var(--radius-sm);font-weight:700;
   font-size:.95rem;box-shadow:var(--shadow-lg);transform:translateY(150%);
-  transition:transform .4s cubic-bezier(.34,1.4,.64,1);z-index:1100;
+  transition:transform .4s ease;z-index:1100;
   display:flex;align-items:center;gap:10px;max-width:90vw}
 .toast.show{transform:translateY(0)}
 .toast.success{background:linear-gradient(135deg,var(--success),#34b87c)}
 .toast.error{background:linear-gradient(135deg,var(--danger),#e64e70)}
 .toast.info{background:linear-gradient(135deg,var(--primary),var(--primary-dark))}
 .toast.warning{background:linear-gradient(135deg,var(--warning),#d4a017)}
+
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
 
 @media(max-width:720px){
   body{padding:16px 12px}
@@ -441,7 +448,6 @@ import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc } from "
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const MONTHS_AR = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-const DAY_EMOJIS = { "الجمعة":"🕌", "السبت":"🌤️", "الأحد":"☀️", "الاثنين":"🌙", "الثلاثاء":"📖", "الأربعاء":"📝", "الخميس":"🎯" };
 
 let currentAdmin = null;
 let usersCache = [];
@@ -483,7 +489,7 @@ async function handleAuthState(user){
   try {
     const userRef = doc(db, USERS_COLLECTION, user.uid);
     const snap = await getDoc(userRef);
-    
+
     if (!snap.exists()){
       $("loader").style.display = "none";
       document.body.innerHTML = `
@@ -506,13 +512,13 @@ async function handleAuthState(user){
       `;
       return;
     }
-    
+
     const userData = snap.data();
     if (userData.role !== "admin"){
       window.location.href = "index.html";
       return;
     }
-    
+
     currentAdmin = user;
     $("loader").style.display = "none";
     $("mainContainer").style.display = "block";
@@ -526,7 +532,7 @@ async function handleAuthState(user){
         text-align:center;font-family:Cairo,sans-serif">
         <div style="font-size:3rem;margin-bottom:16px">❌</div>
         <h2 style="color:#1e2b4f;margin-bottom:12px">خطأ في تحميل البيانات</h2>
-        <p style="color:#6b7a9e;line-height:1.7;margin-bottom:20px">${err.message || err.code || "خطأ غير معروف"}</p>
+        <p style="color:#6b7a9e;line-height:1.7;margin-bottom:20px">${escapeHtml(err.message || err.code || "خطأ غير معروف")}</p>
         <button onclick="window.location.href='login.html'"
           style="padding:12px 24px;border:none;border-radius:12px;
           background:linear-gradient(135deg,#6e8eff,#4b5fd4);color:#fff;
@@ -573,7 +579,7 @@ function renderStats(){
   $("statTotalUsers").textContent = total;
   $("statStudents").textContent = students;
   $("statAdmins").textContent = admins;
-  $("statTasks").textContent = "—"; // يمكن حسابها من الجداول لاحقاً
+  $("statTasks").textContent = "—";
 }
 
 function renderUsersTable(){
@@ -606,7 +612,7 @@ function renderUsersTable(){
     const statusLabel = u.status === "inactive" ? "🚫 معطل" : "✅ نشط";
     const statusClass = u.status === "inactive" ? "inactive" : "active";
     const isSelf = u.uid === currentAdmin.uid;
-    
+
     html += `<tr>
       <td class="user-name">${escapeHtml(u.username || "—")}</td>
       <td class="user-email">${escapeHtml(u.email || "—")}</td>
@@ -629,6 +635,7 @@ function renderUsersTable(){
   html += `</tbody></table></div>`;
   wrapper.innerHTML = html;
 
+  // Event delegation بدل listener لكل زر
   wrapper.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', () => {
       const action = btn.dataset.action;
@@ -747,7 +754,6 @@ async function handleUserSave(){
       await updateDoc(userRef, { email, username, grade, role, status });
       showToast("تم تحديث بيانات المستخدم ✅", "success");
     } else {
-      // إضافة جديدة
       const existingRef = doc(db, USERS_COLLECTION, uid);
       const existingSnap = await getDoc(existingRef);
       if (existingSnap.exists()){
@@ -899,16 +905,18 @@ function renderPreview(){
       لا توجد مهام لهذا اليوم
     </div>`;
   } else {
-    tasksHtml = `<div class="user-preview-grid">`;
+    const fragment = [];
+    fragment.push(`<div class="user-preview-grid">`);
     tasks.forEach((t, i) => {
       const taskKey = `${key}-${i}`;
       const isDone = !!(data.completed && data.completed[taskKey]);
-      tasksHtml += `<div class="preview-task ${isDone ? "done" : ""}">
+      fragment.push(`<div class="preview-task ${isDone ? "done" : ""}">
         <div class="pt-time">⏰ ${escapeHtml(t.time)} ${isDone ? "✅" : ""}</div>
         <div class="pt-title">${escapeHtml(t.title)}</div>
-      </div>`;
+      </div>`);
     });
-    tasksHtml += `</div>`;
+    fragment.push(`</div>`);
+    tasksHtml = fragment.join("");
   }
 
   content.innerHTML = `
