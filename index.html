@@ -18,22 +18,21 @@
 body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:100vh;
   padding:24px 16px;color:var(--text);overflow-x:hidden;position:relative}
 
+/* ===== خلفية محسّنة: بدون blur ثقيل ولا أنيميشن مستمر ===== */
 .animated-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;
   background:linear-gradient(145deg,#eef3ff 0%,#e0e8ff 50%,#f0e6ff 100%)}
-.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;
-  animation:float 20s ease-in-out infinite}
-.orb-1{width:400px;height:400px;background:#6e8eff;top:-100px;right:-100px}
-.orb-2{width:350px;height:350px;background:#b78aff;bottom:-100px;left:-80px;animation-delay:-7s}
-.orb-3{width:300px;height:300px;background:#ffb56b;top:50%;left:40%;animation-delay:-14s}
-@keyframes float{
-  0%,100%{transform:translate(0,0) scale(1)}
-  33%{transform:translate(60px,-40px) scale(1.1)}
-  66%{transform:translate(-40px,60px) scale(.95)}
-}
+.orb{position:absolute;border-radius:50%;
+  filter:blur(40px);opacity:.5;
+  /* إيقاف الأنيميشن لتخفيف الحمل على GPU */
+  animation:none;
+  will-change:auto}
+.orb-1{width:350px;height:350px;background:#6e8eff;top:-100px;right:-100px}
+.orb-2{width:300px;height:300px;background:#b78aff;bottom:-100px;left:-80px}
+.orb-3{width:260px;height:260px;background:#ffb56b;top:50%;left:40%}
 
 .loader{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:20px;background:rgba(244,247,255,.9);
-  backdrop-filter:blur(10px);z-index:999;font-weight:700;color:var(--primary-dark)}
+  justify-content:center;gap:20px;background:rgba(244,247,255,.97);
+  z-index:999;font-weight:700;color:var(--primary-dark)}
 .loader-ring{width:70px;height:70px;border:5px solid #dde5ff;border-top-color:var(--primary);
   border-radius:50%;animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -41,8 +40,9 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .container{max-width:1280px;margin:0 auto;animation:fadeInUp .7s ease-out}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
+/* ===== الهيدر: بدون backdrop-filter ===== */
 .header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
-  gap:20px;background:rgba(255,255,255,.75);backdrop-filter:blur(20px);
+  gap:20px;background:rgba(255,255,255,.94);
   border-radius:var(--radius);padding:24px 32px;box-shadow:var(--shadow-md);
   border:1px solid rgba(255,255,255,.9);margin-bottom:20px}
 .title-section h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;
@@ -73,7 +73,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .logout-icon-btn:hover{background:var(--danger);border-color:var(--danger);
   transform:scale(1.1) rotate(-5deg)}
 
-.user-greeting{background:rgba(255,255,255,.85);border-radius:var(--radius-sm);
+.user-greeting{background:rgba(255,255,255,.92);border-radius:var(--radius-sm);
   padding:14px 20px;margin-bottom:20px;box-shadow:var(--shadow-sm);
   display:flex;align-items:center;gap:12px;border-right:4px solid var(--primary)}
 .user-greeting .avatar{width:44px;height:44px;border-radius:50%;
@@ -84,22 +84,20 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .user-greeting .name{font-weight:900;font-size:1.1rem;color:var(--text)}
 .user-greeting .grade{font-size:.82rem;color:var(--text-light);font-weight:600}
 
+/* ===== شيل shimmer من البانر لتخفيف الأنيميشن ===== */
 .motivation-banner{background:linear-gradient(135deg,#fff 0%,#f0f4ff 100%);
   border-radius:var(--radius-sm);padding:16px 24px;display:flex;
   align-items:center;gap:14px;margin-bottom:20px;
   border-right:5px solid var(--primary);box-shadow:var(--shadow-sm);
   position:relative;overflow:hidden}
-.motivation-banner::before{content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(110,142,255,.06),transparent);
-  animation:shimmer 3s ease infinite}
-@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 .motivation-icon{font-size:1.6rem;animation:pulse 1.8s ease infinite}
 .motivation-text{font-weight:700;color:var(--text);font-size:1.05rem;
   transition:opacity .5s ease,transform .5s ease}
 .motivation-text.fade{opacity:0;transform:translateY(-10px)}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
-.filters-bar{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);
+/* ===== الفلاتر: بدون backdrop-filter ===== */
+.filters-bar{background:rgba(255,255,255,.95);
   border-radius:var(--radius);padding:18px 24px;margin-bottom:20px;
   box-shadow:var(--shadow-sm);display:flex;gap:16px;flex-wrap:wrap;align-items:center;
   border:1px solid rgba(255,255,255,.9)}
@@ -109,7 +107,8 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .filter-group select{padding:11px 16px;border:2px solid #e5ecff;
   border-radius:var(--radius-sm);font-size:.95rem;font-family:inherit;
   font-weight:700;background:#fafbff;color:var(--text);cursor:pointer;
-  transition:all .25s ease;flex:1;appearance:none;
+  transition:border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
+  flex:1;appearance:none;
   background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7a9e' stroke-width='2.5'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat:no-repeat;background-position:left 12px center;background-size:16px;
   padding-left:36px}
@@ -124,7 +123,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .days-nav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;justify-content:center}
 .day-btn{background:#fff;border:1px solid #e5ecff;padding:12px 18px;
   border-radius:40px;font-weight:700;font-size:.9rem;color:var(--text);
-  cursor:pointer;transition:all .3s cubic-bezier(.34,1.2,.64,1);
+  cursor:pointer;transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease, color .3s ease;
   display:flex;flex-direction:column;align-items:center;gap:3px;
   font-family:inherit;min-width:90px}
 .day-btn .day-name{font-weight:900;font-size:.95rem}
@@ -145,7 +144,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
   display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .toolbar-actions{display:flex;gap:10px;flex-wrap:wrap}
 .btn{border:none;padding:11px 20px;border-radius:40px;font-weight:700;
-  font-size:.9rem;cursor:pointer;transition:all .25s ease;
+  font-size:.9rem;cursor:pointer;transition:transform .25s ease, box-shadow .25s ease, background-color .25s ease;
   font-family:inherit;display:inline-flex;align-items:center;gap:6px}
 .btn-add{background:linear-gradient(135deg,var(--success),#34b87c);color:#fff;
   box-shadow:0 8px 18px -6px rgba(74,207,139,.5)}
@@ -154,12 +153,15 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .btn-reset{background:#fff;color:var(--text);border:1px solid #e5ecff}
 .btn-reset:hover{border-color:var(--accent);color:#d68a2b}
 
+/* ===== الكروت: content-visibility لتحسين الأداء ===== */
 .schedule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .task-card{background:#fff;border-radius:var(--radius);padding:18px 20px;
   box-shadow:var(--shadow-sm);border:1px solid #eef2ff;
-  transition:all .35s cubic-bezier(.34,1.2,.64,1);position:relative;
-  overflow:hidden;display:flex;flex-direction:column;gap:12px;
-  animation:cardIn .5s ease backwards}
+  transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;
+  animation:cardIn .5s ease backwards;
+  content-visibility:auto;
+  contain-intrinsic-size:160px}
 @keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.95)}
   to{opacity:1;transform:translateY(0) scale(1)}}
 .task-card::before{content:'';position:absolute;top:0;right:0;width:5px;height:100%;
@@ -179,20 +181,20 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
   padding:5px 12px;border-radius:30px;display:inline-flex;align-items:center;gap:4px}
 .task-type-icon{font-size:1.4rem;opacity:.85}
 .task-title{font-size:1.15rem;font-weight:700;color:var(--text);
-  line-height:1.4;transition:all .3s ease}
+  line-height:1.4;transition:color .3s ease, text-decoration .3s ease}
 .task-card.done .task-title{text-decoration:line-through;color:var(--text-light)}
 .task-actions{display:flex;justify-content:space-between;align-items:center;
   margin-top:auto;gap:8px}
 .check-label{display:flex;align-items:center;gap:8px;cursor:pointer;
   font-weight:700;font-size:.9rem;color:var(--text);padding:8px 14px;
-  border-radius:30px;background:#f5f8ff;transition:all .25s ease;
+  border-radius:30px;background:#f5f8ff;transition:background-color .25s ease, border-color .25s ease;
   border:1px solid transparent;user-select:none}
 .check-label:hover{background:#e6ecff;border-color:#c6d6ff}
 .check-label input{width:18px;height:18px;accent-color:var(--success);cursor:pointer}
 .card-actions{display:flex;gap:6px}
 .icon-btn{background:transparent;border:none;width:34px;height:34px;
   border-radius:50%;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:1rem;transition:all .25s ease}
+  cursor:pointer;font-size:1rem;transition:background-color .25s ease, transform .25s ease}
 .icon-btn:hover{background:#eef3ff;transform:scale(1.15)}
 .icon-btn.delete:hover{background:#ffe6ec}
 .empty-message{grid-column:1/-1;text-align:center;padding:60px 20px;
@@ -210,7 +212,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .progress-ring .bg-circle{stroke:#eaf0ff}
 .progress-ring .progress-circle{stroke:url(#ringGradient);
   stroke-dasharray:283;stroke-dashoffset:283;
-  transition:stroke-dashoffset .9s cubic-bezier(.34,1.2,.64,1)}
+  transition:stroke-dashoffset .9s ease}
 .progress-ring-text{position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;font-weight:900;
   color:var(--primary-dark);pointer-events:none}
@@ -233,13 +235,14 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .daily-message.encourage{background:linear-gradient(135deg,#fff7e8,#ffeccf);
   color:#b5761f;border-right-color:var(--accent)}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(30,43,79,.45);
-  backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+/* ===== المودالات: backdrop-filter على الـ overlay فقط ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(30,43,79,.55);
+  display:flex;align-items:center;justify-content:center;
   z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s ease;padding:20px}
 .modal-overlay.active{opacity:1;pointer-events:all}
 .modal{background:#fff;border-radius:var(--radius);width:100%;max-width:480px;
   box-shadow:var(--shadow-lg);transform:scale(.9) translateY(20px);
-  transition:transform .35s cubic-bezier(.34,1.4,.64,1);overflow:hidden;
+  transition:transform .35s ease;overflow:hidden;
   max-height:92vh;display:flex;flex-direction:column}
 .modal-overlay.active .modal{transform:scale(1) translateY(0)}
 .modal-small{max-width:380px}
@@ -248,7 +251,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .modal-header h3{font-weight:900;font-size:1.15rem;color:var(--text)}
 .modal-close{background:transparent;border:none;width:34px;height:34px;
   border-radius:50%;cursor:pointer;font-size:1rem;color:var(--text-light);
-  transition:all .2s ease}
+  transition:background-color .2s ease, color .2s ease}
 .modal-close:hover{background:#ffe6ec;color:var(--danger)}
 .modal-body{padding:20px 24px;display:flex;flex-direction:column;
   gap:14px;overflow-y:auto}
@@ -256,7 +259,8 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
   font-weight:700;font-size:.9rem;color:var(--text)}
 .modal-body input,.modal-body select{padding:12px 16px;border:2px solid #e5ecff;
   border-radius:var(--radius-sm);font-size:1rem;font-family:inherit;
-  transition:all .25s ease;background:#fafbff;color:var(--text)}
+  transition:border-color .25s ease, background-color .25s ease, box-shadow .25s ease;
+  background:#fafbff;color:var(--text)}
 .modal-body input:focus,.modal-body select:focus{outline:none;
   border-color:var(--primary);background:#fff;
   box-shadow:0 0 0 4px rgba(110,142,255,.12)}
@@ -275,7 +279,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .time-picker select{padding:12px 10px;border:2px solid #e5ecff;
   border-radius:var(--radius-sm);font-size:1rem;font-family:inherit;
   font-weight:700;text-align:center;cursor:pointer;background:#fafbff;
-  color:var(--text);transition:all .25s ease;appearance:none;
+  color:var(--text);transition:border-color .25s ease, background-color .25s ease, box-shadow .25s ease;appearance:none;
   background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7a9e' stroke-width='2.5'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat:no-repeat;background-position:left 10px center;
   background-size:16px;padding-left:32px}
@@ -284,7 +288,7 @@ body{font-family:'Cairo','Segoe UI',sans-serif;background:var(--bg);min-height:1
 .time-ampm{display:flex;gap:4px;background:#f0f4ff;border-radius:30px;padding:4px}
 .time-ampm button{background:transparent;border:none;padding:8px 14px;
   border-radius:30px;font-weight:800;font-size:.9rem;cursor:pointer;
-  color:var(--text-light);transition:all .25s ease;font-family:inherit}
+  color:var(--text-light);transition:background-color .25s ease, color .25s ease, box-shadow .25s ease;font-family:inherit}
 .time-ampm button.active{background:#fff;color:var(--primary-dark);
   box-shadow:0 4px 10px rgba(110,142,255,.2)}
 .time-preview{margin-top:6px;font-size:.85rem;color:var(--text-light);
@@ -305,7 +309,7 @@ select#inputType{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg x
 .toast{position:fixed;bottom:30px;right:30px;background:var(--text);color:#fff;
   padding:14px 22px;border-radius:var(--radius-sm);font-weight:700;
   font-size:.95rem;box-shadow:var(--shadow-lg);transform:translateY(150%);
-  transition:transform .4s cubic-bezier(.34,1.4,.64,1);z-index:1100;
+  transition:transform .4s ease;z-index:1100;
   display:flex;align-items:center;gap:10px;max-width:90vw}
 .toast.show{transform:translateY(0)}
 .toast.success{background:linear-gradient(135deg,var(--success),#34b87c)}
@@ -318,6 +322,11 @@ select#inputType{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg x
 @keyframes confettiFall{
   0%{transform:translateY(-20vh) rotate(0deg);opacity:1}
   100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
 
 @media(max-width:720px){
@@ -425,9 +434,7 @@ select#inputType{background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg x
       <span id="progressPercent">0%</span>
     </div>
     <div style="height:14px;background:#eaf0ff;border-radius:20px;overflow:hidden;position:relative">
-      <div id="progressFill" style="height:100%;width:0%;background:linear-gradient(90deg,#6e8eff,#b78aff,#ffb56b);background-size:200% 200%;border-radius:20px;transition:width .8s cubic-bezier(.34,1.2,.64,1);animation:gradientShift 3s ease infinite;box-shadow:0 0 12px rgba(110,142,255,.5);position:relative">
-        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:shimmer 2s ease infinite"></div>
-      </div>
+      <div id="progressFill" style="height:100%;width:0%;background:linear-gradient(90deg,#6e8eff,#b78aff,#ffb56b);border-radius:20px;transition:width .8s ease;box-shadow:0 0 12px rgba(110,142,255,.4)"></div>
     </div>
   </div>
 
@@ -592,6 +599,19 @@ function formatDateAr(d){ return `${d.getDate()} ${MONTHS_AR[d.getMonth()]}`; }
 function escapeHtml(s){ if(!s) return ""; const div=document.createElement("div"); div.textContent=s; return div.innerHTML; }
 function isToday(d){ return sameDay(d, new Date()); }
 
+/* مقارنة خفيفة بدل JSON.stringify */
+function shallowEqual(a, b){
+  if (a === b) return true;
+  if (!a || !b) return false;
+  const ak = Object.keys(a), bk = Object.keys(b);
+  if (ak.length !== bk.length) return false;
+  for (let i = 0; i < ak.length; i++){
+    const k = ak[i];
+    if (a[k] !== b[k]) return false;
+  }
+  return true;
+}
+
 function getWeeksInMonth(year, month){
   const daysInMonth = new Date(year, month+1, 0).getDate();
   const weeks = [];
@@ -605,7 +625,6 @@ function getWeeksInMonth(year, month){
 }
 function getWeekIndexForDate(d){ return Math.floor((d.getDate() - 1) / 7); }
 
-// القالب المؤقت الافتراضي (يظهر للمستخدم الجديد حتى يتم تعديله من الأدمن)
 function getDefaultTemplate(){
   return {
     "الجمعة":[ {time:"7:00–8:00 ص",title:"مذاكرة رياضيات",type:"study"}, {time:"8:00–9:00 ص",title:"مذاكرة إنجليزي",type:"study"} ],
@@ -654,48 +673,44 @@ async function handleAuthState(user){
     try {
       const userRef = doc(db, USERS_COLLECTION, user.uid);
       const userSnap = await getDoc(userRef);
-      
+
       if (!userSnap.exists()){
-        // لو المستخدم مش موجود في الكولكشن، نطرده
         await signOut(auth);
         window.location.href = "login.html";
         return;
       }
-      
+
       userProfile = userSnap.data();
-      
-      // لو الأدمن، حوله للوحة التحكم
+
       if (userProfile.role === "admin"){
         window.location.href = "admin.html";
         return;
       }
-      
-      // إظهار الجدول
+
       $("loader").style.display = "none";
       $("mainContainer").style.display = "block";
-      
+
       const username = userProfile.username || "طالب";
       $("headerName").textContent = username;
       $("userNameDisplay").textContent = username;
       $("userGradeDisplay").textContent = userProfile.grade ? `الصف: ${userProfile.grade}` : "";
       $("userAvatar").textContent = username.charAt(0).toUpperCase();
-      
+
       loadUserData(user.uid).then(() => listenToChanges(user.uid));
     } catch(err){
       console.error("Auth state error:", err);
-      window.location.href = "login.html"; // في حالة الخطأ، ارجع للوجن
+      window.location.href = "login.html";
     }
   } else {
-    // لو مفيش مستخدم مسجل، حوله لصفحة الدخول
     window.location.href = "login.html";
   }
 }
 
 async function handleLogout(){
   if (unsubscribe){ unsubscribe(); unsubscribe = null; }
-  try { 
-    await signOut(auth); 
-    window.location.href = "login.html"; 
+  try {
+    await signOut(auth);
+    window.location.href = "login.html";
   }
   catch(err){ console.error(err); }
 }
@@ -711,13 +726,12 @@ async function loadUserData(uid){
       overrides = data.overrides || {};
       completedTasks = data.completed || {};
     } else {
-      // لو مفيش جدول مخزن، نستخدم القالب الافتراضي
       template = getDefaultTemplate();
       overrides = {};
       completedTasks = {};
       await saveAll();
     }
-    
+
     DAYS.forEach(d => {
       if (!template[d]) template[d] = [];
       template[d] = sortTasksByTime(template[d]);
@@ -759,6 +773,13 @@ async function saveAll(){
   }
 }
 
+/* Debounced save لتقليل الكتابات على Firestore */
+let saveTimer = null;
+function scheduleSave(){
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { saveAll(); saveTimer = null; }, 700);
+}
+
 function listenToChanges(uid){
   if (unsubscribe) unsubscribe();
   const ref = doc(db, SCHEDULE_COLLECTION, uid);
@@ -766,19 +787,20 @@ function listenToChanges(uid){
   unsubscribe = onSnapshot(ref, (snap) => {
     if (!snap.exists()) return;
     if (isFirst){ isFirst = false; return; }
-    
+
     const data = snap.data();
     let needsRender = false;
+
     const remoteCompleted = data.completed || {};
-    if (JSON.stringify(remoteCompleted) !== JSON.stringify(completedTasks)){
+    if (!shallowEqual(remoteCompleted, completedTasks)){
       completedTasks = remoteCompleted;
       needsRender = true;
     }
-    if (data.overrides && JSON.stringify(data.overrides) !== JSON.stringify(overrides)){
+    if (data.overrides && !shallowEqual(data.overrides, overrides)){
       overrides = data.overrides;
       needsRender = true;
     }
-    if (data.template && JSON.stringify(data.template) !== JSON.stringify(template)){
+    if (data.template && !shallowEqual(data.template, template)){
       template = data.template;
       DAYS.forEach(d => {
         if (!template[d]) template[d] = [];
@@ -909,6 +931,8 @@ function renderSchedule(){
   }
 
   const key = dateKey(currentDate);
+  const fragment = document.createDocumentFragment();
+
   tasks.forEach((task, index) => {
     const taskKey = `${key}-${index}`;
     const isDone = !!completedTasks[taskKey];
@@ -939,8 +963,9 @@ function renderSchedule(){
     cb.addEventListener("change", e => toggleTask(index, e.target.checked));
     card.querySelector(".edit").addEventListener("click", () => openModal("edit", index));
     card.querySelector(".delete").addEventListener("click", () => openConfirmDelete(index));
-    grid.appendChild(card);
+    fragment.appendChild(card);
   });
+  grid.appendChild(fragment);
   updateDailyProgress();
 }
 
@@ -958,7 +983,7 @@ async function toggleTask(index, isDone){
   renderSchedule();
   updateProgress();
   updateStreak();
-  await saveAll();
+  scheduleSave(); // debounced
   if (isDone) celebrateIfComplete();
 }
 
