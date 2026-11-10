@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التطوير الشخصي — 90 يومًا</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --bg:#0B1120;
+  --sidebar:#111827;
+  --card:#172033;
+  --card-2:#1D2842;
+  --primary:#10B981;
+  --primary-soft:rgba(16,185,129,.15);
+  --secondary:#3B82F6;
+  --warning:#F59E0B;
+  --danger:#EF4444;
+  --text:#F8FAFC;
+  --muted:#94A3B8;
+  --border:rgba(148,163,184,.16);
+  --glass:rgba(17,24,39,.72);
+  --shadow:0 12px 34px rgba(0,0,0,.38);
+  --radius:20px;
+}
+body.light{
+  --bg:#EEF2F7;
+  --sidebar:#FFFFFF;
+  --card:#FFFFFF;
+  --card-2:#F4F7FB;
+  --text:#0F172A;
+  --muted:#5B6B85;
+  --border:rgba(15,23,42,.10);
+  --glass:rgba(255,255,255,.82);
+  --shadow:0 12px 30px rgba(15,23,42,.10);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Cairo',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  direction:rtl;
+  line-height:1.65;
+  min-height:100vh;
+  transition:background .3s ease,color .3s ease;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 420px at 88% -12%, rgba(16,185,129,.14), transparent 62%),
+    radial-gradient(760px 420px at 6% 112%, rgba(59,130,246,.12), transparent 60%);
+}
+.en{font-family:'Inter',sans-serif;direction:ltr;display:inline-block}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(148,163,184,.28);border-radius:20px}
+::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.45)}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+.sidebar{
+  width:268px;flex:0 0 268px;
+  background:var(--sidebar);
+  border-inline-end:1px solid var(--border);
+  padding:18px 14px 26px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  transition:width .25s ease,flex-basis .25s ease,transform .28s ease;
+  z-index:60;
+}
+.app.collapsed .sidebar{width:86px;flex-basis:86px}
+.app.collapsed .nav-label,.app.collapsed .brand-text,.app.collapsed .nav-title,.app.collapsed .side-foot{display:none}
+
+.brand{display:flex;align-items:center;gap:12px;padding:8px 10px 20px}
+.brand-logo{
+  width:44px;height:44px;flex:0 0 44px;border-radius:14px;
+  background:linear-gradient(135deg,var(--primary),#059669);
+  display:grid;place-items:center;color:#062018;font-size:1.15rem;
+  box-shadow:0 8px 22px rgba(16,185,129,.35);
+}
+.brand-text h1{font-size:1rem;font-weight:800;line-height:1.2}
+.brand-text span{font-size:.72rem;color:var(--muted)}
+
+.nav-title{font-size:.72rem;color:var(--muted);padding:14px 12px 6px;letter-spacing:.4px;font-weight:700}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 13px;border-radius:13px;
+  color:var(--muted);cursor:pointer;font-weight:600;font-size:.92rem;
+  margin-bottom:4px;border:1px solid transparent;
+  transition:.2s ease;user-select:none;
+}
+.nav-item i{width:20px;text-align:center;font-size:.98rem}
+.nav-item:hover{background:var(--primary-soft);color:var(--text)}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(16,185,129,.20),rgba(16,185,129,.03));
+  color:var(--primary);border-color:rgba(16,185,129,.28);
+}
+.side-foot{margin-top:18px;padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+.topbar{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 22px;position:sticky;top:0;z-index:40;
+  background:var(--glass);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.topbar h2{font-size:1.02rem;font-weight:700}
+.topbar .spacer{flex:1}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 13px;border-radius:999px;font-size:.8rem;font-weight:700;
+  background:var(--card);border:1px solid var(--border);color:var(--muted);
+}
+.chip.gold{color:var(--warning);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.1)}
+.chip.green{color:var(--primary);border-color:rgba(16,185,129,.3);background:var(--primary-soft)}
+
+.icon-btn{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  cursor:pointer;transition:.2s;font-size:.95rem;
+}
+.icon-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+.content{padding:24px;max-width:1440px;width:100%;margin:0 auto}
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+  transition:border-color .2s,transform .2s;
+}
+.card:hover{border-color:rgba(16,185,129,.28)}
+.card h3{font-size:1.02rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.card h3 i{color:var(--primary)}
+
+.grid{display:grid;gap:18px;margin-bottom:18px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.sec-title{font-size:1.05rem;font-weight:800;margin:6px 0 14px;display:flex;align-items:center;gap:9px}
+.sec-title i{color:var(--primary)}
+.muted{color:var(--muted);font-size:.86rem}
+.small{font-size:.78rem}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:12px;border:1px solid transparent;
+  font-family:inherit;font-weight:700;font-size:.88rem;cursor:pointer;
+  transition:.2s;background:var(--card-2);color:var(--text);
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.primary{background:linear-gradient(135deg,var(--primary),#059669);color:#04211A;box-shadow:0 8px 22px rgba(16,185,129,.3)}
+.btn.secondary{background:linear-gradient(135deg,var(--secondary),#2563EB);color:#fff}
+.btn.ghost{background:transparent;border-color:var(--border);color:var(--muted)}
+.btn.ghost:hover{border-color:var(--primary);color:var(--primary)}
+.btn.danger{background:rgba(239,68,68,.14);color:var(--danger);border-color:rgba(239,68,68,.32)}
+.btn.sm{padding:6px 12px;font-size:.78rem;border-radius:10px}
+
+input[type=text],input[type=url],input[type=date],input[type=number],select,textarea{
+  width:100%;padding:10px 13px;border-radius:11px;
+  background:var(--card-2);border:1px solid var(--border);
+  color:var(--text);font-family:inherit;font-size:.88rem;outline:none;
+  transition:.2s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,185,129,.14)}
+textarea{resize:vertical;min-height:78px;line-height:1.7}
+label.fl{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+
+input[type=checkbox]{
+  width:20px;height:20px;accent-color:var(--primary);cursor:pointer;
+  flex:0 0 20px;
+}
+
+.bar{height:10px;border-radius:999px;background:rgba(148,163,184,.18);overflow:hidden}
+.bar > div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),#34D399);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar.blue > div{background:linear-gradient(90deg,var(--secondary),#60A5FA)}
+.bar.gold > div{background:linear-gradient(90deg,var(--warning),#FBBF24)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:700;
+  background:var(--card-2);border:1px solid var(--border);color:var(--muted);
+}
+.pill.green{color:var(--primary);border-color:rgba(16,185,129,.3);background:var(--primary-soft)}
+.pill.blue{color:var(--secondary);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.12)}
+.pill.gold{color:var(--warning);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.12)}
+.pill.red{color:var(--danger);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.12)}
+
+/* Stat cards */
+.stat{display:flex;align-items:center;gap:15px}
+.stat-icon{
+  width:54px;height:54px;flex:0 0 54px;border-radius:16px;display:grid;place-items:center;
+  font-size:1.25rem;
+}
+.stat-icon.g{background:var(--primary-soft);color:var(--primary)}
+.stat-icon.b{background:rgba(59,130,246,.14);color:var(--secondary)}
+.stat-icon.o{background:rgba(245,158,11,.14);color:var(--warning)}
+.stat-icon.r{background:rgba(239,68,68,.14);color:var(--danger)}
+.stat-val{font-size:1.7rem;font-weight:800;line-height:1.15;font-family:'Inter',sans-serif}
+.stat-lbl{font-size:.8rem;color:var(--muted);font-weight:600}
+
+/* Welcome */
+.welcome{
+  background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(59,130,246,.10) 60%,transparent);
+  border:1px solid rgba(16,185,129,.24);
+  display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap;
+  margin-bottom:18px;
+}
+.welcome h2{font-size:1.5rem;font-weight:800;margin-bottom:6px}
+.welcome p{color:var(--muted);font-size:.9rem}
+
+/* Phase cards */
+.phase-card{position:relative;overflow:hidden}
+.phase-card::after{
+  content:"";position:absolute;inset-inline-start:-40px;top:-40px;width:130px;height:130px;
+  border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.18),transparent 70%);
+}
+.phase-card.done{border-color:rgba(16,185,129,.45)}
+.phase-card.active{border-color:rgba(59,130,246,.45)}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.skill-tags span{font-size:.72rem;padding:4px 10px;border-radius:999px;background:var(--card-2);border:1px solid var(--border);color:var(--muted)}
+
+/* Activity cards */
+.act-card{position:relative;transition:.25s}
+.act-card.done{border-color:rgba(16,185,129,.5);background:linear-gradient(180deg,rgba(16,185,129,.07),transparent)}
+.act-card.pulse{animation:pulse 1.4s ease 2}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{box-shadow:0 0 0 12px rgba(16,185,129,0)}}
+.act-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.act-icon{width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;font-size:1.1rem;background:var(--primary-soft);color:var(--primary)}
+.act-head h4{font-size:.96rem;font-weight:700}
+.act-head .dur{font-size:.75rem;color:var(--muted)}
+.act-instr{font-size:.84rem;color:var(--muted);margin-bottom:12px;min-height:44px}
+
+.timer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px;border-radius:12px;background:var(--card-2);border:1px solid var(--border);margin-bottom:10px}
+.timer .time{font-family:'Inter',sans-serif;font-size:1.22rem;font-weight:700;letter-spacing:1px;min-width:74px;text-align:center;color:var(--text)}
+.timer.running .time{color:var(--primary)}
+.timer button{padding:6px 11px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-weight:700;font-size:.76rem;cursor:pointer;transition:.2s}
+.timer button:hover{color:var(--primary);border-color:var(--primary)}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:9px}
+.cal-cell{
+  aspect-ratio:1/1;border-radius:13px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;cursor:pointer;
+  border:1px solid var(--border);background:var(--card-2);font-weight:700;
+  transition:.2s;font-size:.86rem;
+}
+.cal-cell:hover{transform:translateY(-2px);border-color:var(--primary)}
+.cal-cell .lbl{font-size:.58rem;font-weight:600;opacity:.85}
+.cal-cell.completed{background:rgba(16,185,129,.22);border-color:rgba(16,185,129,.5);color:var(--primary)}
+.cal-cell.partial{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.42);color:var(--warning)}
+.cal-cell.missed{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.36);color:var(--danger)}
+.cal-cell.today{outline:2px solid var(--secondary);outline-offset:2px}
+.cal-cell.future{opacity:.55}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:.78rem;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:4px;display:inline-block}
+
+/* Courses */
+.course-card{display:flex;flex-direction:column;gap:10px}
+.course-card .c-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.course-card h4{font-size:.98rem;font-weight:700;line-height:1.4}
+.status-badge{font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.status-notstarted{background:rgba(148,163,184,.16);color:var(--muted)}
+.status-progress{background:rgba(245,158,11,.16);color:var(--warning)}
+.status-completed{background:var(--primary-soft);color:var(--primary)}
+
+/* English words */
+.word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:12px 0}
+.word{background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.word b{font-family:'Inter',sans-serif;font-size:.86rem;color:var(--primary)}
+.word span{font-size:.76rem;color:var(--muted)}
+
+/* Achievements */
+.badge-card{display:flex;gap:14px;align-items:center;padding:16px;border-radius:16px;background:var(--card-2);border:1px solid var(--border);transition:.2s}
+.badge-card.unlocked{border-color:rgba(16,185,129,.42);background:linear-gradient(135deg,rgba(16,185,129,.12),transparent)}
+.badge-card.locked{opacity:.55;filter:grayscale(.6)}
+.badge-icon{width:52px;height:52px;flex:0 0 52px;border-radius:16px;display:grid;place-items:center;font-size:1.25rem;background:rgba(148,163,184,.14);color:var(--muted)}
+.badge-card.unlocked .badge-icon{background:linear-gradient(135deg,var(--primary),#059669);color:#04211A;box-shadow:0 8px 20px rgba(16,185,129,.3)}
+
+/* Chart */
+.chart-box{position:relative;height:290px;width:100%}
+.chart-box.tall{height:340px}
+
+/* Toast */
+#toasts{position:fixed;bottom:24px;inset-inline-start:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{
+  padding:13px 20px;border-radius:14px;font-weight:700;font-size:.85rem;
+  background:var(--card);border:1px solid var(--primary);color:var(--text);
+  box-shadow:0 14px 34px rgba(0,0,0,.4);
+  animation:slideIn .35s ease;display:flex;align-items:center;gap:10px;max-width:340px;
+}
+.toast i{color:var(--primary)}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Views */
+.view{display:none;animation:fade .3s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.page-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.page-head h2{font-size:1.35rem;font-weight:800}
+.day-nav{display:flex;gap:8px;flex-wrap:wrap}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:55;display:none;backdrop-filter:blur(3px)}
+.app.nav-open .overlay{display:block}
+
+.divider{height:1px;background:var(--border);margin:16px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1180px){
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+  .cal-grid{grid-template-columns:repeat(8,1fr)}
+}
+@media (max-width:1024px){
+  .sidebar{position:fixed;inset-inline-start:0;top:0;transform:translateX(105%);height:100vh;box-shadow:-20px 0 50px rgba(0,0,0,.5)}
+  .app.nav-open .sidebar{transform:translateX(0)}
+  .app.collapsed .sidebar{width:268px;flex-basis:268px}
+  .app.collapsed .nav-label,.app.collapsed .brand-text,.app.collapsed .nav-title,.app.collapsed .side-foot{display:block}
+  .grid-2{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .content{padding:16px}
+  .grid-4,.grid-3{grid-template-columns:1fr}
+  .cal-grid{grid-template-columns:repeat(6,1fr)}
+  .welcome h2{font-size:1.18rem}
+  .stat-val{font-size:1.4rem}
+  .topbar{padding:12px 14px}
+  .topbar h2{font-size:.9rem}
+  .chart-box{height:250px}
+  #toasts{inset-inline-start:12px;inset-inline-end:12px;bottom:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><i class="fa-solid fa-rocket"></i></div>
+      <div class="brand-text">
+        <h1>لوحة التطوير</h1>
+        <span>Personal Development · 90 Days</span>
+      </div>
+    </div>
+
+    <div class="nav-title">الرئيسية</div>
+    <div class="nav-item active" data-view="dashboard"><i class="fa-solid fa-house"></i><span class="nav-label">لوحة التحكم</span></div>
+    <div class="nav-item" data-view="daily"><i class="fa-solid fa-book-open-reader"></i><span class="nav-label">التعلّم اليومي</span></div>
+    <div class="nav-item" data-view="calendar"><i class="fa-solid fa-calendar-days"></i><span class="nav-label">التقويم</span></div>
+
+    <div class="nav-title">المحتوى</div>
+    <div class="nav-item" data-view="courses"><i class="fa-solid fa-graduation-cap"></i><span class="nav-label">مكتبة الكورسات</span></div>
+    <div class="nav-item" data-view="english"><i class="fa-solid fa-language"></i><span class="nav-label">تطوير الإنجليزية</span></div>
+    <div class="nav-item" data-view="challenges"><i class="fa-solid fa-trophy"></i><span class="nav-label">التحديات الأسبوعية</span></div>
+
+    <div class="nav-title">التقدّم</div>
+    <div class="nav-item" data-view="analytics"><i class="fa-solid fa-chart-line"></i><span class="nav-label">التحليلات</span></div>
+    <div class="nav-item" data-view="journal"><i class="fa-solid fa-feather-pointed"></i><span class="nav-label">المذكرة اليومية</span></div>
+    <div class="nav-item" data-view="achievements"><i class="fa-solid fa-medal"></i><span class="nav-label">الإنجازات</span></div>
+    <div class="nav-item" data-view="settings"><i class="fa-solid fa-gear"></i><span class="nav-label">الإعدادات</span></div>
+
+    <div class="side-foot">
+      <i class="fa-solid fa-circle-info" style="color:var(--primary)"></i>
+      كل بياناتك محفوظة محليًا في متصفحك فقط.
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" title="القائمة"><i class="fa-solid fa-bars"></i></button>
+      <h2 id="topbarTitle">لوحة التحكم</h2>
+      <div class="spacer"></div>
+      <span class="chip green" id="topPoints"><i class="fa-solid fa-star"></i> 0 نقطة</span>
+      <span class="chip gold" id="topStreak"><i class="fa-solid fa-fire"></i> 0</span>
+      <button class="icon-btn" id="themeBtn" title="تبديل الوضع"><i class="fa-solid fa-moon"></i></button>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ DASHBOARD ============ -->
+      <section class="view active" id="view-dashboard">
+        <div id="dashWelcome"></div>
+        <div class="grid grid-4" id="dashStats"></div>
+        <div class="card" id="dashProgressCard" style="margin-bottom:18px"></div>
+        <h3 class="sec-title"><i class="fa-solid fa-layer-group"></i> مراحل البرنامج</h3>
+        <div class="grid grid-3" id="dashPhases"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-list-check"></i> خطة اليوم</h3>
+            <div id="dashToday"></div>
+          </div>
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-column"></i> أداء الأيام القريبة</h3>
+            <div class="chart-box"><canvas id="dashChart"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DAILY ============ -->
+      <section class="view" id="view-daily">
+        <div class="page-head">
+          <div>
+            <h2>التعلّم اليومي</h2>
+            <p class="muted">خطة اليوم الكاملة — 60 دقيقة</p>
+          </div>
+          <div class="day-nav">
+            <button class="btn ghost" id="prevDay"><i class="fa-solid fa-chevron-right"></i> السابق</button>
+            <button class="btn ghost" id="todayDay"><i class="fa-solid fa-location-crosshairs"></i> اليوم</button>
+            <button class="btn ghost" id="nextDay">التالي <i class="fa-solid fa-chevron-left"></i></button>
+          </div>
+        </div>
+        <div id="dailyHero" style="margin-bottom:18px"></div>
+        <div class="grid grid-2" id="activities"></div>
+      </section>
+
+      <!-- ============ CALENDAR ============ -->
+      <section class="view" id="view-calendar">
+        <div class="page-head">
+          <div><h2>تقويم البرنامج</h2><p class="muted">تابع حالة كل يوم من الأيام التسعين</p></div>
+        </div>
+        <div class="card">
+          <div class="legend">
+            <span><i class="dot" style="background:var(--primary)"></i> مكتمل</span>
+            <span><i class="dot" style="background:var(--warning)"></i> مكتمل جزئيًا</span>
+            <span><i class="dot" style="background:var(--danger)"></i> فائت</span>
+            <span><i class="dot" style="background:var(--secondary)"></i> اليوم</span>
+            <span><i class="dot" style="background:var(--muted)"></i> قادم</span>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+      </section>
+
+      <!-- ============ COURSES ============ -->
+      <section class="view" id="view-courses">
+        <div class="page-head">
+          <div><h2>مكتبة كورسات Almentor</h2><p class="muted">أضف روابط الكورسات الحقيقية وملاحظاتك وتقييمك</p></div>
+          <button class="btn primary" id="addCourseBtn"><i class="fa-solid fa-plus"></i> كورس جديد</button>
+        </div>
+        <div id="newCourseForm" style="display:none;margin-bottom:18px" class="card"></div>
+        <div class="grid grid-3" id="coursesGrid"></div>
+      </section>
+
+      <!-- ============ ENGLISH ============ -->
+      <section class="view" id="view-english">
+        <div class="page-head">
+          <div><h2>تطوير الإنجليزية المهنية</h2><p class="muted">مفردات وتحديات تحدث يومية — 15 دقيقة</p></div>
+          <div style="min-width:190px">
+            <label class="fl">اختر اليوم</label>
+            <select id="engDaySelect"></select>
+          </div>
+        </div>
+        <div class="grid grid-3" id="engLevels" style="margin-bottom:18px"></div>
+        <div id="engDayCard"></div>
+      </section>
+
+      <!-- ============ CHALLENGES ============ -->
+      <section class="view" id="view-challenges">
+        <div class="page-head">
+          <div><h2>التحديات الأسبوعية</h2><p class="muted">تحدٍّ واحد كل أسبوع مع نتيجة قابلة للقياس</p></div>
+        </div>
+        <div class="grid grid-2" id="challengesGrid"></div>
+      </section>
+
+      <!-- ============ ANALYTICS ============ -->
+      <section class="view" id="view-analytics">
+        <div class="page-head">
+          <div><h2>التحليلات وتطوّر المهارات</h2><p class="muted">قيّم مهاراتك من 1 إلى 10 وحدّثها كل 30 يومًا</p></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-pie"></i> المكتمل مقابل المتبقي</h3>
+            <div class="chart-box"><canvas id="chartOverall"></canvas></div>
+          </div>
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-simple"></i> نسبة الإنجاز الأسبوعية</h3>
+            <div class="chart-box"><canvas id="chartWeekly"></canvas></div>
+          </div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-spider"></i> تطوّر المهارات</h3>
+            <div class="chart-box tall"><canvas id="chartSkills"></canvas></div>
+          </div>
+          <div class="card">
+            <h3><i class="fa-solid fa-language"></i> تقدّم الإنجليزية بالمستويات</h3>
+            <div class="chart-box tall"><canvas id="chartEnglish"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-table-list"></i> تقييم المهارات</h3>
+          <div id="skillsTable"></div>
+        </div>
+      </section>
+
+      <!-- ============ JOURNAL ============ -->
+      <section class="view" id="view-journal">
+        <div class="page-head">
+          <div><h2>المذكرة اليومية</h2><p class="muted">أسئلة التأمل الخمسة — 5 دقائق</p></div>
+          <div style="min-width:190px">
+            <label class="fl">تاريخ المذكرة</label>
+            <input type="date" id="journalDate">
+          </div>
+        </div>
+        <div class="card" id="journalForm" style="margin-bottom:18px"></div>
+        <div class="card">
+          <h3><i class="fa-solid fa-clock-rotate-left"></i> المذكرات السابقة</h3>
+          <div id="journalList"></div>
+        </div>
+      </section>
+
+      <!-- ============ ACHIEVEMENTS ============ -->
+      <section class="view" id="view-achievements">
+        <div class="page-head">
+          <div><h2>الإنجازات والتحفيز</h2><p class="muted">اجمع النقاط وافتح كل الشارات</p></div>
+        </div>
+        <div class="grid grid-3" id="achStats" style="margin-bottom:18px"></div>
+        <div class="grid grid-2" id="achGrid"></div>
+      </section>
+
+      <!-- ============ SETTINGS ============ -->
+      <section class="view" id="view-settings">
+        <div class="page-head">
+          <div><h2>الإعدادات وإدارة البيانات</h2><p class="muted">تحكم كامل في برنامجك وبياناتك</p></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <h3><i class="fa-solid fa-user-gear"></i> إعدادات البرنامج</h3>
+            <div style="margin-bottom:14px">
+              <label class="fl">اسم المستخدم</label>
+              <input type="text" id="setName">
+            </div>
+            <div style="margin-bottom:14px">
+              <label class="fl">تاريخ بداية البرنامج</label>
+              <input type="date" id="setStart">
+            </div>
+            <div style="margin-bottom:14px">
+              <label class="fl">الهدف اليومي (دقيقة)</label>
+              <input type="number" id="setGoal" min="15" max="240" step="5">
+            </div>
+            <div style="margin-bottom:14px">
+              <label class="fl">الوضع</label>
+              <select id="setTheme">
+                <option value="dark">داكن</option>
+                <option value="light">فاتح</option>
+              </select>
+            </div>
+            <button class="btn primary" id="saveSettings"><i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-database"></i> إدارة البيانات</h3>
+            <p class="muted small" style="margin-bottom:14px">كل البيانات محفوظة في LocalStorage داخل متصفحك. صدّر نسخة احتياطية بشكل دوري.</p>
+            <div class="row" style="margin-bottom:12px">
+              <button class="btn secondary" id="exportBtn"><i class="fa-solid fa-download"></i> تصدير JSON</button>
+              <button class="btn ghost" id="importBtn"><i class="fa-solid fa-upload"></i> استيراد JSON</button>
+              <input type="file" id="importFile" accept="application/json" style="display:none">
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+              <button class="btn danger" id="resetProgressBtn"><i class="fa-solid fa-rotate-left"></i> إعادة تعيين التقدّم</button>
+              <button class="btn danger" id="clearAllBtn"><i class="fa-solid fa-trash"></i> مسح كل البيانات</button>
+            </div>
+            <div class="divider"></div>
+            <p class="muted small" id="storageInfo"></p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ============================================================
+   1. CONSTANTS & STORAGE KEYS
+   ============================================================ */
+const LS = {
+  settings:'pdd90_settings',
+  progress:'pdd90_progress',
+  courses:'pdd90_courses',
+  english:'pdd90_english',
+  challenges:'pdd90_challenges',
+  journal:'pdd90_journal',
+  skills:'pdd90_skills',
+  achievements:'pdd90_achievements',
+  points:'pdd90_points'
+};
+
+const ACTIVITIES = [
+  {key:'course',     title:'كورس Almentor',  duration:25, points:10, icon:'fa-graduation-cap'},
+  {key:'english',    title:'تطوير الإنجليزية', duration:15, points:10, icon:'fa-language'},
+  {key:'practical',  title:'تمرين عملي',      duration:15, points:15, icon:'fa-dumbbell'},
+  {key:'reflection', title:'التأمل الذاتي',   duration:5,  points:5,  icon:'fa-feather-pointed'}
+];
+
+const WEEKS = [
+  {n:1,  from:1,  to:7,  phase:1, title:'Self-Confidence'},
+  {n:2,  from:8,  to:14, phase:1, title:'Communication Skills'},
+  {n:3,  from:15, to:21, phase:1, title:'Active Listening'},
+  {n:4,  from:22, to:30, phase:1, title:'Body Language & Voice Control'},
+  {n:5,  from:31, to:37, phase:2, title:'Public Speaking'},
+  {n:6,  from:38, to:44, phase:2, title:'Presentation Skills'},
+  {n:7,  from:45, to:51, phase:2, title:'Persuasion & Influence'},
+  {n:8,  from:52, to:60, phase:2, title:'Social Intelligence & Charisma'},
+  {n:9,  from:61, to:67, phase:3, title:'Emotional Intelligence'},
+  {n:10, from:68, to:74, phase:3, title:'Leadership'},
+  {n:11, from:75, to:81, phase:3, title:'Negotiation & Conflict Management'},
+  {n:12, from:82, to:84, phase:3, title:'Leadership Presence'},
+  {n:13, from:85, to:90, phase:3, title:'Final Assessment & Graduation Project'}
+];
+
+const WEEK_COURSES = {
+  1:'Communication Strategies',
+  2:'Communication Strategies',
+  3:'Communication Strategies',
+  4:'The Art of Speaking and Persuasion',
+  5:'Advanced Presentation Skills',
+  6:'Advanced Presentation Skills',
+  7:'The Art of Speaking and Persuasion',
+  8:'Standout at Work: Influence, Visibility & Leadership Presence',
+  9:'Emotional Intelligence in Leadership',
+  10:'Principles of Management & Leadership',
+  11:'Principles of Management & Leadership',
+  12:'Standout at Work: Influence, Visibility & Leadership Presence',
+  13:'Your Guide to Build a Strong Personal Brand'
+};
+
+const PHASES = [
+  {id:1, name:'المرحلة الأولى: الأساسيات والتواصل', en:'Foundation & Communication', from:1, to:30,
+   skills:['الثقة بالنفس','مهارات التواصل','الإنصات الفعّال','لغة الجسد والتحكم بالصوت']},
+  {id:2, name:'المرحلة الثانية: الكاريزما والتأثير', en:'Charisma & Influence', from:31, to:60,
+   skills:['التحدث العام','مهارات العرض','الإقناع','الذكاء الاجتماعي','الحضور الشخصي']},
+  {id:3, name:'المرحلة الثالثة: القيادة والتميّز المهني', en:'Leadership & Professional Excellence', from:61, to:90,
+   skills:['الذكاء العاطفي','القيادة','التفاوض','إدارة الصراع','التغذية الراجعة','صنع القرار','العلامة الشخصية']}
+];
+
+/* ---------- 90 Days content (unique per day) ---------- */
+const DAYS = [
+  /* Week 1 — Self-Confidence */
+  {sk:'الثقة بالنفس', ob:'فهم مفهوم الثقة بالنفس وتقييم مستواها الحالي بصدق', task:'سجّل فيديو تعريفي عن نفسك مدته دقيقتان ثم شاهده وسجّل ثلاث نقاط قوة لاحظتها'},
+  {sk:'الثقة بالنفس', ob:'تحديد مصادر انعدام الثقة والمواقف التي تُضعف حضورك', task:'اكتب ثلاثة مواقف تفقد فيها ثقتك وحدّد السبب الجذري لكل موقف'},
+  {sk:'الثقة بالنفس', ob:'بناء حوار داخلي إيجابي بدل النقد الذاتي المستمر', task:'دوّن خمس عبارات نقد ذاتي وحوّل كل واحدة إلى عبارة داعمة وواقعية'},
+  {sk:'الثقة بالنفس', ob:'تعلّم لغة جسد واثقة في الوقوف والجلوس', task:'قف أمام المرآة خمس دقائق وتمرّن على وقفة مستقيمة وتواصل بصري ثابت'},
+  {sk:'الثقة بالنفس', ob:'التمرّن على التقديم الذاتي في سياق مهني', task:'اكتب مقدمة مهنية عن نفسك في ثلاثين ثانية وألقِها بصوت مرتفع ثلاث مرات'},
+  {sk:'الثقة بالنفس', ob:'مواجهة موقف بسيط يثير القلق بدل تجنّبه', task:'ابدأ محادثة قصيرة مع شخص لا تعرفه جيدًا في العمل وسجّل ما حدث'},
+  {sk:'الثقة بالنفس', ob:'تقييم أسبوع الثقة بالنفس واستخلاص الدروس', task:'أعد تسجيل مقدمة الدقيقتين وقارنها بتسجيل اليوم الأول'},
+
+  /* Week 2 — Communication Skills */
+  {sk:'مهارات التواصل', ob:'فهم عناصر عملية التواصل: المرسل والرسالة والقناة والتغذية الراجعة', task:'حلّل محادثة حديثة وحدّد فيها العناصر الخمسة لعملية التواصل'},
+  {sk:'مهارات التواصل', ob:'التعبير عن رأي بوضوح دون اعتذار مفرط أو تصنّع', task:'اكتب فقرة برأيك في قضية مهنية وألقِها دون كلمات تردد'},
+  {sk:'مهارات التواصل', ob:'تعلّم صياغة الأسئلة المفتوحة لفتح الحوار', task:'اكتب عشرة أسئلة مفتوحة واستخدم ثلاثة منها في محادثة حقيقية'},
+  {sk:'مهارات التواصل', ob:'إتقان بنية الرسالة القصيرة: مقدمة وجوهر وخاتمة', task:'اكتب رسالة بريد مهنية قصيرة في ثلاث جمل فقط'},
+  {sk:'مهارات التواصل', ob:'التمييز بين التواصل العدواني والسلبي والحازم', task:'اكتب ثلاث صيغ حازمة لطلب المساعدة من زميل'},
+  {sk:'مهارات التواصل', ob:'تبسيط الأفكار المعقدة وشرحها في وقت قصير', task:'اشرح فكرة عملّية معقدة في ستين ثانية لشخص غير مختص'},
+  {sk:'مهارات التواصل', ob:'تقييم أسبوع التواصل وتحديد نقطة تحسين واحدة', task:'سجّل محادثة وهمية مدتها ثلاث دقائق وراجع وضوح رسالتك'},
+
+  /* Week 3 — Active Listening */
+  {sk:'الإنصات الفعّال', ob:'فهم الفرق بين السماع والإنصات الفعّال', task:'طبّق الإنصات الكامل في محادثة واحدة دون مقاطعة وسجّل ملاحظاتك'},
+  {sk:'الإنصات الفعّال', ob:'استخدام إعادة الصياغة للتأكد من فهم المتحدث', task:'أعد صياغة كلام زميل بجملة واحدة ثلاث مرات اليوم'},
+  {sk:'الإنصات الفعّال', ob:'تعلّم طرح أسئلة التوضيح بدل الافتراض', task:'اسأل ثلاثة أسئلة توضيحية في اجتماع أو محادثة'},
+  {sk:'الإنصات الفعّال', ob:'قراءة المشاعر خلف الكلمات أثناء الإنصات', task:'لاحظ نبرة صوت ثلاثة أشخاص وحدّد الحالة العاطفية لكل منهم'},
+  {sk:'الإنصات الفعّال', ob:'التخلص من عادة مقاطعة الآخرين', task:'دوّن عدد المرات التي قاطعت فيها الآخرين اليوم وحاول تقليلها غدًا'},
+  {sk:'الإنصات الفعّال', ob:'تلخيص ما قاله المتحدث في نقاط محددة', task:'لخّص محادثة كاملة في ثلاث نقاط مكتوبة وأرسلها للمتحدث للتأكيد'},
+  {sk:'الإنصات الفعّال', ob:'تقييم أسبوع الإنصات وقياس أثره على العلاقات', task:'اكتب كيف تغيّر تفاعل الآخرين معك عندما أنصتت فعليًا'},
+
+  /* Week 4 — Body Language & Voice */
+  {sk:'لغة الجسد', ob:'فهم أثر لغة الجسد على مصداقية الرسالة', task:'سجّل فيديو قصيرًا عن رأيك وحلّل إشارات جسدك: اليدين والوقفة والتواصل البصري'},
+  {sk:'لغة الجسد', ob:'ضبط التواصل البصري دون التحديق المزعج', task:'تمرّن على توزيع النظر على ثلاثة أشخاص أثناء حديثك لمدة دقيقتين'},
+  {sk:'لغة الجسد', ob:'استخدام اليدين لدعم الرسالة لا تشتيت الانتباه', task:'ألقِ فقرة قصيرة مع إيماءات مدروسة وسجّلها للمراجعة'},
+  {sk:'التحكم بالصوت', ob:'التحكم في سرعة الكلام والوقفات المقصودة', task:'اقرأ نصًا في دقيقة واحدة ثم أعد قراءته بوقفات مقصودة في خمس وسبعين ثانية'},
+  {sk:'التحكم بالصوت', ob:'تنويع نبرة الصوت لإبراز المعنى', task:'سجّل نفس الجملة بثلاث نبرات: حماسية وهادئة وحازمة'},
+  {sk:'لغة الجسد', ob:'قراءة لغة جسد الآخرين أثناء الحوار', task:'لاحظ وضعية ثلاثة زملاء أثناء محادثة واستنتج انفتاحهم أو انسحابهم'},
+  {sk:'لغة الجسد', ob:'التخلص من الحركات العصبية المشتتة', task:'سجّل نفسك دقيقتين وحصر الحركات العصبية واستبدلها بحركة واعية'},
+  {sk:'لغة الجسد', ob:'دمج لغة الجسد والصوت في حديث متكامل', task:'قدّم عرضًا قصيرًا مدته ثلاث دقائق مع تحكم كامل في الجسد والصوت'},
+  {sk:'لغة الجسد', ob:'مراجعة شاملة للمرحلة الأولى وتقييم مهاراتها', task:'سجّل فيديو تقييميًا مدته خمس دقائق يوضح تطورك في المرحلة الأولى'},
+
+  /* Week 5 — Public Speaking */
+  {sk:'التحدث العام', ob:'التغلب على رهبة المسرح والتحضير النفسي قبل الحديث', task:'تمرّن على تنفس عميق 4-7-8 ثلاث مرات قبل إلقاء حديث قصير'},
+  {sk:'التحدث العام', ob:'بناء هيكل الخطاب: افتتاحية وجسم وخاتمة قوية', task:'اكتب مخططًا لخطاب ثلاث دقائق بعنوان واضح وثلاث نقاط رئيسية'},
+  {sk:'التحدث العام', ob:'افتتاحيات تجذب الانتباه في أول ثلاثين ثانية', task:'اكتب ثلاث افتتاحيات مختلفة لنفس الموضوع واختر الأقوى'},
+  {sk:'التحدث العام', ob:'إدارة الوقت أثناء الحديث العام', task:'ألقِ حديثًا مدته ثلاث دقائق واضبط مؤقتًا وتوقف عند الوقت المحدد'},
+  {sk:'التحدث العام', ob:'التعامل مع أسئلة الجمهور بثقة', task:'اطلب من صديق طرح ثلاثة أسئلة مفاجئة وأجب دون تحضير'},
+  {sk:'التحدث العام', ob:'استخدام القصص القصيرة لتثبيت الرسالة', task:'أضف قصة شخصية مدتها خمس وأربعون ثانية داخل حديثك وسجّل النتيجة'},
+  {sk:'التحدث العام', ob:'تقييم أدائك في التحدث العام بمعايير واضحة', task:'سجّل خطابًا مدته ثلاث دقائق وقيّمه على: الوضوح والثقة والبنية والوقت'},
+
+  /* Week 6 — Presentation Skills */
+  {sk:'مهارات العرض', ob:'تصميم شرائح عرض بسيطة وفعّالة', task:'صمّم ثلاث شرائح لعرض فكرة واحدة بقاعدة شريحة واحدة لكل فكرة'},
+  {sk:'مهارات العرض', ob:'تحويل البيانات إلى رسالة واضحة', task:'خذ رقمًا أو إحصائية من عملك وحوّلها إلى جملة رسالة واحدة'},
+  {sk:'مهارات العرض', ob:'بدء العرض بقصة أو سؤال محفّز', task:'أعد كتابة مقدمة عرضك القديم كسؤال محفّز'},
+  {sk:'مهارات العرض', ob:'استخدام القواعد البصرية بدل النصوص الطويلة', task:'أعد تصميم شريحة نصية طويلة إلى شريحة بصرية واحدة'},
+  {sk:'مهارات العرض', ob:'تقديم عرض دون قراءة الشرائح', task:'ألقِ عرضًا مدته أربع دقائق دون النظر إلى الشرائح'},
+  {sk:'مهارات العرض', ob:'إدارة أسئلة الجمهور الصعبة أثناء العرض', task:'حضّر ردودًا على ثلاثة أسئلة متوقعة وردّ عليها بصوت مرتفع'},
+  {sk:'مهارات العرض', ob:'تقييم أسبوع العروض وتحسين أضعف عنصر', task:'سجّل عرضًا كاملًا مدته خمس دقائق وراجع معايير التقييم الستة'},
+
+  /* Week 7 — Persuasion & Influence */
+  {sk:'الإقناع', ob:'فهم مبادئ الإقناع الستة وتطبيقها أخلاقيًا', task:'اختر مبدأً واحدًا كالتبادلية أو الالتزام أو الدليل الاجتماعي واستخدمه في نقاش عمل'},
+  {sk:'الإقناع', ob:'بناء حجة منطقية مدعومة بالأدلة', task:'اكتب حجة من ثلاث نقاط مع دليل واحد لكل نقطة'},
+  {sk:'الإقناع', ob:'مخاطبة مصالح المستمع لا مصالحك فقط', task:'أعد صياغة طلب مهني ليركز على فائدة الطرف الآخر'},
+  {sk:'الإقناع', ob:'التعامل مع الاعتراضات دون دفاعية', task:'دوّن ثلاثة اعتراضات محتملة واكتب ردًا هادئًا لكل منها'},
+  {sk:'الإقناع', ob:'استخدام أسلوب نعم وبعد ذلك لتحويل الاعتراض', task:'استخدم الأسلوب في محادثة حقيقية واحدة اليوم'},
+  {sk:'الإقناع', ob:'التأثير عبر المصداقية والاتساق لا الضغط', task:'اكتب ثلاثة أسباب تجعل الآخرين يثقون برأيك وحدّد سببًا يحتاج تطويرًا'},
+  {sk:'الإقناع', ob:'تقييم أسبوع الإقناع وقياس نتائج المحاولات', task:'سجّل محاولة إقناع حقيقية وحلّل: ما نجح؟ ما فشل؟ ولماذا؟'},
+
+  /* Week 8 — Social Intelligence & Charisma */
+  {sk:'الذكاء الاجتماعي', ob:'فهم مكوّنات الكاريزما: الحضور والقوة والدفء', task:'اختر مكوّنًا واحدًا ضعيفًا فيك وطبّق تمرينًا واحدًا لتقويته اليوم'},
+  {sk:'الذكاء الاجتماعي', ob:'بناء انطباع أول قوي في أول دقيقة', task:'حضّر جملة تعريفية عن نفسك وأول سؤال تطرحه عند مقابلة شخص جديد'},
+  {sk:'الذكاء الاجتماعي', ob:'إدارة المحادثات الصغيرة بذكاء', task:'ابدأ ثلاث محادثات صغيرة مع زملاء واستخدم مواضيع مشتركة'},
+  {sk:'الذكاء الاجتماعي', ob:'التعرّف على شبكات العلاقات المهنية وتوسيعها', task:'تواصل مع شخص مهني جديد عبر رسالة قصيرة ومحددة'},
+  {sk:'الذكاء الاجتماعي', ob:'قراءة المشاعر الجماعية داخل الفريق', task:'لاحظ مزاج الفريق في اجتماع واكتب ما شعرت به وما سببه'},
+  {sk:'الذكاء الاجتماعي', ob:'تقديم الدعم الاجتماعي للآخرين دون تكلّف', task:'اسأل زميلًا عن تحدٍ يواجهه وقدّم مساعدة عملية واحدة'},
+  {sk:'الذكاء الاجتماعي', ob:'استخدام المدح الصادق المحدد بدل المجاملة العامة', task:'اكتب ثلاث جمل مدح محددة وقدّمها لثلاثة أشخاص'},
+  {sk:'الذكاء الاجتماعي', ob:'الحفاظ على العلاقات المهنية بعد بنائها', task:'أرسل رسالة متابعة لشخص تعرّفت عليه هذا الشهر'},
+  {sk:'الذكاء الاجتماعي', ob:'مراجعة المرحلة الثانية وتقييم مهارات التأثير', task:'سجّل فيديو تقييميًا مدته خمس دقائق يوضح تطورك في المرحلة الثانية'},
+
+  /* Week 9 — Emotional Intelligence */
+  {sk:'الذكاء العاطفي', ob:'التعرّف على مشاعرك وتسميتها بدقة', task:'سجّل ثلاثة مواقف اليوم وسمّ المشاعر التي شعرت بها بدقة'},
+  {sk:'الذكاء العاطفي', ob:'فهم محفزات الانفعال ومتى تشتد', task:'حدّد ثلاثة محفزات تغضبك واكتب استجابة بديلة لكل منها'},
+  {sk:'الذكاء العاطفي', ob:'تنظيم الانفعال في اللحظات الضاغطة', task:'استخدم تقنية توقف ثم تنفس ثم فكّر في موقف ضاغط واحد اليوم'},
+  {sk:'الذكاء العاطفي', ob:'التعاطف المعرفي: فهم وجهة نظر الآخر', task:'اكتب موقفًا مختلفًا عليه من وجهة نظر الشخص الآخر'},
+  {sk:'الذكاء العاطفي', ob:'التعامل مع مشاعر الآخرين دون استيعابها', task:'استمع لزميل منفعل دون أن تنفعل معه وسجّل ما فعلته'},
+  {sk:'الذكاء العاطفي', ob:'تحليل موقف عاطفي صعب بعد حدوثه', task:'حلّل موقفًا صعبًا: ما الحدث؟ ما الشعور؟ ما التفسير؟ ما البديل؟'},
+  {sk:'الذكاء العاطفي', ob:'تقييم أسبوع الذكاء العاطفي', task:'اكتب كيف تغيّرت استجابتك للمواقف مقارنة بالأسبوع الماضي'},
+
+  /* Week 10 — Leadership */
+  {sk:'القيادة', ob:'فهم الفرق بين المدير والقائد', task:'اكتب خمس صفات قائد أثّر فيك وكيف يمكنك تبنيها'},
+  {sk:'القيادة', ob:'تحديد أسلوبك القيادي الحالي', task:'أجب على استبيان سريع لأسلوبك القيادي واكتب نتيجتك'},
+  {sk:'القيادة', ob:'تفويض المهام بثقة ووضوح', task:'فوّض مهمة واحدة لزميل مع تحديد النتيجة والموعد ومعايير الجودة'},
+  {sk:'القيادة', ob:'قيادة اجتماع قصير وفعّال', task:'قُد اجتماعًا مدته عشر دقائق بجدول أعمال مكتوب'},
+  {sk:'القيادة', ob:'اتخاذ قرار بمنهجية تحليلية', task:'استخدم مصفوفة قرار بوزن المعايير لقرار حقيقي اليوم'},
+  {sk:'القيادة', ob:'تقديم تغذية راجعة بنّاءة', task:'قدّم تغذية راجعة لزميل بمنهجية: الموقف والسلوك والأثر والاقتراح'},
+  {sk:'القيادة', ob:'تحفيز الفريق بالاعتراف والتقدير', task:'اعترف بإنجاز ثلاثة أشخاص بشكل محدد وعلني'},
+
+  /* Week 11 — Negotiation & Conflict */
+  {sk:'التفاوض', ob:'فهم مفهوم BATNA والمصالح المشتركة', task:'حدّد بديلك الأفضل عن أي اتفاق قبل تفاوض وهمي اليوم'},
+  {sk:'التفاوض', ob:'التمييز بين الموقف والمصلحة في التفاوض', task:'اكتب ثلاث مصالح خفية لطرف آخر في موقف مختلف'},
+  {sk:'التفاوض', ob:'تحضير تفاوض بخطة واضحة', task:'اكتب خطة تفاوض: أهدافك وحدودك وتنازلاتك الممكنة'},
+  {sk:'إدارة الصراع', ob:'إدارة الصراع بأسلوب تعاوني', task:'استخدم أسلوب الطرف الثالث المحايد في خلاف بسيط بين زملاء'},
+  {sk:'إدارة الصراع', ob:'تهدئة المواقف المتصاعدة', task:'تمرّن على ثلاث عبارات تهدئة وطبّق واحدة في موقف حقيقي'},
+  {sk:'إدارة الصراع', ob:'الوصول إلى حل مقبول للطرفين', task:'اكتب اتفاقًا وهميًا من ثلاث نقاط يحقق مصلحة الطرفين'},
+  {sk:'التفاوض', ob:'تقييم أسبوع التفاوض وإدارة الصراع', task:'حلّل تفاوضًا حقيقيًا أو وهميًا: ما الذي حسم النتيجة؟'},
+
+  /* Week 12 — Leadership Presence */
+  {sk:'الحضور القيادي', ob:'بناء حضور قيادي في الاجتماعات', task:'اجلس في مقدمة الاجتماع وتحدث في أول خمس دقائق بفكرة واحدة واضحة'},
+  {sk:'الحضور القيادي', ob:'التحدث بثقة أمام الإدارة العليا', task:'حضّر جملة افتتاحية قوية لموقف مع الإدارة وألقِها ثلاث مرات'},
+  {sk:'الحضور القيادي', ob:'الاتساق بين القيم والسلوك القيادي', task:'اكتب ثلاث قيم تقودك وحدّد سلوكًا واحدًا يعبّر عنها اليوم'},
+
+  /* Week 13 — Final Assessment & Graduation */
+  {sk:'التقييم النهائي', ob:'مراجعة شاملة لمهارات المرحلة الثالثة', task:'اكتب تقييمًا ذاتيًا لكل مهارة من مهارات المرحلة الثالثة'},
+  {sk:'التقييم النهائي', ob:'تصميم عرض تقديمي احترافي متكامل', task:'اكتب مخطط عرضك النهائي: الهدف والجمهور والنقاط والخاتمة'},
+  {sk:'التقييم النهائي', ob:'التدريب على العرض النهائي وتحسينه', task:'ألقِ عرضك التدريبي كاملًا مرة واحدة وسجّل ملاحظات التحسين'},
+  {sk:'العلامة الشخصية', ob:'بناء علامة شخصية مهنية متسقة', task:'اكتب بيان علامتك الشخصية في جملتين وحدّد كيف ستظهر في سيرتك'},
+  {sk:'التقييم النهائي', ob:'التقييم النهائي الشامل لمهاراتك عبر تسعين يومًا', task:'أعد تقييم المهارات العشر من 1 إلى 10 وقارنها ببداية البرنامج'},
+  {sk:'التقييم النهائي', ob:'التخرّج وتقديم العرض الختامي للبرنامج', task:'قدّم عرضًا احترافيًا مدته 15-20 دقيقة يلخّص رحلتك وتعلّمك'}
+];
+
+/* ---------- English speaking topics (90) ---------- */
+const ENG_TOPICS = [
+  'Introducing Yourself','Talking About Your Job','Describing Your Daily Routine','Expressing Opinions',
+  'Asking for Clarification','Small Talk at Work','Making Requests Politely','Talking About Goals',
+  'Describing a Challenge','Giving Simple Feedback','Agreeing and Disagreeing','Phone Conversations',
+  'Writing a Professional Email','Explaining a Process','Talking About Achievements','Active Listening Phrases',
+  'Paraphrasing What You Heard','Asking Open Questions','Body Language Vocabulary','Voice and Tone Words',
+  'Handling Interruptions','Starting a Conversation','Ending a Conversation Gracefully','Describing Feelings at Work',
+  'Talking About Teamwork','Public Speaking Basics','Opening a Speech','Structuring a Talk',
+  'Signposting Language','Closing a Speech','Handling Questions','Describing Charts and Data',
+  'Slide Presentation Language','Emphasis and Pausing','Storytelling in English','Persuasive Language',
+  'Building an Argument','Handling Objections','Negotiating a Deadline','Softening a Request',
+  'Networking Introductions','Talking About Your Strengths','Giving Compliments','Social Intelligence Vocabulary',
+  'Apologizing Professionally','Expressing Empathy','Emotional Intelligence Vocabulary','Managing Stress Conversation',
+  'Giving Constructive Feedback','Receiving Feedback','Leading a Meeting','Setting an Agenda',
+  'Delegating Tasks','Decision Making Vocabulary','Motivation and Praise','Conflict Resolution Language',
+  'Mediating a Disagreement','Negotiation Vocabulary','Making Proposals','Reaching an Agreement',
+  'Refusing Politely','Time Management Vocabulary','Leadership Vocabulary','Coaching Conversations',
+  'Performance Review Language','Talking About Career Plans','Leadership Presence Phrases','Speaking with Authority',
+  'Talking to Senior Management','Personal Branding Vocabulary','Elevator Pitch','Job Interview English',
+  'Talking About Weaknesses','Salary Discussion','Business Vocabulary Review','Advanced Meeting Phrases',
+  'Debating a Topic','Presenting a Proposal','Handling Difficult Conversations','Cross-Cultural Communication',
+  'Idioms for Business','Phrasal Verbs at Work','Formal vs Informal English','Summarizing a Discussion',
+  'Final Presentation Practice','Graduation Speech','Reflecting on Progress','Talking About the Future',
+  'Professional Storytelling Final','Complete Program Review'
+];
+
+/* ---------- Professional English word pool ---------- */
+const WORD_POOL = ('accountability|المسؤولية,achieve|يُحقّق,active listening|الإنصات الفعّال,adapt|يتكيّف,agenda|جدول الأعمال,'+
+'alignment|التوافق,articulate|واضح التعبير,assertive|حازم,attitude|السلوك,audience|الجمهور,authority|المرجعية,awareness|الوعي,'+
+'body language|لغة الجسد,brainstorm|عصف ذهني,brief|موجز,build rapport|بناء الألفة,capacity|القدرة,challenge|التحدّي,clarify|يوضّح,'+
+'collaborate|يتعاون,commitment|الالتزام,communicate|يتواصل,compelling|مقنع,competence|الكفاءة,confidence|الثقة,conflict|الصراع,'+
+'consensus|الإجماع,consistent|متّسق,constructive|بنّاء,convince|يُقنع,credibility|المصداقية,critical thinking|التفكير النقدي,'+
+'deadline|الموعد النهائي,decision|القرار,delegate|يُفوّض,deliver|يُنجز,empathy|التعاطف,empower|يُمكّن,engage|يُشرك,'+
+'enthusiasm|الحماس,evaluate|يُقيّم,evidence|الدليل,expectation|التوقّع,feedback|التغذية الراجعة,flexible|مرن,focus|التركيز,'+
+'gesture|الإيماءة,goal|الهدف,growth|النمو,guidance|التوجيه,impact|الأثر,implement|يُنفّذ,improve|يُحسّن,influence|التأثير,'+
+'initiative|المبادرة,insight|البصيرة,integrity|النزاهة,interpersonal|بين الشخصي,leadership|القيادة,listening|الإنصات,'+
+'management|الإدارة,meeting|الاجتماع,mentor|المُرشد,mindset|طريقة التفكير,motivate|يُحفّز,negotiate|يتفاوض,networking|بناء الشبكات,'+
+'objective|الهدف,open-minded|متفتح الذهن,opinion|الرأي,opportunity|الفرصة,outcome|النتيجة,ownership|تحمّل المسؤولية,passion|الشغف,'+
+'performance|الأداء,persuade|يُقنع,pitch|عرض موجز,posture|وضعية الجسم,presentation|العرض التقديمي,priority|الأولوية,'+
+'professional|مهني,progress|التقدّم,proposal|المقترح,reputation|السمعة,resilience|المرونة,resolve|يحلّ,responsibility|المسؤولية,'+
+'review|المراجعة,self-awareness|الوعي الذاتي,strategy|الاستراتيجية,strength|نقطة القوة,summarize|يُلخّص,support|الدعم,'+
+'teamwork|العمل الجماعي,transparency|الشفافية,trust|الثقة,value|القيمة,vision|الرؤية,weakness|نقطة الضعف,workload|عبء العمل,'+
+'assertiveness|الحزم').split(',').map(x=>{const p=x.split('|');return {w:p[0],m:p[1]};});
+
+/* ---------- Weekly challenges ---------- */
+const CHALLENGES = [
+  {week:1, title:'سجّل مقدمة شخصية', assignment:'سجّل فيديو مدته دقيقتان تقدّم فيه نفسك بشكل مهني', result:'فيديو واحد محفوظ ومُراجع', phase:1},
+  {week:2, title:'ابدأ خمس محادثات هادفة', assignment:'ابدأ خمس محادثات حقيقية مع زملاء أو معارف خلال الأسبوع', result:'خمس محادثات مسجّلة بأسماء المواضيع', phase:1},
+  {week:3, title:'طبّق الإنصات الفعّال', assignment:'أنصت بتركيز كامل في ثلاث محادثات دون مقاطعة واحدة', result:'ثلاث محادثات موثّقة بما فهمته', phase:1},
+  {week:4, title:'قدّم عرضًا قصيرًا بلغة جسد واثقة', assignment:'قدّم عرضًا مدته ثلاث دقائق مع تحكم كامل في الوقفة والإيماءات', result:'عرض مسجّل ومُقيّم من 10', phase:1},
+  {week:5, title:'تحدّث أمام مجموعة صغيرة', assignment:'تحدّث أمام ثلاثة أشخاص على الأقل لمدة ثلاث دقائق', result:'حضور ثلاثة مستمعين على الأقل', phase:2},
+  {week:6, title:'قدّم عرضًا منظمًا', assignment:'قدّم عرضًا مدته خمس دقائق بشرائح وهيكل واضح', result:'عرض مسجّل بشرائح وبنية', phase:2},
+  {week:7, title:'أقنع شخصًا بحجج منطقية', assignment:'حاول إقناع شخص بفكرة باستخدام ثلاث حجج مدعومة', result:'موافقة الشخص أو تفسير واضح للرفض', phase:2},
+  {week:8, title:'ابنِ علاقة مهنية جديدة', assignment:'تعرّف على شخص مهني جديد وتابعه برسالة متابعة', result:'جهة اتصال جديدة + متابعة', phase:2},
+  {week:9, title:'تعامل مع موقف عاطفي باحترافية', assignment:'واجه موقفًا انفعاليًا وطبّق تنظيم الانفعال خطوة بخطوة', result:'تحليل مكتوب للموقف والاستجابة', phase:3},
+  {week:10, title:'قُد نقاشًا قصيرًا للفريق', assignment:'قُد اجتماعًا مدته عشر دقائق بجدول أعمال مكتوب', result:'محضر اجتماع بثلاث قرارات', phase:3},
+  {week:11, title:'حلّ خلافًا باحترافية', assignment:'توسّط في خلاف بين طرفين ووصل إلى حل مقبول', result:'اتفاق مكتوب من ثلاث نقاط', phase:3},
+  {week:12, title:'قدّم تغذية راجعة بنّاءة', assignment:'قدّم جلسة تغذية راجعة كاملة لزميل بمنهجية الموقف والسلوك والأثر', result:'ملاحظات الزميل وتقييمه', phase:3},
+  {week:13, title:'التحدي الختامي: جلسة تدريبية احترافية', assignment:'قدّم جلسة تدريبية كاملة مدتها 15-20 دقيقة', result:'جلسة مسجّلة ومُقيّمة نهائيًا', phase:3}
+];
+
+/* ---------- Default courses ---------- */
+const DEFAULT_COURSES = [
+  {id:'c1', title:'Communication Strategies', skill:'مهارات التواصل', phase:1, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c2', title:'The Art of Speaking and Persuasion', skill:'التحدث والإقناع', phase:2, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c3', title:'Emotional Intelligence in Leadership', skill:'الذكاء العاطفي', phase:3, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c4', title:'Advanced Presentation Skills', skill:'مهارات العرض', phase:2, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c5', title:'Standout at Work: Influence, Visibility & Leadership Presence', skill:'الحضور القيادي', phase:2, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c6', title:'Your Guide to Build a Strong Personal Brand', skill:'العلامة الشخصية', phase:3, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c7', title:'Think Again With Mourad Makram', skill:'طريقة التفكير', phase:1, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c8', title:'Principles of Management & Leadership', skill:'القيادة', phase:3, status:'notstarted', url:'', notes:'', rating:0},
+  {id:'c9', title:'Business English Learning Program', skill:'الإنجليزية المهنية', phase:1, status:'notstarted', url:'', notes:'', rating:0}
+];
+
+/* ---------- Default skills ---------- */
+const DEFAULT_SKILLS = [
+  {id:'s1',  name:'الثقة بالنفس',        initial:4, current:4, target:9},
+  {id:'s2',  name:'مهارات التواصل',      initial:4, current:4, target:9},
+  {id:'s3',  name:'التحدث أمام الجمهور', initial:3, current:3, target:9},
+  {id:'s4',  name:'لغة الجسد',           initial:4, current:4, target:9},
+  {id:'s5',  name:'الإنصات الفعّال',     initial:5, current:5, target:9},
+  {id:'s6',  name:'الإقناع',             initial:3, current:3, target:9},
+  {id:'s7',  name:'الذكاء العاطفي',      initial:4, current:4, target:9},
+  {id:'s8',  name:'القيادة',             initial:3, current:3, target:9},
+  {id:'s9',  name:'التفاوض',             initial:3, current:3, target:9},
+  {id:'s10', name:'الإنجليزية المهنية',  initial:4, current:4, target:9}
+];
+
+/* ---------- Achievements ---------- */
+const ACHIEVEMENTS = [
+  {id:'first_step',   name:'الخطوة الأولى',        desc:'أكملت اليوم الأول بالكامل',           icon:'fa-shoe-prints',
+   check:()=>dayDone(1)===4, prog:()=>[dayDone(1),4]},
+  {id:'consistency',  name:'المداومة',              desc:'7 أيام نشطة من التعلّم',              icon:'fa-calendar-check',
+   check:()=>activeDays()>=7, prog:()=>[Math.min(activeDays(),7),7]},
+  {id:'streak14',     name:'المثابر',               desc:'سلسلة 14 يومًا متتاليًا',             icon:'fa-fire',
+   check:()=>computeStreak()>=14, prog:()=>[Math.min(computeStreak(),14),14]},
+  {id:'comm_master',  name:'سيّد التواصل',          desc:'إكمال المرحلة الأولى بالكامل',        icon:'fa-comments',
+   check:()=>phasePct(1)===100, prog:()=>[phasePct(1),100]},
+  {id:'speaker',      name:'المتحدث الواثق',        desc:'إكمال 5 تمارين تحدث إنجليزية',        icon:'fa-microphone',
+   check:()=>engDone()>=5, prog:()=>[Math.min(engDone(),5),5]},
+  {id:'influencer',   name:'المؤثّر',               desc:'إكمال المرحلة الثانية بالكامل',       icon:'fa-bolt',
+   check:()=>phasePct(2)===100, prog:()=>[phasePct(2),100]},
+  {id:'leader',       name:'قائد في الميدان',       desc:'إكمال المرحلة الثالثة بالكامل',       icon:'fa-chess-king',
+   check:()=>phasePct(3)===100, prog:()=>[phasePct(3),100]},
+  {id:'eng_progress', name:'تقدّم الإنجليزية',      desc:'إكمال 30 تمرين إنجليزي',              icon:'fa-language',
+   check:()=>engDone()>=30, prog:()=>[Math.min(engDone(),30),30]},
+  {id:'journalist',   name:'المدوّن',               desc:'10 مذكرات يومية مكتوبة',              icon:'fa-feather',
+   check:()=>Object.keys(state.journal).length>=10, prog:()=>[Math.min(Object.keys(state.journal).length,10),10]},
+  {id:'graduate',     name:'خرّيج 90 يومًا',        desc:'إكمال البرنامج بالكامل',              icon:'fa-graduation-cap',
+   check:()=>totalDone()===360, prog:()=>[totalDone(),360]}
+];
+
+/* ============================================================
+   2. HELPERS
+   ============================================================ */
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function load(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ return fallback; }
+}
+function save(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.warn('Storage error', e); }
+}
+function isoToday(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function todayDate(){ const d = new Date(); d.setHours(0,0,0,0); return d; }
+function startDateObj(){
+  const d = new Date((state.settings.startDate || isoToday())+'T00:00:00');
+  d.setHours(0,0,0,0);
+  return d;
+}
+function dayDate(day){
+  const d = new Date(startDateObj());
+  d.setDate(d.getDate() + (day-1));
+  return d;
+}
+function dayDateStr(day){
+  return dayDate(day).toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function weekOf(day){
+  const w = WEEKS.find(x=>day>=x.from && day<=x.to);
+  return w ? w.n : 13;
+}
+function weekInfo(n){ return WEEKS.find(w=>w.n===n) || WEEKS[0]; }
+function phaseOf(day){ return day<=30 ? 1 : (day<=60 ? 2 : 3); }
+function phaseInfo(id){ return PHASES.find(p=>p.id===id); }
+
+function toast(msg, icon){
+  const box = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<i class="fa-solid '+(icon||'fa-circle-check')+'"></i><span>'+esc(msg)+'</span>';
+  box.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(10px)'; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+/* ============================================================
+   3. STATE
+   ============================================================ */
+let state = {
+  settings: load(LS.settings, {name:'مينا', startDate: isoToday(), dailyGoal:60, theme:'dark'}),
+  progress: load(LS.progress, {}),
+  courses: load(LS.courses, null),
+  english: load(LS.english, {}),
+  challenges: load(LS.challenges, {}),
+  journal: load(LS.journal, {}),
+  skills: load(LS.skills, null),
+  achievements: load(LS.achievements, []),
+  points: load(LS.points, 0)
+};
+if(!state.courses || !state.courses.length) state.courses = JSON.parse(JSON.stringify(DEFAULT_COURSES));
+if(!state.skills || !state.skills.length) state.skills = JSON.parse(JSON.stringify(DEFAULT_SKILLS));
+
+/* Build program */
+const PROGRAM = DAYS.map((d,i)=>{
+  const day = i+1;
+  const week = weekOf(day);
+  const words = [];
+  for(let k=0;k<5;k++) words.push(WORD_POOL[((day-1)*5+k) % WORD_POOL.length]);
+  return {
+    day, week, phase: phaseOf(day),
+    sk: d.sk, ob: d.ob, task: d.task,
+    course: WEEK_COURSES[week],
+    engTopic: ENG_TOPICS[i] || 'Professional English',
+    words: words
+  };
+});
+
+/* ============================================================
+   4. COMPUTATIONS
+   ============================================================ */
+function getProg(day){
+  if(!state.progress[day]) state.progress[day] = {t:{}, n:{}};
+  const p = state.progress[day];
+  if(!p.t) p.t = {};
+  if(!p.n) p.n = {};
+  return p;
+}
+function dayDone(day){
+  const p = state.progress[day];
+  if(!p || !p.t) return 0;
+  return ACTIVITIES.filter(a=>p.t[a.key]).length;
+}
+function totalDone(){
+  let s = 0;
+  for(let d=1; d<=90; d++) s += dayDone(d);
+  return s;
+}
+function overallPct(){ return Math.round((totalDone()/(90*4))*100); }
+function phasePct(ph){
+  const days = PROGRAM.filter(d=>d.phase===ph);
+  let done = 0;
+  days.forEach(d=> done += dayDone(d.day));
+  return Math.round((done/(days.length*4))*100);
+}
+function activeDays(){
+  let c = 0;
+  for(let d=1; d<=90; d++) if(dayDone(d)>0) c++;
+  return c;
+}
+function engDone(){
+  let c = 0;
+  for(let d=1; d<=90; d++){ const p = state.progress[d]; if(p && p.t && p.t.english) c++; }
+  return c;
+}
+function computeStreak(){
+  let streak = 0;
+  let d = currentDay();
+  if(dayDone(d)===0) d = d-1;
+  while(d>=1 && dayDone(d)>0){ streak++; d--; }
+  return streak;
+}
+function computePoints(){
+  let pts = 0;
+  for(let d=1; d<=90; d++){
+    const p = state.progress[d];
+    if(!p || !p.t) continue;
+    ACTIVITIES.forEach(a=>{ if(p.t[a.key]) pts += a.points; });
+  }
+  Object.keys(state.challenges).forEach(k=>{ const c = state.challenges[k]; if(c && c.done) pts += 30; });
+  return pts;
+}
+function currentDay(){
+  const diff = Math.round((todayDate() - startDateObj())/86400000);
+  return Math.min(90, Math.max(1, diff+1));
+}
+function dayStatus(day){
+  const done = dayDone(day);
+  const dd = dayDate(day).getTime();
+  const td = todayDate().getTime();
+  if(done===4) return 'completed';
+  if(dd===td) return done>0 ? 'partial' : 'today';
+  if(dd<td) return done>0 ? 'partial' : 'missed';
+  return done>0 ? 'partial' : 'future';
+}
+
+/* ============================================================
+   5. PERSISTENCE HELPERS
+   ============================================================ */
+function persistProgress(){
+  save(LS.progress, state.progress);
+  const eng = {};
+  for(let d=1; d<=90; d++){
+    const p = state.progress[d];
+    if(p && p.t && p.t.english) eng[d] = {done:true, notes:(p.n && p.n.english) || ''};
+  }
+  state.english = eng;
+  save(LS.english, eng);
+}
+function recalc(silent){
+  state.points = computePoints();
+  save(LS.points, state.points);
+  checkAchievements(silent);
+  updateTopbar();
+}
+function checkAchievements(silent){
+  let changed = false;
+  ACHIEVEMENTS.forEach(a=>{
+    let ok = false;
+    try{ ok = a.check(); }catch(e){ ok = false; }
+    if(ok && !state.achievements.includes(a.id)){
+      state.achievements.push(a.id);
+      changed = true;
+      if(!silent) toast('إنجاز جديد: '+a.name, 'fa-medal');
+    }
+  });
+  if(changed) save(LS.achievements, state.achievements);
+}
+function updateTopbar(){
+  const p = document.getElementById('topPoints');
+  const s = document.getElementById('topStreak');
+  if(p) p.innerHTML = '<i class="fa-solid fa-star"></i> ' + (state.points||0) + ' نقطة';
+  if(s) s.innerHTML = '<i class="fa-solid fa-fire"></i> ' + computeStreak() + ' يوم';
+}
+
+/* ============================================================
+   6. NAVIGATION
+   ============================================================ */
+const RENDERERS = {};
+let lastView = 'dashboard';
+
+function showView(name){
+  if(name !== 'daily') clearAllTimers();
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el = document.getElementById('view-'+name);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===name));
+  document.getElementById('app').classList.remove('nav-open');
+
+  const titles = {
+    dashboard:'لوحة التحكم', daily:'التعلّم اليومي', calendar:'التقويم',
+    courses:'مكتبة الكورسات', english:'تطوير الإنجليزية', challenges:'التحديات الأسبوعية',
+    analytics:'التحليلات', journal:'المذكرة اليومية', achievements:'الإنجازات', settings:'الإعدادات'
+  };
+  document.getElementById('topbarTitle').textContent = titles[name] || '';
+  lastView = name;
+
+  if(RENDERERS[name]) RENDERERS[name]();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============================================================
+   7. DASHBOARD
+   ============================================================ */
+RENDERERS.dashboard = function(){
+  const day = currentDay();
+  const d = PROGRAM[day-1];
+  const ph = phaseInfo(d.phase);
+  const pct = overallPct();
+  const done = totalDone();
+  const remaining = 360 - done;
+  const streak = computeStreak();
+
+  /* Welcome */
+  document.getElementById('dashWelcome').innerHTML = `
+    <div class="card welcome">
+      <div>
+        <h2>مرحباً ${esc(state.settings.name)}، مستعد لتطوير نفسك اليوم؟</h2>
+        <p>Personal Development — 90 Days · ${esc(dayDateStr(day))}</p>
+        <div class="row" style="margin-top:14px">
+          <span class="pill green"><i class="fa-solid fa-calendar-day"></i> اليوم ${day} من 90</span>
+          <span class="pill blue"><i class="fa-solid fa-layer-group"></i> ${esc(ph.name)}</span>
+          <span class="pill"><i class="fa-solid fa-flag"></i> الأسبوع ${d.week}</span>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="startTodayBtn"><i class="fa-solid fa-play"></i> ابدأ تعلّم اليوم</button>
+        <button class="btn ghost" id="continueBtn"><i class="fa-solid fa-forward"></i> أكمل التعلّم</button>
+      </div>
+    </div>`;
+
+  /* Stats */
+  document.getElementById('dashStats').innerHTML = `
+    <div class="card stat">
+      <div class="stat-icon g"><i class="fa-solid fa-chart-simple"></i></div>
+      <div><div class="stat-val">${pct}%</div><div class="stat-lbl">التقدّم الكلي</div></div>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon b"><i class="fa-solid fa-circle-check"></i></div>
+      <div><div class="stat-val">${done}</div><div class="stat-lbl">مهام مكتملة</div></div>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon o"><i class="fa-solid fa-hourglass-half"></i></div>
+      <div><div class="stat-val">${remaining}</div><div class="stat-lbl">مهام متبقية</div></div>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon r"><i class="fa-solid fa-fire"></i></div>
+      <div><div class="stat-val">${streak}</div><div class="stat-lbl">سلسلة الأيام النشطة</div></div>
+    </div>`;
+
+  /* Overall progress */
+  document.getElementById('dashProgressCard').innerHTML = `
+    <div class="flex-between" style="margin-bottom:12px">
+      <h3 style="margin:0"><i class="fa-solid fa-gauge-high"></i> التقدّم الكلي في البرنامج</h3>
+      <span class="pill green">${pct}% مكتمل</span>
+    </div>
+    <div class="bar" style="height:16px"><div style="width:${pct}%"></div></div>
+    <div class="flex-between" style="margin-top:12px">
+      <span class="muted small">${done} من 360 مهمة مكتملة</span>
+      <span class="muted small">${activeDays()} يوم نشط · ${state.points} نقطة</span>
+    </div>`;
+
+  /* Phases */
+  document.getElementById('dashPhases').innerHTML = PHASES.map(p=>{
+    const pp = phasePct(p.id);
+    let status = 'قادمة', cls = '', badge = 'pill';
+    if(pp === 100){ status = 'مكتملة'; cls = 'done'; badge = 'pill green'; }
+    else if(day >= p.from && day <= p.to){ status = 'قيد التنفيذ'; cls = 'active'; badge = 'pill blue'; }
+    else if(day > p.to){ status = 'غير مكتملة'; cls = 'active'; badge = 'pill gold'; }
+    return `
+      <div class="card phase-card ${cls}">
+        <div class="flex-between" style="margin-bottom:8px">
+          <h4 style="font-size:.95rem;font-weight:800">${esc(p.name)}</h4>
+          <span class="${badge}">${status}</span>
+        </div>
+        <p class="muted small en">${esc(p.en)}</p>
+        <p class="muted small" style="margin:6px 0">الأيام ${p.from} – ${p.to}</p>
+        <div class="skill-tags">${p.skills.map(s=>'<span>'+esc(s)+'</span>').join('')}</div>
+        <div class="bar" style="margin-top:10px"><div style="width:${pp}%"></div></div>
+        <div class="muted small" style="margin-top:6px">${pp}% مكتمل</div>
+      </div>`;
+  }).join('');
+
+  /* Today's plan */
+  const tp = getProg(day);
+  document.getElementById('dashToday').innerHTML = `
+    <div style="margin-bottom:12px">
+      <div class="pill green" style="margin-bottom:8px">${esc(d.sk)}</div>
+      <p style="font-size:.9rem"><b>هدف اليوم:</b> ${esc(d.ob)}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${ACTIVITIES.map(a=>{
+        const ok = !!tp.t[a.key];
+        return `<div class="flex-between" style="padding:9px 12px;border-radius:11px;background:var(--card-2);border:1px solid var(--border)">
+          <span style="font-size:.85rem;${ok?'color:var(--primary);font-weight:700':''}">
+            <i class="fa-solid ${ok?'fa-circle-check':'fa-circle'}" style="color:${ok?'var(--primary)':'var(--muted)'}"></i>
+            ${esc(a.title)}
+          </span>
+          <span class="muted small">${a.duration} د</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  /* Chart */
+  renderDashChart();
+
+  /* Buttons */
+  document.getElementById('startTodayBtn').onclick = ()=>{ showView('daily'); renderDaily(currentDay()); };
+  document.getElementById('continueBtn').onclick = continueLearning;
+};
+
+function continueLearning(){
+  const day = currentDay();
+  showView('daily');
+  renderDaily(day);
+  const p = getProg(day);
+  const next = ACTIVITIES.find(a=>!p.t[a.key]);
+  if(next){
+    setTimeout(()=>{
+      const el = document.querySelector('[data-actcard="'+next.key+'"]');
+      if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.classList.add('pulse'); setTimeout(()=>el.classList.remove('pulse'), 3000); }
+    }, 180);
+  }
+}
+
+let dashChartInst = null;
+function renderDashChart(){
+  const ctx = document.getElementById('dashChart');
+  if(!ctx || typeof Chart === 'undefined') return;
+  const cur = currentDay();
+  const from = Math.max(1, cur-3);
+  const to = Math.min(90, from+6);
+  const labels = [], comp = [], pend = [], pcts = [];
+  for(let d=from; d<=to; d++){
+    const dn = dayDone(d);
+    labels.push('يوم '+d);
+    comp.push(dn);
+    pend.push(4-dn);
+    pcts.push(Math.round(dn/4*100));
+  }
+  if(dashChartInst) dashChartInst.destroy();
+  dashChartInst = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'مكتمل', data:comp, backgroundColor:'rgba(16,185,129,.75)', borderRadius:7, order:2},
+        {label:'متبقٍ', data:pend, backgroundColor:'rgba(148,163,184,.28)', borderRadius:7, order:2},
+        {label:'نسبة الإنجاز %', data:pcts, type:'line', yAxisID:'y1', borderColor:'#3B82F6',
+         backgroundColor:'#3B82F6', tension:.35, pointRadius:4, borderWidth:2, order:1}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{labels:{boxWidth:12, font:{family:'Cairo', size:11}}}},
+      scales:{
+        y:{beginAtZero:true, max:4, ticks:{stepSize:1}, grid:{color:'rgba(148,163,184,.12)'}},
+        y1:{position:'left', beginAtZero:true, max:100, grid:{display:false}, ticks:{display:false}},
+        x:{grid:{display:false}, ticks:{font:{family:'Cairo', size:10}}}
+      }
+    }
+  });
+}
+
+/* ============================================================
+   8. DAILY LEARNING
+   ============================================================ */
+let currentViewDay = 1;
+const timers = {};
+
+function clearAllTimers(){
+  Object.keys(timers).forEach(k=>{ if(timers[k] && timers[k].iv) clearInterval(timers[k].iv); delete timers[k]; });
+}
+
+function initTimers(){
+  clearAllTimers();
+  ACTIVITIES.forEach(a=>{ timers[a.key] = {remaining: a.duration*60, running:false, iv:null}; });
+  ACTIVITIES.forEach(a=> updateTimerUI(a.key));
+}
+
+function updateTimerUI(key){
+  const el = document.querySelector('[data-timer="'+key+'"]');
+  const t = timers[key];
+  if(!el || !t) return;
+  const m = Math.floor(t.remaining/60), s = t.remaining%60;
+  el.querySelector('.time').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  el.classList.toggle('running', t.running);
+}
+
+function timerAction(key, action){
+  const t = timers[key];
+  if(!t) return;
+  if(action === 'start'){
+    if(t.running || t.remaining<=0) return;
+    t.running = true;
+    t.iv = setInterval(()=>{
+      t.remaining--;
+      if(t.remaining <= 0){
+        t.remaining = 0; t.running = false;
+        clearInterval(t.iv); t.iv = null;
+        toast('انتهى وقت النشاط — أحسنت!', 'fa-hourglass-end');
+      }
+      updateTimerUI(key);
+    }, 1000);
+  } else if(action === 'pause'){
+    t.running = false;
+    if(t.iv){ clearInterval(t.iv); t.iv = null; }
+  } else if(action === 'reset'){
+    t.running = false;
+    if(t.iv){ clearInterval(t.iv); t.iv = null; }
+    const a = ACTIVITIES.find(x=>x.key===key);
+    t.remaining = (a ? a.duration : 10)*60;
+  }
+  updateTimerUI(key);
+}
+
+function activityInstruction(a, d){
+  switch(a.key){
+    case 'course':
+      return 'شاهد الجزء المرتبط بمهارة اليوم من الكورس المقترح: <span class="en">'+esc(d.course)+'</span> — ركّز على مهارة "'+esc(d.sk)+'".';
+    case 'english':
+      return 'تحدّث بصوت مرتفع عن: <span class="en">'+esc(d.engTopic)+'</span> — واستخدم المفردات: <span class="en">'+
+             esc(d.words.map(w=>w.w).join(' · '))+'</span>';
+    case 'practical':
+      return esc(d.task);
+    case 'reflection':
+      return 'أجب على: ماذا تعلّمت اليوم؟ ماذا طبّقت؟ ما الذي ستحسّنه غدًا؟';
+    default:
+      return '';
+  }
+}
+
+function renderDaily(day){
+  day = Math.min(90, Math.max(1, day||currentDay()));
+  currentViewDay = day;
+  const d = PROGRAM[day-1];
+  const p = getProg(day);
+  const dn = dayDone(day);
+  const pctDay = Math.round(dn/4*100);
+  const ph = phaseInfo(d.phase);
+
+  document.getElementById('dailyHero').innerHTML = `
+    <div class="card" style="background:linear-gradient(135deg,rgba(16,185,129,.10),transparent 70%);border-color:rgba(16,185,129,.25)">
+      <div class="row" style="margin-bottom:12px">
+        <span class="pill green"><i class="fa-solid fa-calendar-day"></i> اليوم ${day} / 90</span>
+        <span class="pill"><i class="fa-solid fa-flag"></i> الأسبوع ${d.week} · ${esc(weekInfo(d.week).title)}</span>
+        <span class="pill blue"><i class="fa-solid fa-layer-group"></i> ${esc(ph.name)}</span>
+        <span class="pill"><i class="fa-solid fa-clock"></i> ${esc(dayDateStr(day))}</span>
+      </div>
+      <h3 style="font-size:1.15rem;margin-bottom:6px"><i class="fa-solid fa-bullseye" style="color:var(--primary)"></i> ${esc(d.sk)}</h3>
+      <p style="font-size:.92rem;margin-bottom:14px"><b>هدف اليوم:</b> ${esc(d.ob)}</p>
+      <div class="bar"><div id="dayBar" style="width:${pctDay}%"></div></div>
+      <div class="flex-between" style="margin-top:8px">
+        <span class="muted small" id="dayProgressText">إنجاز اليوم: ${dn} من 4 مهام (${pctDay}%)</span>
+        <span class="muted small">60 دقيقة تعلّم</span>
+      </div>
+    </div>`;
+
+  document.getElementById('activities').innerHTML = ACTIVITIES.map(a=>{
+    const ok = !!p.t[a.key];
+    return `
+      <div class="card act-card ${ok?'done':''}" data-actcard="${a.key}">
+        <div class="act-head">
+          <div class="act-icon"><i class="fa-solid ${a.icon}"></i></div>
+          <div style="flex:1">
+            <h4>${esc(a.title)}</h4>
+            <span class="dur"><i class="fa-regular fa-clock"></i> ${a.duration} دقيقة · ${a.points} نقطة</span>
+          </div>
+          <input type="checkbox" data-task="${a.key}" ${ok?'checked':''} title="إكمال المهمة">
+        </div>
+        <p class="act-instr">${activityInstruction(a, d)}</p>
+        <div class="timer" data-timer="${a.key}">
+          <span class="time">00:00</span>
+          <button data-t="start" data-key="${a.key}"><i class="fa-solid fa-play"></i> بدء</button>
+          <button data-t="pause" data-key="${a.key}"><i class="fa-solid fa-pause"></i> إيقاف</button>
+          <button data-t="reset" data-key="${a.key}"><i class="fa-solid fa-rotate-left"></i> إعادة</button>
+        </div>
+        <textarea data-note="${a.key}" placeholder="ملاحظاتك على هذا النشاط...">${esc(p.n[a.key]||'')}</textarea>
+      </div>`;
+  }).join('');
+
+  /* Wire up events */
+  const container = document.getElementById('activities');
+
+  container.querySelectorAll('input[data-task]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      setTask(day, cb.dataset.task, cb.checked);
+      const card = cb.closest('.act-card');
+      card.classList.toggle('done', cb.checked);
+      refreshDayHeader(day);
+    });
+  });
+
+  container.querySelectorAll('textarea[data-note]').forEach(ta=>{
+    ta.addEventListener('input', ()=>{
+      const pp = getProg(day);
+      pp.n[ta.dataset.note] = ta.value;
+      persistProgress();
+    });
+  });
+
+  container.querySelectorAll('.timer button').forEach(btn=>{
+    btn.addEventListener('click', ()=> timerAction(btn.dataset.key, btn.dataset.t));
+  });
+
+  initTimers();
+
+  document.getElementById('prevDay').disabled = (day === 1);
+  document.getElementById('nextDay').disabled = (day === 90);
+  document.getElementById('prevDay').onclick = ()=>{ renderDaily(day-1); window.scrollTo({top:0,behavior:'smooth'}); };
+  document.getElementById('nextDay').onclick = ()=>{ renderDaily(day+1); window.scrollTo({top:0,behavior:'smooth'}); };
+  document.getElementById('todayDay').onclick = ()=>{ renderDaily(currentDay()); window.scrollTo({top:0,behavior:'smooth'}); };
+}
+
+function refreshDayHeader(day){
+  const dn = dayDone(day);
+  const pct = Math.round(dn/4*100);
+  const bar = document.getElementById('dayBar');
+  const txt = document.getElementById('dayProgressText');
+  if(bar) bar.style.width = pct+'%';
+  if(txt) txt.textContent = 'إنجاز اليوم: '+dn+' من 4 مهام ('+pct+'%)';
+}
+
+function setTask(day, key, done){
+  const p = getProg(day);
+  p.t[key] = !!done;
+  persistProgress();
+  recalc();
+}
+
+RENDERERS.daily = function(){ renderDaily(currentViewDay || currentDay()); };
+
+/* ============================================================
+   9. CALENDAR
+   ============================================================ */
+RENDERERS.calendar = function(){
+  const grid = document.getElementById('calGrid');
+  const cur = currentDay();
+  let html = '';
+  for(let d=1; d<=90; d++){
+    const st = dayStatus(d);
+    let cls = '', lbl = '';
+    if(st === 'completed'){ cls = 'completed'; lbl = 'مكتمل'; }
+    else if(st === 'partial'){ cls = 'partial'; lbl = dayDone(d)+'/4'; }
+    else if(st === 'missed'){ cls = 'missed'; lbl = 'فائت'; }
+    else if(st === 'today'){ cls = 'future'; lbl = 'اليوم'; }
+    else { cls = 'future'; lbl = 'قادم'; }
+    if(d === cur) cls += ' today';
+    html += `<div class="cal-cell ${cls}" data-day="${d}" title="اليوم ${d} — ${esc(dayDateStr(d))}">
+      <span>${d}</span><span class="lbl">${lbl}</span></div>`;
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.cal-cell').forEach(c=>{
+    c.onclick = ()=>{ showView('daily'); renderDaily(parseInt(c.dataset.day,10)); };
+  });
+};
+
+/* ============================================================
+   10. COURSES
+   ============================================================ */
+RENDERERS.courses = function(){
+  const grid = document.getElementById('coursesGrid');
+  grid.innerHTML = state.courses.map(c=>{
+    const stMap = {notstarted:['لم يبدأ','status-notstarted'], progress:['قيد التقدّم','status-progress'], completed:['مكتمل','status-completed']};
+    const st = stMap[c.status] || stMap.notstarted;
+    return `
+      <div class="card course-card" data-cid="${c.id}">
+        <div class="c-head">
+          <h4 class="en">${esc(c.title)}</h4>
+          <span class="status-badge ${st[1]}">${st[0]}</span>
+        </div>
+        <div class="row">
+          <span class="pill">${esc(c.skill||'—')}</span>
+          <span class="pill blue">المرحلة ${c.phase||1}</span>
+        </div>
+        <div>
+          <label class="fl">حالة الكورس</label>
+          <select data-f="status">
+            <option value="notstarted" ${c.status==='notstarted'?'selected':''}>لم يبدأ</option>
+            <option value="progress" ${c.status==='progress'?'selected':''}>قيد التقدّم</option>
+            <option value="completed" ${c.status==='completed'?'selected':''}>مكتمل</option>
+          </select>
+        </div>
+        <div>
+          <label class="fl">رابط الكورس (URL)</label>
+          <input type="url" data-f="url" value="${esc(c.url||'')}" placeholder="https://...">
+        </div>
+        <div>
+          <label class="fl">ملاحظات الكورس</label>
+          <textarea data-f="notes" placeholder="أهم ما تعلّمته...">${esc(c.notes||'')}</textarea>
+        </div>
+        <div>
+          <label class="fl">تقييمي الشخصي (1-10)</label>
+          <input type="number" data-f="rating" min="0" max="10" value="${c.rating||0}">
+        </div>
+        <div class="row">
+          ${c.url ? '<a class="btn sm secondary" href="'+esc(c.url)+'" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square"></i> فتح الكورس</a>' : ''}
+          <button class="btn sm danger" data-del="${c.id}"><i class="fa-solid fa-trash"></i> حذف</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('[data-cid]').forEach(card=>{
+    const id = card.dataset.cid;
+    card.querySelectorAll('[data-f]').forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        const c = state.courses.find(x=>x.id===id);
+        if(!c) return;
+        const f = inp.dataset.f;
+        c[f] = (f==='rating') ? (parseInt(inp.value,10)||0) : inp.value;
+        save(LS.courses, state.courses);
+        toast('تم حفظ بيانات الكورس', 'fa-floppy-disk');
+        RENDERERS.courses();
+      });
+    });
+    const del = card.querySelector('[data-del]');
+    if(del) del.addEventListener('click', ()=>{
+      if(!confirm('هل تريد حذف هذا الكورس؟')) return;
+      state.courses = state.courses.filter(x=>x.id!==id);
+      save(LS.courses, state.courses);
+      RENDERERS.courses();
+      toast('تم حذف الكورس', 'fa-trash');
+    });
+  });
+};
+
+document.getElementById('addCourseBtn').addEventListener('click', ()=>{
+  const f = document.getElementById('newCourseForm');
+  if(f.style.display === 'block'){ f.style.display = 'none'; return; }
+  f.style.display = 'block';
+  f.innerHTML = `
+    <h3><i class="fa-solid fa-plus"></i> إضافة كورس جديد</h3>
+    <div class="grid grid-2" style="margin-bottom:0">
+      <div><label class="fl">عنوان الكورس (English)</label><input type="text" id="ncTitle" placeholder="Course Title"></div>
+      <div><label class="fl">المهارة المرتبطة</label><input type="text" id="ncSkill" placeholder="مثال: القيادة"></div>
+      <div><label class="fl">المرحلة</label>
+        <select id="ncPhase"><option value="1">المرحلة 1</option><option value="2">المرحلة 2</option><option value="3">المرحلة 3</option></select>
+      </div>
+      <div><label class="fl">الرابط</label><input type="url" id="ncUrl" placeholder="https://..."></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="ncSave"><i class="fa-solid fa-check"></i> إضافة</button>
+      <button class="btn ghost" id="ncCancel">إلغاء</button>
+    </div>`;
+  document.getElementById('ncCancel').onclick = ()=>{ f.style.display='none'; };
+  document.getElementById('ncSave').onclick = ()=>{
+    const title = document.getElementById('ncTitle').value.trim();
+    if(!title){ toast('أدخل عنوان الكورس', 'fa-triangle-exclamation'); return; }
+    state.courses.push({
+      id:'c'+Date.now(),
+      title,
+      skill: document.getElementById('ncSkill').value.trim() || 'عام',
+      phase: parseInt(document.getElementById('ncPhase').value,10),
+      status:'notstarted',
+      url: document.getElementById('ncUrl').value.trim(),
+      notes:'', rating:0
+    });
+    save(LS.courses, state.courses);
+    f.style.display = 'none';
+    RENDERERS.courses();
+    toast('تمت إضافة الكورس', 'fa-circle-check');
+  };
+});
+
+/* ============================================================
+   11. ENGLISH SECTION
+   ============================================================ */
+let engSelectedDay = null;
+
+RENDERERS.english = function(){
+  const sel = document.getElementById('engDaySelect');
+  if(!sel.options.length){
+    let opts = '';
+    for(let d=1; d<=90; d++){
+      const lvl = d<=30 ? 1 : (d<=60 ? 2 : 3);
+      opts += `<option value="${d}">اليوم ${d} — Level ${lvl} — ${esc(PROGRAM[d-1].engTopic)}</option>`;
+    }
+    sel.innerHTML = opts;
+  }
+  if(!engSelectedDay) engSelectedDay = currentDay();
+  sel.value = engSelectedDay;
+  sel.onchange = ()=>{ engSelectedDay = parseInt(sel.value,10); renderEngDay(); };
+
+  const levels = [
+    {n:1, name:'Level 1 — Basic Professional Communication', from:1, to:30},
+    {n:2, name:'Level 2 — Presentations and Persuasion', from:31, to:60},
+    {n:3, name:'Level 3 — Leadership and Business Communication', from:61, to:90}
+  ];
+  document.getElementById('engLevels').innerHTML = levels.map(l=>{
+    let done = 0, total = l.to - l.from + 1;
+    for(let d=l.from; d<=l.to; d++){ const p = state.progress[d]; if(p && p.t && p.t.english) done++; }
+    const pct = Math.round(done/total*100);
+    return `<div class="card">
+      <h4 class="en" style="font-size:.85rem;margin-bottom:8px">${esc(l.name)}</h4>
+      <div class="bar blue"><div style="width:${pct}%"></div></div>
+      <div class="muted small" style="margin-top:8px">${done} من ${total} تمرين (${pct}%)</div>
+    </div>`;
+  }).join('');
+
+  renderEngDay();
+};
+
+function renderEngDay(){
+  const day = engSelectedDay || currentDay();
+  const d = PROGRAM[day-1];
+  const p = getProg(day);
+  const lvl = day<=30 ? 1 : (day<=60 ? 2 : 3);
+  const levelNames = {1:'Level 1 — Basic Professional Communication', 2:'Level 2 — Presentations and Persuasion', 3:'Level 3 — Leadership and Business Communication'};
+
+  let challenge = '';
+  if(lvl === 1) challenge = 'سجّل 60 ثانية تتحدث فيها عن: '+d.engTopic+' مستخدمًا ثلاث كلمات من مفردات اليوم.';
+  else if(lvl === 2) challenge = 'ألقِ حديثًا مدته دقيقتان عن: '+d.engTopic+' مع مقدمة وجسم وخاتمة واضحة.';
+  else challenge = 'قدّم مناقشة احترافية مدتها دقيقتان حول: '+d.engTopic+' مع الرد على سؤال متوقّع من المستمع.';
+
+  document.getElementById('engDayCard').innerHTML = `
+    <div class="card">
+      <div class="flex-between" style="margin-bottom:12px">
+        <div class="row">
+          <span class="pill blue">اليوم ${day}</span>
+          <span class="pill">${esc(levelNames[lvl])}</span>
+        </div>
+        <label style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:.85rem;cursor:pointer">
+          <input type="checkbox" id="engDone" ${p.t.english?'checked':''}> إنجاز تمرين اليوم
+        </label>
+      </div>
+      <h3 class="en" style="font-size:1.1rem"><i class="fa-solid fa-microphone-lines"></i> Speaking Topic: ${esc(d.engTopic)}</h3>
+      <div class="divider"></div>
+      <h4 style="font-size:.9rem;margin-bottom:6px"><i class="fa-solid fa-book" style="color:var(--primary)"></i> Five Professional Words</h4>
+      <div class="word-grid">
+        ${d.words.map(w=>`<div class="word"><b>${esc(w.w)}</b><span>${esc(w.m)}</span></div>`).join('')}
+      </div>
+      <div class="divider"></div>
+      <h4 style="font-size:.9rem;margin-bottom:6px"><i class="fa-solid fa-bullseye" style="color:var(--warning)"></i> Speaking Challenge</h4>
+      <p class="muted" style="font-size:.88rem;margin-bottom:12px">${esc(challenge)}</p>
+      <label class="fl">ملاحظاتك</label>
+      <textarea id="engNotes" placeholder="المفردات التي استخدمتها، الصعوبات، ملاحظات النطق...">${esc(p.n.english||'')}</textarea>
+    </div>`;
+
+  document.getElementById('engDone').addEventListener('change', (e)=>{
+    setTask(day, 'english', e.target.checked);
+    RENDERERS.english();
+    if(e.target.checked) toast('أحسنت! تم إنجاز تمرين الإنجليزية', 'fa-circle-check');
+  });
+  document.getElementById('engNotes').addEventListener('input', (e)=>{
+    const pp = getProg(day);
+    pp.n.english = e.target.value;
+    persistProgress();
+  });
+}
+
+/* ============================================================
+   12. WEEKLY CHALLENGES
+   ============================================================ */
+RENDERERS.challenges = function(){
+  const grid = document.getElementById('challengesGrid');
+  grid.innerHTML = CHALLENGES.map((c,i)=>{
+    const key = String(c.week);
+    const st = state.challenges[key] || {done:false, reflection:''};
+    return `
+      <div class="card ${st.done?'act-card done':''}">
+        <div class="flex-between" style="margin-bottom:10px">
+          <div class="row">
+            <span class="pill ${st.done?'green':'gold'}">الأسبوع ${c.week}</span>
+            <span class="pill">المرحلة ${c.phase}</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;cursor:pointer">
+            <input type="checkbox" data-ch="${key}" ${st.done?'checked':''}> مكتمل
+          </label>
+        </div>
+        <h4 style="font-size:1rem;margin-bottom:8px">${esc(c.title)}</h4>
+        <p class="muted small" style="margin-bottom:6px"><b style="color:var(--text)">المهمة:</b> ${esc(c.assignment)}</p>
+        <p class="muted small" style="margin-bottom:12px"><b style="color:var(--text)">النتيجة القابلة للقياس:</b> ${esc(c.result)}</p>
+        <label class="fl">التقييم الذاتي / التأمل</label>
+        <textarea data-chref="${key}" placeholder="ما الذي نجح؟ ما الذي كان صعبًا؟">${esc(st.reflection||'')}</textarea>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll('[data-ch]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const k = cb.dataset.ch;
+      if(!state.challenges[k]) state.challenges[k] = {done:false, reflection:''};
+      state.challenges[k].done = cb.checked;
+      save(LS.challenges, state.challenges);
+      recalc();
+      RENDERERS.challenges();
+      if(cb.checked) toast('تم إنجاز التحدي الأسبوعي! +30 نقطة', 'fa-trophy');
+    });
+  });
+  grid.querySelectorAll('[data-chref]').forEach(ta=>{
+    ta.addEventListener('input', ()=>{
+      const k = ta.dataset.chref;
+      if(!state.challenges[k]) state.challenges[k] = {done:false, reflection:''};
+      state.challenges[k].reflection = ta.value;
+      save(LS.challenges, state.challenges);
+    });
+  });
+};
+
+/* ============================================================
+   13. ANALYTICS
+   ============================================================ */
+let charts = {};
+
+function destroyChart(k){ if(charts[k]){ charts[k].destroy(); charts[k] = null; } }
+
+RENDERERS.analytics = function(){
+  /* Skills table */
+  const table = document.getElementById('skillsTable');
+  table.innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead>
+          <tr style="color:var(--muted);font-size:.78rem">
+            <th style="text-align:start;padding:10px">المهارة</th>
+            <th style="padding:10px">البداية</th>
+            <th style="padding:10px">الحالية</th>
+            <th style="padding:10px">المستهدف</th>
+            <th style="padding:10px;min-width:150px">نسبة التحسّن</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${state.skills.map(s=>{
+            const denom = (s.target - s.initial) || 1;
+            const imp = Math.max(0, Math.min(100, Math.round(((s.current - s.initial)/denom)*100)));
+            return `<tr style="border-top:1px solid var(--border)">
+              <td style="padding:10px;font-weight:700">${esc(s.name)}</td>
+              <td style="padding:6px"><input type="number" min="1" max="10" value="${s.initial}" data-sk="${s.id}" data-f="initial" style="width:70px"></td>
+              <td style="padding:6px"><input type="number" min="1" max="10" value="${s.current}" data-sk="${s.id}" data-f="current" style="width:70px"></td>
+              <td style="padding:6px"><input type="number" min="1" max="10" value="${s.target}" data-sk="${s.id}" data-f="target" style="width:70px"></td>
+              <td style="padding:10px">
+                <div class="bar"><div style="width:${imp}%"></div></div>
+                <span class="muted small">${imp}%</span>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small" style="margin-top:12px"><i class="fa-solid fa-circle-info"></i> يُنصح بتحديث الدرجات الحالية كل 30 يومًا لقياس التطور الحقيقي.</p>`;
+
+  table.querySelectorAll('input[data-sk]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const s = state.skills.find(x=>x.id===inp.dataset.sk);
+      if(!s) return;
+      let v = parseInt(inp.value,10);
+      if(isNaN(v)) v = 1;
+      v = Math.max(1, Math.min(10, v));
+      s[inp.dataset.f] = v;
+      save(LS.skills, state.skills);
+      RENDERERS.analytics();
+    });
+  });
+
+  /* Charts */
+  const done = totalDone();
+  const pending = 360 - done;
+
+  destroyChart('overall');
+  charts.overall = new Chart(document.getElementById('chartOverall'), {
+    type:'doughnut',
+    data:{ labels:['مكتمل','متبقٍ'], datasets:[{
+      data:[done, pending],
+      backgroundColor:['#10B981','rgba(148,163,184,.22)'],
+      borderWidth:0, hoverOffset:8
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'68%',
+      plugins:{legend:{position:'bottom', labels:{boxWidth:12, font:{family:'Cairo', size:12}}}}
+    }
+  });
+
+  const wLabels = WEEKS.map(w=>'أ'+w.n);
+  const wData = WEEKS.map(w=>{
+    let doneW = 0, totalW = 0;
+    for(let d=w.from; d<=w.to; d++){ doneW += dayDone(d); totalW += 4; }
+    return Math.round(doneW/totalW*100);
+  });
+  destroyChart('weekly');
+  charts.weekly = new Chart(document.getElementById('chartWeekly'), {
+    type:'bar',
+    data:{ labels:wLabels, datasets:[{
+      label:'نسبة الإنجاز %', data:wData,
+      backgroundColor: wData.map(v=> v===100 ? '#10B981' : (v>0 ? 'rgba(59,130,246,.75)' : 'rgba(148,163,184,.25)')),
+      borderRadius:7
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ y:{beginAtZero:true,max:100,grid:{color:'rgba(148,163,184,.12)'}}, x:{grid:{display:false}} }
+    }
+  });
+
+  destroyChart('skills');
+  charts.skills = new Chart(document.getElementById('chartSkills'), {
+    type:'radar',
+    data:{
+      labels: state.skills.map(s=>s.name),
+      datasets:[
+        {label:'البداية', data:state.skills.map(s=>s.initial), borderColor:'#94A3B8', backgroundColor:'rgba(148,163,184,.12)', borderWidth:1.5},
+        {label:'الحالية', data:state.skills.map(s=>s.current), borderColor:'#10B981', backgroundColor:'rgba(16,185,129,.22)', borderWidth:2},
+        {label:'المستهدف', data:state.skills.map(s=>s.target), borderColor:'#3B82F6', backgroundColor:'rgba(59,130,246,.10)', borderWidth:1.5}
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom', labels:{boxWidth:12, font:{family:'Cairo', size:11}}}},
+      scales:{ r:{ beginAtZero:true, max:10, ticks:{stepSize:2, backdropColor:'transparent', font:{size:9}},
+        grid:{color:'rgba(148,163,184,.15)'}, angleLines:{color:'rgba(148,163,184,.15)'},
+        pointLabels:{font:{family:'Cairo', size:10}} } }
+    }
+  });
+
+  const lvNames = ['Level 1','Level 2','Level 3'];
+  const lvData = [[1,30],[31,60],[61,90]].map(([a,b])=>{
+    let dn = 0;
+    for(let d=a; d<=b; d++){ const p = state.progress[d]; if(p && p.t && p.t.english) dn++; }
+    return Math.round(dn/(b-a+1)*100);
+  });
+  destroyChart('english');
+  charts.english = new Chart(document.getElementById('chartEnglish'), {
+    type:'bar',
+    data:{ labels:lvNames, datasets:[{
+      label:'نسبة إنجاز الإنجليزية %', data:lvData,
+      backgroundColor:['rgba(16,185,129,.8)','rgba(59,130,246,.8)','rgba(245,158,11,.8)'],
+      borderRadius:8
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{ x:{beginAtZero:true,max:100,grid:{color:'rgba(148,163,184,.12)'}}, y:{grid:{display:false}} }
+    }
+  });
+};
+
+/* ============================================================
+   14. JOURNAL
+   ============================================================ */
+const JOURNAL_QUESTIONS = [
+  {key:'learned', q:'ماذا تعلّمت اليوم؟'},
+  {key:'applied', q:'ماذا طبّقت اليوم؟'},
+  {key:'well',    q:'ما الذي سار بشكل جيد؟'},
+  {key:'improve', q:'ما الذي أحتاج إلى تحسينه؟'},
+  {key:'diff',    q:'ما الذي سأفعله بشكل مختلف غدًا؟'}
+];
+
+RENDERERS.journal = function(){
+  const dateInput = document.getElementById('journalDate');
+  if(!dateInput.value) dateInput.value = isoToday();
+  const date = dateInput.value;
+  const entry = state.journal[date] || {};
+
+  document.getElementById('journalForm').innerHTML = `
+    <h3><i class="fa-solid fa-pen-nib"></i> مذكرة ${esc(date)}</h3>
+    ${JOURNAL_QUESTIONS.map(q=>`
+      <div style="margin-bottom:14px">
+        <label class="fl">${esc(q.q)}</label>
+        <textarea data-jq="${q.key}" placeholder="اكتب هنا...">${esc(entry[q.key]||'')}</textarea>
+      </div>`).join('')}
+    <button class="btn primary" id="saveJournal"><i class="fa-solid fa-floppy-disk"></i> حفظ المذكرة</button>`;
+
+  document.getElementById('saveJournal').onclick = ()=>{
+    const obj = {};
+    document.querySelectorAll('[data-jq]').forEach(ta=>{ obj[ta.dataset.jq] = ta.value; });
+    const hasContent = Object.values(obj).some(v=>v.trim().length>0);
+    if(!hasContent){ toast('اكتب شيئًا قبل الحفظ', 'fa-triangle-exclamation'); return; }
+    state.journal[date] = obj;
+    save(LS.journal, state.journal);
+    recalc();
+    RENDERERS.journal();
+    toast('تم حفظ المذكرة', 'fa-circle-check');
+  };
+
+  dateInput.onchange = ()=> RENDERERS.journal();
+
+  /* List */
+  const keys = Object.keys(state.journal).sort().reverse();
+  const list = document.getElementById('journalList');
+  if(!keys.length){
+    list.innerHTML = '<p class="muted">لا توجد مذكرات محفوظة بعد. ابدأ بمذكرة اليوم.</p>';
+  } else {
+    list.innerHTML = keys.map(k=>{
+      const e = state.journal[k];
+      return `<div class="card" style="margin-bottom:12px;background:var(--card-2)">
+        <div class="flex-between" style="margin-bottom:8px">
+          <b>${esc(k)}</b>
+          <div class="row">
+            <button class="btn sm ghost" data-edit="${k}"><i class="fa-solid fa-pen"></i> تعديل</button>
+            <button class="btn sm danger" data-delj="${k}"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        ${JOURNAL_QUESTIONS.map(q=> e[q.key] ? `<p class="small" style="margin-bottom:4px"><span class="muted">${esc(q.q)}</span> ${esc(e[q.key])}</p>` : '').join('')}
+      </div>`;
+    }).join('');
+
+    list.querySelectorAll('[data-edit]').forEach(b=>{
+      b.onclick = ()=>{ document.getElementById('journalDate').value = b.dataset.edit; RENDERERS.journal(); window.scrollTo({top:0,behavior:'smooth'}); };
+    });
+    list.querySelectorAll('[data-delj]').forEach(b=>{
+      b.onclick = ()=>{
+        if(!confirm('حذف هذه المذكرة؟')) return;
+        delete state.journal[b.dataset.delj];
+        save(LS.journal, state.journal);
+        RENDERERS.journal();
+      };
+    });
+  }
+};
+
+/* ============================================================
+   15. ACHIEVEMENTS
+   ============================================================ */
+RENDERERS.achievements = function(){
+  const unlocked = state.achievements.length;
+  document.getElementById('achStats').innerHTML = `
+    <div class="card stat">
+      <div class="stat-icon o"><i class="fa-solid fa-star"></i></div>
+      <div><div class="stat-val">${state.points}</div><div class="stat-lbl">مجموع النقاط</div></div>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon g"><i class="fa-solid fa-medal"></i></div>
+      <div><div class="stat-val">${unlocked} / ${ACHIEVEMENTS.length}</div><div class="stat-lbl">شارات مفتوحة</div></div>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon b"><i class="fa-solid fa-fire"></i></div>
+      <div><div class="stat-val">${computeStreak()}</div><div class="stat-lbl">السلسلة الحالية</div></div>
+    </div>`;
+
+  document.getElementById('achGrid').innerHTML = ACHIEVEMENTS.map(a=>{
+    const has = state.achievements.includes(a.id);
+    let prog = [0,1];
+    try{ prog = a.prog(); }catch(e){ prog = [0,1]; }
+    const pct = Math.round(prog[0]/prog[1]*100);
+    return `<div class="badge-card ${has?'unlocked':'locked'}">
+      <div class="badge-icon"><i class="fa-solid ${a.icon}"></i></div>
+      <div style="flex:1">
+        <div class="flex-between">
+          <b style="font-size:.92rem">${esc(a.name)}</b>
+          ${has?'<span class="pill green small">مفتوح</span>':'<span class="pill small">مغلق</span>'}
+        </div>
+        <p class="muted small" style="margin-bottom:6px">${esc(a.desc)}</p>
+        <div class="bar" style="height:6px"><div style="width:${pct}%"></div></div>
+        <span class="muted small">${prog[0]} / ${prog[1]}</span>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+/* ============================================================
+   16. SETTINGS
+   ============================================================ */
+RENDERERS.settings = function(){
+  document.getElementById('setName').value = state.settings.name || '';
+  document.getElementById('setStart').value = state.settings.startDate || isoToday();
+  document.getElementById('setGoal').value = state.settings.dailyGoal || 60;
+  document.getElementById('setTheme').value = state.settings.theme || 'dark';
+
+  let bytes = 0;
+  Object.values(LS).forEach(k=>{ const v = localStorage.getItem(k); if(v) bytes += v.length; });
+  document.getElementById('storageInfo').textContent =
+    'حجم البيانات المحفوظة تقريبًا: ' + (bytes/1024).toFixed(1) + ' كيلوبايت · ' + Object.keys(LS).length + ' مفاتيح تخزين.';
+};
+
+document.getElementById('saveSettings').addEventListener('click', ()=>{
+  const name = document.getElementById('setName').value.trim() || 'مينا';
+  const start = document.getElementById('setStart').value || isoToday();
+  const goal = parseInt(document.getElementById('setGoal').value,10) || 60;
+  const theme = document.getElementById('setTheme').value;
+
+  state.settings = {name, startDate:start, dailyGoal:goal, theme};
+  save(LS.settings, state.settings);
+  applyTheme();
+  updateTopbar();
+  toast('تم حفظ الإعدادات', 'fa-circle-check');
+  RENDERERS.settings();
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const data = {};
+  Object.keys(LS).forEach(k=>{ data[k] = load(LS[k], null); });
+  data.__exportedAt = new Date().toISOString();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'personal-development-90days-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('تم تصدير البيانات', 'fa-download');
+});
+
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      Object.keys(LS).forEach(k=>{
+        if(data[k] !== undefined && data[k] !== null){
+          save(LS[k], data[k]);
+        }
+      });
+      state.settings = load(LS.settings, state.settings);
+      state.progress = load(LS.progress, {});
+      state.courses = load(LS.courses, DEFAULT_COURSES);
+      state.challenges = load(LS.challenges, {});
+      state.journal = load(LS.journal, {});
+      state.skills = load(LS.skills, DEFAULT_SKILLS);
+      state.achievements = load(LS.achievements, []);
+      state.points = load(LS.points, 0);
+      applyTheme();
+      recalc(true);
+      toast('تم استيراد البيانات بنجاح', 'fa-circle-check');
+      showView('dashboard');
+    }catch(e){
+      toast('ملف غير صالح', 'fa-triangle-exclamation');
+    }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+document.getElementById('resetProgressBtn').addEventListener('click', ()=>{
+  if(!confirm('سيتم حذف كل التقدّم والمهام والمذكرات والتحديات والنقاط. هل أنت متأكد؟')) return;
+  state.progress = {};
+  state.challenges = {};
+  state.journal = {};
+  state.achievements = [];
+  state.points = 0;
+  state.english = {};
+  save(LS.progress, {});
+  save(LS.challenges, {});
+  save(LS.journal, {});
+  save(LS.achievements, []);
+  save(LS.points, 0);
+  save(LS.english, {});
+  updateTopbar();
+  toast('تم إعادة تعيين التقدّم', 'fa-rotate-left');
+  showView('dashboard');
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', ()=>{
+  if(!confirm('سيتم مسح كل البيانات نهائيًا بما فيها الإعدادات والكورسات. متابعة؟')) return;
+  Object.values(LS).forEach(k=> localStorage.removeItem(k));
+  location.reload();
+});
+
+/* ============================================================
+   17. THEME
+   ============================================================ */
+function applyTheme(){
+  const t = state.settings.theme || 'dark';
+  document.body.classList.toggle('light', t === 'light');
+  const btn = document.getElementById('themeBtn');
+  if(btn) btn.innerHTML = t === 'light'
+    ? '<i class="fa-solid fa-sun"></i>'
+    : '<i class="fa-solid fa-moon"></i>';
+}
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  state.settings.theme = (state.settings.theme === 'light') ? 'dark' : 'light';
+  save(LS.settings, state.settings);
+  applyTheme();
+});
+
+/* ============================================================
+   18. SIDEBAR / MOBILE
+   ============================================================ */
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  const app = document.getElementById('app');
+  if(window.innerWidth <= 1024){
+    app.classList.toggle('nav-open');
+  } else {
+    app.classList.toggle('collapsed');
+  }
+});
+document.getElementById('overlay').addEventListener('click', ()=>{
+  document.getElementById('app').classList.remove('nav-open');
+});
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click', ()=> showView(item.dataset.view));
+});
+
+/* ============================================================
+   19. INIT
+   ============================================================ */
+function init(){
+  applyTheme();
+  persistProgress();
+  recalc(true);
+  updateTopbar();
+  showView('dashboard');
+}
+
+/* Chart.js global defaults */
+if(typeof Chart !== 'undefined'){
+  Chart.defaults.color = '#94A3B8';
+  Chart.defaults.font.family = "'Cairo', sans-serif";
+  Chart.defaults.font.size = 11;
+}
+
+init();
+</script>
+</body>
+</html>
