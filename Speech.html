@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Studio — English Text to Speech</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* ============================================================
+   1. CSS VARIABLES & THEME
+   ============================================================ */
+:root {
+  --bg: #0b0f19;
+  --bg-soft: #121826;
+  --panel: rgba(22, 30, 48, 0.72);
+  --panel-solid: #151c2c;
+  --border: rgba(120, 140, 180, 0.18);
+  --text: #e7ecf7;
+  --text-dim: #94a3b8;
+  --accent: #6c8cff;
+  --accent-2: #22d3ee;
+  --accent-grad: linear-gradient(135deg, #6c8cff 0%, #22d3ee 100%);
+  --danger: #f87171;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+html[data-theme="light"] {
+  --bg: #eef2f9;
+  --bg-soft: #e2e8f3;
+  --panel: rgba(255, 255, 255, 0.78);
+  --panel-solid: #ffffff;
+  --border: rgba(30, 50, 90, 0.12);
+  --text: #10192c;
+  --text-dim: #55647e;
+  --shadow: 0 12px 36px rgba(40, 60, 100, 0.14);
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Segoe UI", "Tahoma", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background .3s ease, color .3s ease;
+  background-image:
+    radial-gradient(900px 500px at 85% -10%, rgba(108,140,255,.16), transparent 60%),
+    radial-gradient(700px 400px at 0% 100%, rgba(34,211,238,.12), transparent 60%);
+  background-attachment: fixed;
+}
+button, input, select, textarea { font-family: inherit; }
+button { cursor: pointer; border: none; background: none; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 6px; }
+::selection { background: rgba(108,140,255,.35); }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 18px 60px; }
+
+/* ============================================================
+   3. HEADER
+   ============================================================ */
+header {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 1080px; margin: 0 auto; padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; }
+.brand .logo {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: var(--accent-grad);
+  display: grid; place-items: center; color: #fff;
+  box-shadow: 0 6px 18px rgba(108,140,255,.4);
+  flex-shrink: 0;
+}
+.brand span { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.header-spacer { flex: 1; }
+.icon-btn {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  color: var(--text); transition: .2s;
+}
+.icon-btn:hover { background: var(--accent); color: #fff; border-color: transparent; transform: translateY(-1px); }
+.icon-btn svg { width: 20px; height: 20px; }
+.icon-btn.active { background: var(--accent-grad); color: #fff; border-color: transparent; }
+
+/* ============================================================
+   4. HERO
+   ============================================================ */
+.hero { text-align: center; padding: 44px 0 28px; }
+.hero h1 {
+  font-size: clamp(1.6rem, 4.5vw, 2.6rem); font-weight: 800; line-height: 1.25;
+  background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  direction: ltr;
+}
+.hero p { color: var(--text-dim); margin-top: 10px; font-size: 1.02rem; direction: ltr; }
+
+/* ============================================================
+   5. CARDS / PANELS
+   ============================================================ */
+.card {
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.card-title {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 700; font-size: .98rem; margin-bottom: 14px;
+}
+.card-title svg { width: 19px; height: 19px; color: var(--accent-2); }
+
+/* ============================================================
+   6. TEXTAREA
+   ============================================================ */
+.textarea-shell { position: relative; }
+textarea#textInput {
+  width: 100%; min-height: 190px; resize: vertical;
+  background: var(--bg-soft); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 16px; font-size: 1.05rem; line-height: 1.7;
+  direction: ltr; text-align: left;
+  transition: border-color .2s, box-shadow .2s;
+}
+textarea#textInput:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(108,140,255,.18);
+}
+textarea#textInput::placeholder { color: var(--text-dim); opacity: .7; }
+
+.text-meta {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin-top: 12px; font-size: .85rem; color: var(--text-dim);
+}
+.counter-pill {
+  background: var(--bg-soft); border: 1px solid var(--border);
+  padding: 5px 12px; border-radius: 999px;
+}
+.text-actions { display: flex; gap: 8px; margin-inline-start: auto; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px 16px; border-radius: 11px; font-weight: 600; font-size: .9rem;
+  border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);
+  transition: .18s; white-space: nowrap;
+}
+.btn svg { width: 17px; height: 17px; }
+.btn:hover { background: var(--accent); color: #fff; border-color: transparent; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.btn.primary { background: var(--accent-grad); color: #fff; border: none; box-shadow: 0 8px 22px rgba(108,140,255,.35); }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.ghost { background: transparent; }
+.btn.danger:hover { background: var(--danger); }
+.btn.sm { padding: 7px 12px; font-size: .8rem; border-radius: 9px; }
+.btn.big { padding: 15px 24px; font-size: 1rem; border-radius: 13px; flex: 1; min-width: 110px; }
+.btn.big svg { width: 21px; height: 21px; }
+
+/* ============================================================
+   7. CONTROLS
+   ============================================================ */
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .86rem; font-weight: 600; margin-bottom: 7px; color: var(--text-dim);
+}
+.field-label .val {
+  background: var(--accent-grad); -webkit-background-clip: text; background-clip: text;
+  color: transparent; font-weight: 800; font-size: .92rem;
+}
+select {
+  width: 100%; padding: 11px 14px; border-radius: var(--radius-sm);
+  background: var(--bg-soft); color: var(--text);
+  border: 1px solid var(--border); font-size: .92rem; cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: left 12px center;
+  padding-left: 38px;
+}
+select:focus { outline: none; border-color: var(--accent); }
+input[type="range"] {
+  width: 100%; height: 6px; border-radius: 999px; appearance: none;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,.35); cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--accent); cursor: pointer;
+}
+.voice-row { display: flex; gap: 8px; align-items: stretch; }
+.voice-row select { flex: 1; }
+.preview-btn {
+  width: 46px; border-radius: var(--radius-sm); flex-shrink: 0;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  display: grid; place-items: center; color: var(--text); transition: .18s;
+}
+.preview-btn:hover { background: var(--accent-2); color: #04121a; border-color: transparent; }
+.preview-btn svg { width: 19px; height: 19px; }
+.hint { font-size: .76rem; color: var(--text-dim); margin-top: 6px; }
+
+/* ============================================================
+   8. PLAYBACK
+   ============================================================ */
+.status-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 16px; padding: 11px 15px;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: .86rem;
+}
+.status-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--text-dim); flex-shrink: 0;
+  transition: background .25s, box-shadow .25s;
+}
+.status-dot.ready   { background: var(--success); box-shadow: 0 0 10px var(--success); }
+.status-dot.speaking{ background: var(--accent-2); box-shadow: 0 0 12px var(--accent-2); animation: pulse 1.1s infinite; }
+.status-dot.paused  { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+.status-dot.stopped { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+.status-text { font-weight: 700; }
+.playback-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+}
+@media (max-width: 720px) { .playback-grid { grid-template-columns: repeat(2, 1fr); } .playback-grid .btn.big:nth-child(5) { grid-column: span 2; } }
+
+.wave-box {
+  height: 72px; display: flex; align-items: center; justify-content: center; gap: 5px;
+  margin: 18px 0 4px;
+}
+.wave-box .bar {
+  width: 5px; height: 10px; border-radius: 3px;
+  background: var(--accent-grad); opacity: .35;
+  transition: height .15s ease, opacity .3s;
+}
+.wave-box.active .bar { opacity: 1; animation: wave 1s ease-in-out infinite; }
+.wave-box.paused .bar { opacity: .55; height: 12px !important; animation-play-state: paused; }
+@keyframes wave {
+  0%,100% { height: 10px; }
+  50% { height: 46px; }
+}
+
+/* ============================================================
+   9. EXAMPLES / HISTORY / FAVORITES
+   ============================================================ */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: var(--bg-soft); border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 999px; font-size: .84rem;
+  color: var(--text); transition: .18s; direction: ltr;
+}
+.chip:hover { border-color: var(--accent); background: rgba(108,140,255,.14); transform: translateY(-1px); }
+
+.list-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.tab-btn {
+  padding: 8px 16px; border-radius: 999px; font-size: .85rem; font-weight: 600;
+  border: 1px solid var(--border); color: var(--text-dim); background: transparent; transition: .18s;
+}
+.tab-btn.active { background: var(--accent-grad); color: #fff; border-color: transparent; }
+
+.list-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 11px 13px; border-radius: var(--radius-sm);
+  background: var(--bg-soft); border: 1px solid var(--border);
+  margin-bottom: 8px; transition: .18s;
+}
+.list-item:hover { border-color: var(--accent); }
+.list-item .txt {
+  flex: 1; font-size: .88rem; direction: ltr; text-align: left;
+  cursor: pointer; word-break: break-word; line-height: 1.5;
+  max-height: 4.6em; overflow: hidden;
+}
+.list-item .txt:hover { color: var(--accent-2); }
+.mini-btn {
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  background: transparent; color: var(--text-dim); flex-shrink: 0; transition: .18s;
+}
+.mini-btn:hover { background: var(--danger); color: #fff; }
+.mini-btn svg { width: 15px; height: 15px; }
+.empty-msg { color: var(--text-dim); font-size: .85rem; text-align: center; padding: 18px 0; }
+
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.section-head h3 { display: flex; align-items: center; gap: 8px; font-size: .98rem; }
+.section-head h3 svg { width: 19px; height: 19px; color: var(--accent-2); }
+
+/* ============================================================
+   10. TOAST
+   ============================================================ */
+#toastContainer {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+  align-items: center; pointer-events: none; width: min(92vw, 420px);
+}
+.toast {
+  background: var(--panel-solid); color: var(--text);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 18px; font-size: .88rem; font-weight: 600;
+  box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px;
+  animation: toastIn .3s ease; width: 100%;
+}
+.toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+.toast.success { border-inline-start: 4px solid var(--success); }
+.toast.success svg { color: var(--success); }
+.toast.error { border-inline-start: 4px solid var(--danger); }
+.toast.error svg { color: var(--danger); }
+.toast.info { border-inline-start: 4px solid var(--accent); }
+.toast.info svg { color: var(--accent); }
+.toast.hide { animation: toastOut .3s ease forwards; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(16px); } }
+
+/* ============================================================
+   11. MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(4, 8, 18, 0.7); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; animation: fadeIn .22s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--panel-solid); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 26px; max-width: 520px; width: 100%;
+  box-shadow: var(--shadow); animation: modalIn .28s cubic-bezier(.2,.9,.3,1.2);
+  max-height: 88vh; overflow-y: auto;
+}
+@keyframes modalIn { from { opacity: 0; transform: scale(.94) translateY(10px); } to { opacity: 1; transform: none; } }
+.modal h2 { display: flex; align-items: center; gap: 9px; font-size: 1.18rem; margin-bottom: 14px; }
+.modal h2 svg { color: var(--accent-2); width: 23px; height: 23px; }
+.modal p { color: var(--text-dim); font-size: .9rem; margin-bottom: 12px; line-height: 1.8; }
+.modal ul { color: var(--text-dim); font-size: .87rem; padding-inline-start: 20px; margin-bottom: 16px; line-height: 1.9; }
+.modal .modal-close { width: 100%; justify-content: center; margin-top: 6px; }
+.modal .field { margin-bottom: 14px; }
+
+/* ============================================================
+   12. FOOTER
+   ============================================================ */
+footer {
+  text-align: center; padding: 30px 18px; color: var(--text-dim);
+  font-size: .82rem; border-top: 1px solid var(--border); margin-top: 20px;
+}
+footer .foot-brand { color: var(--accent-2); font-weight: 700; }
+
+/* ============================================================
+   13. UTILITIES
+   ============================================================ */
+.hidden { display: none !important; }
+@media (max-width: 480px) {
+  .card { padding: 16px; }
+  .header-inner { padding: 10px 14px; }
+  .hero { padding: 30px 0 20px; }
+  .btn.big { padding: 13px 16px; font-size: .92rem; min-width: 90px; }
+  .playback-grid { gap: 8px; }
+}
+
+/* Settings drawer-style content */
+.settings-section { margin-bottom: 18px; }
+.settings-section:last-child { margin-bottom: 0; }
+.settings-note {
+  font-size: .78rem; color: var(--text-dim); background: var(--bg-soft);
+  border: 1px dashed var(--border); border-radius: var(--radius-sm);
+  padding: 10px 12px; margin-top: 12px; line-height: 1.7;
+}
+.settings-badge {
+  display: inline-block; font-size: .72rem; font-weight: 700;
+  background: var(--accent-grad); color: #fff; padding: 2px 8px;
+  border-radius: 999px; margin-inline-start: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo"><i data-lucide="audio-lines"></i></div>
+      <span>Voice Studio</span>
+    </div>
+    <div class="header-spacer"></div>
+    <button class="icon-btn" id="settingsBtn" title="الإعدادات" aria-label="الإعدادات">
+      <i data-lucide="settings"></i>
+    </button>
+    <button class="icon-btn" id="themeToggle" title="تبديل الوضع الفاتح/الداكن" aria-label="تبديل الوضع">
+      <i data-lucide="sun-moon"></i>
+    </button>
+    <button class="icon-btn" id="aboutBtn" title="حول الموقع" aria-label="حول الموقع">
+      <i data-lucide="info"></i>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <h1>Turn English Text Into Natural Speech</h1>
+    <p>Listen, practice, and improve your English pronunciation.</p>
+  </section>
+
+  <!-- ==================== TEXT INPUT ==================== -->
+  <section class="card">
+    <div class="card-title"><i data-lucide="pencil-line"></i> اكتب النص الإنجليزي</div>
+    <div class="textarea-shell">
+      <textarea id="textInput" placeholder="Type or paste your English text here..." spellcheck="false" aria-label="نص الإدخال الإنجليزي"></textarea>
+    </div>
+    <div class="text-meta">
+      <span class="counter-pill"><span id="wordCount">0</span> كلمة</span>
+      <span class="counter-pill"><span id="charCount">0</span> حرف</span>
+      <div class="text-actions">
+        <button class="btn sm ghost" id="pasteBtn" title="لصق من الحافظة"><i data-lucide="clipboard-paste"></i> لصق</button>
+        <button class="btn sm ghost" id="clearBtn" title="مسح النص"><i data-lucide="eraser"></i> مسح</button>
+        <button class="btn sm ghost" id="favBtn" title="إضافة إلى المفضلة"><i data-lucide="star"></i> مفضلة</button>
+        <button class="btn sm ghost" id="speakSelectedBtn" title="نطق النص المحدد"><i data-lucide="highlighter"></i> Pronounce Selected</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PLAYBACK ==================== -->
+  <section class="card">
+    <div class="status-bar">
+      <span class="status-dot ready" id="statusDot"></span>
+      <span>الحالة:</span>
+      <span class="status-text" id="statusText">Ready</span>
+    </div>
+
+    <div class="wave-box" id="waveBox" aria-hidden="true"></div>
+
+    <div class="playback-grid">
+      <button class="btn big primary" id="playBtn" title="تشغيل النص"><i data-lucide="play"></i> Play</button>
+      <button class="btn big" id="pauseBtn" title="إيقاف مؤقت" disabled><i data-lucide="pause"></i> Pause</button>
+      <button class="btn big" id="resumeBtn" title="استكمال" disabled><i data-lucide="play-circle"></i> Resume</button>
+      <button class="btn big" id="stopBtn" title="إيقاف" disabled><i data-lucide="square"></i> Stop</button>
+      <button class="btn big" id="replayBtn" title="إعادة التشغيل"><i data-lucide="rotate-ccw"></i> Replay</button>
+    </div>
+  </section>
+
+  <!-- ==================== QUICK EXAMPLES ==================== -->
+  <section class="card">
+    <div class="card-title"><i data-lucide="sparkles"></i> Quick Examples</div>
+    <div class="chip-grid" id="examplesGrid"></div>
+  </section>
+
+  <!-- ==================== HISTORY & FAVORITES ==================== -->
+  <section class="card">
+    <div class="section-head">
+      <h3><i data-lucide="history"></i> السجل والمفضلة</h3>
+      <button class="btn sm danger" id="clearListBtn" title="مسح القائمة الحالية">
+        <i data-lucide="trash-2"></i> مسح الكل
+      </button>
+    </div>
+    <div class="list-tabs">
+      <button class="tab-btn active" data-tab="history">History (<span id="histCount">0</span>)</button>
+      <button class="tab-btn" data-tab="favorites">Favorites (<span id="favCount">0</span>)</button>
+    </div>
+    <div id="historyList"></div>
+    <div id="favoritesList" class="hidden"></div>
+  </section>
+
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <p><span class="foot-brand">Voice Studio</span> — أداة تحويل النص الإنجليزي إلى صوت طبيعي.</p>
+  <p style="margin-top:6px;">يعمل بالكامل في المتصفح باستخدام Web Speech API. لا يتم إرسال أي بيانات.</p>
+</footer>
+
+<!-- ==================== TOAST ==================== -->
+<div id="toastContainer" aria-live="polite"></div>
+
+<!-- ==================== SETTINGS MODAL ==================== -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle"><i data-lucide="settings"></i> الإعدادات</h2>
+
+    <!-- Voice & Language -->
+    <div class="settings-section">
+      <div class="card-title" style="margin-bottom:10px;"><i data-lucide="mic"></i> الصوت واللهجة</div>
+
+      <div class="field">
+        <label class="field-label" for="langSelect">اللغة / اللهجة</label>
+        <select id="langSelect" aria-label="اختيار اللغة واللهجة"></select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="voiceSelect">
+          الصوت <span class="settings-badge" id="voiceCountBadge">0</span>
+        </label>
+        <div class="voice-row">
+          <select id="voiceSelect" aria-label="اختيار الصوت"></select>
+          <button class="preview-btn" id="previewBtn" title="تجربة الصوت المحدد" aria-label="تجربة الصوت">
+            <i data-lucide="play"></i>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn sm ghost" id="reloadVoicesBtn" style="width:100%;justify-content:center;">
+        <i data-lucide="refresh-cw"></i> إعادة تحميل الأصوات
+      </button>
+
+      <div class="settings-note">
+        الأصوات تعتمد على نظام التشغيل والمتصفح. إذا كانت القائمة فارغة، جرّب إعادة التحميل أو تغيير المتصفح.
+      </div>
+    </div>
+
+    <!-- Rate / Pitch / Volume -->
+    <div class="settings-section">
+      <div class="card-title" style="margin-bottom:10px;"><i data-lucide="sliders-horizontal"></i> إعدادات النطق</div>
+
+      <div class="field">
+        <div class="field-label"><span>سرعة النطق</span><span class="val" id="rateVal">1.00</span></div>
+        <input type="range" id="rateInput" min="0.5" max="2" step="0.05" value="1" aria-label="سرعة النطق">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>درجة الصوت (Pitch)</span><span class="val" id="pitchVal">1.00</span></div>
+        <input type="range" id="pitchInput" min="0.5" max="2" step="0.05" value="1" aria-label="درجة الصوت">
+      </div>
+      <div class="field">
+        <div class="field-label"><span>مستوى الصوت</span><span class="val" id="volumeVal">100%</span></div>
+        <input type="range" id="volumeInput" min="0" max="1" step="0.01" value="1" aria-label="مستوى الصوت">
+      </div>
+
+      <button class="btn sm ghost" id="resetBtn" style="width:100%;justify-content:center;">
+        <i data-lucide="rotate-ccw"></i> إعادة الإعدادات الافتراضية
+      </button>
+    </div>
+
+    <button class="btn primary modal-close" id="closeSettings"><i data-lucide="check"></i> تم</button>
+  </div>
+</div>
+
+<!-- ==================== ABOUT MODAL ==================== -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal">
+    <h2><i data-lucide="audio-lines"></i> حول Voice Studio</h2>
+    <p>Voice Studio أداة مجانية تعمل بالكامل داخل متصفحك لتحويل النصوص الإنجليزية إلى كلام منطوق باستخدام <strong>Web Speech API</strong>.</p>
+    <ul>
+      <li>اختيار من بين جميع الأصوات الإنجليزية المتاحة على جهازك.</li>
+      <li>التحكم في السرعة، Pitch، ومستوى الصوت.</li>
+      <li>نطق النص المحدد فقط، مع أمثلة جاهزة وسجل ومفضلة.</li>
+      <li>حفظ إعداداتك تلقائيًا في Local Storage.</li>
+      <li>لا يوجد Backend، ولا API Key، ولا إرسال بيانات.</li>
+    </ul>
+    <p style="font-size:.82rem;">ملاحظة: جودة الأصوات وتوفرها يعتمدان على نظام التشغيل والمتصفح.</p>
+    <button class="btn primary modal-close" id="closeAbout"><i data-lucide="check"></i> فهمت</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   VOICE STUDIO — APP LOGIC
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ---------- Constants & State ---------- */
+  const LS_KEYS = {
+    theme: "vs_theme",
+    settings: "vs_settings",
+    history: "vs_history",
+    favorites: "vs_favorites"
+  };
+  const MAX_HISTORY = 10;
+  const CHUNK_LIMIT = 220;
+
+  const examples = [
+    "Hello! How are you today?",
+    "Welcome to our hotel.",
+    "Thank you for your cooperation.",
+    "Customer satisfaction is our priority.",
+    "Professional development is essential for success.",
+    "Could you please repeat that?",
+    "I would like to improve my English pronunciation."
+  ];
+
+  const langGroups = [
+    { id: "all", label: "كل الأصوات الإنجليزية" },
+    { id: "en-US", label: "English (US)" },
+    { id: "en-GB", label: "English (UK)" },
+    { id: "en-AU", label: "English (Australia)" },
+    { id: "en-IN", label: "English (India)" },
+    { id: "en-CA", label: "English (Canada)" },
+    { id: "en-NZ", label: "English (New Zealand)" },
+    { id: "en-ZA", label: "English (South Africa)" },
+    { id: "en-IE", label: "English (Ireland)" },
+    { id: "en-SG", label: "English (Singapore)" },
+    { id: "other", label: "Other English Voices" }
+  ];
+
+  const state = {
+    voices: [],
+    filteredVoices: [],
+    chunks: [],
+    currentChunk: 0,
+    isSpeaking: false,
+    isPaused: false,
+    history: [],
+    favorites: [],
+    activeTab: "history",
+    settings: {
+      voiceURI: "",
+      rate: 1,
+      pitch: 1,
+      volume: 1,
+      lang: "all"
+    }
+  };
+
+  /* ---------- DOM refs ---------- */
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    textInput: $("textInput"),
+    wordCount: $("wordCount"),
+    charCount: $("charCount"),
+    pasteBtn: $("pasteBtn"),
+    clearBtn: $("clearBtn"),
+    favBtn: $("favBtn"),
+    speakSelectedBtn: $("speakSelectedBtn"),
+    langSelect: $("langSelect"),
+    voiceSelect: $("voiceSelect"),
+    voiceCountBadge: $("voiceCountBadge"),
+    previewBtn: $("previewBtn"),
+    reloadVoicesBtn: $("reloadVoicesBtn"),
+    rateInput: $("rateInput"),
+    rateVal: $("rateVal"),
+    pitchInput: $("pitchInput"),
+    pitchVal: $("pitchVal"),
+    volumeInput: $("volumeInput"),
+    volumeVal: $("volumeVal"),
+    resetBtn: $("resetBtn"),
+    playBtn: $("playBtn"),
+    pauseBtn: $("pauseBtn"),
+    resumeBtn: $("resumeBtn"),
+    stopBtn: $("stopBtn"),
+    replayBtn: $("replayBtn"),
+    statusDot: $("statusDot"),
+    statusText: $("statusText"),
+    waveBox: $("waveBox"),
+    examplesGrid: $("examplesGrid"),
+    historyList: $("historyList"),
+    favoritesList: $("favoritesList"),
+    histCount: $("histCount"),
+    favCount: $("favCount"),
+    clearListBtn: $("clearListBtn"),
+    settingsBtn: $("settingsBtn"),
+    settingsModal: $("settingsModal"),
+    closeSettings: $("closeSettings"),
+    themeToggle: $("themeToggle"),
+    aboutBtn: $("aboutBtn"),
+    aboutModal: $("aboutModal"),
+    closeAbout: $("closeAbout"),
+    toastContainer: $("toastContainer")
+  };
+
+  /* ============================================================
+     UTILITIES
+     ============================================================ */
+  function refreshIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
+  }
+
+  function toast(message, type = "info") {
+    const icons = { success: "check-circle-2", error: "alert-circle", info: "info" };
+    const div = document.createElement("div");
+    div.className = "toast " + type;
+    div.innerHTML = `<i data-lucide="${icons[type] || "info"}"></i><span>${escapeHtml(message)}</span>`;
+    el.toastContainer.appendChild(div);
+    refreshIcons();
+    setTimeout(() => {
+      div.classList.add("hide");
+      setTimeout(() => div.remove(), 320);
+    }, 3200);
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  function detectGender(name) {
+    const n = name.toLowerCase();
+    const female = /\b(female|woman|girl|zira|samantha|victoria|karen|moira|tessa|fiona|serena|allison|ava|susan|kate|emma|salli|joanna|amy|nicole|olivia|aria|jenny|sonia|hazel|nora|ellen|hanna|heera|libby|natasha|clara|maisie|neerja|kalpana|swara|veena)\b/;
+    const male = /\b(male|man|boy|david|mark|daniel|alex|fred|thomas|james|george|diego|jorge|rishi|ravi|arthur|oliver|liam|noah|guy|matthew|brian|eric|christopher|andrew|aaron|reed|eddy|daniel|tom|ravi)\b/;
+    if (female.test(n)) return "female";
+    if (male.test(n)) return "male";
+    return null;
+  }
+
+  /* ============================================================
+     LOCAL STORAGE
+     ============================================================ */
+  function loadFromStorage() {
+    try {
+      const rawSettings = localStorage.getItem(LS_KEYS.settings);
+      if (rawSettings) {
+        const s = JSON.parse(rawSettings);
+        state.settings = Object.assign(state.settings, s);
+      }
+      const h = localStorage.getItem(LS_KEYS.history);
+      if (h) state.history = JSON.parse(h) || [];
+      const f = localStorage.getItem(LS_KEYS.favorites);
+      if (f) state.favorites = JSON.parse(f) || [];
+    } catch (e) {
+      console.warn("Storage load error", e);
+    }
+  }
+
+  function saveSettings() {
+    try { localStorage.setItem(LS_KEYS.settings, JSON.stringify(state.settings)); }
+    catch (e) { console.warn("Settings save error", e); }
+  }
+  function saveHistory() {
+    try { localStorage.setItem(LS_KEYS.history, JSON.stringify(state.history)); }
+    catch (e) { console.warn("History save error", e); }
+  }
+  function saveFavorites() {
+    try { localStorage.setItem(LS_KEYS.favorites, JSON.stringify(state.favorites)); }
+    catch (e) { console.warn("Favorites save error", e); }
+  }
+
+  /* ============================================================
+     THEME
+     ============================================================ */
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem(LS_KEYS.theme, theme); } catch (e) {}
+  }
+  function initTheme() {
+    let saved = null;
+    try { saved = localStorage.getItem(LS_KEYS.theme); } catch (e) {}
+    applyTheme(saved === "light" ? "light" : "dark");
+  }
+  el.themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    applyTheme(current === "light" ? "dark" : "light");
+  });
+
+  /* ============================================================
+     COUNTERS
+     ============================================================ */
+  function updateCounters() {
+    const text = el.textInput.value;
+    el.charCount.textContent = text.length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    el.wordCount.textContent = words;
+  }
+
+  /* ============================================================
+     VOICES
+     ============================================================ */
+  function populateLangSelect() {
+    el.langSelect.innerHTML = "";
+    langGroups.forEach((g) => {
+      const opt = document.createElement("option");
+      opt.value = g.id;
+      opt.textContent = g.label;
+      el.langSelect.appendChild(opt);
+    });
+    const wanted = state.settings.lang || "all";
+    el.langSelect.value = langGroups.some((g) => g.id === wanted) ? wanted : "all";
+  }
+
+  function getEnglishVoices() {
+    return state.voices.filter((v) => (v.lang || "").toLowerCase().startsWith("en"));
+  }
+
+  function filterVoicesByLang(langId) {
+    const all = getEnglishVoices();
+    if (langId === "all") return all;
+    if (langId === "other") {
+      const known = ["en-us", "en-gb", "en-au", "en-in", "en-ca", "en-nz", "en-za", "en-ie", "en-sg"];
+      return all.filter((v) => !known.includes((v.lang || "").toLowerCase().replace("_", "-")));
+    }
+    return all.filter((v) => (v.lang || "").toLowerCase().replace("_", "-") === langId.toLowerCase());
+  }
+
+  function fillVoiceSelect(preserveSelection) {
+    const prev = preserveSelection ? el.voiceSelect.value : null;
+    el.voiceSelect.innerHTML = "";
+    const list = state.filteredVoices;
+
+    el.voiceCountBadge.textContent = list.length;
+
+    if (!list.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "لا توجد أصوات متاحة لهذه اللهجة";
+      el.voiceSelect.appendChild(opt);
+      el.voiceSelect.disabled = true;
+      return;
+    }
+    el.voiceSelect.disabled = false;
+
+    list.forEach((v) => {
+      const opt = document.createElement("option");
+      opt.value = v.voiceURI;
+      const gender = detectGender(v.name);
+      const genderLabel = gender === "female" ? " ♀" : gender === "male" ? " ♂" : "";
+      opt.textContent = `${v.name} — ${v.lang}${genderLabel}`;
+      el.voiceSelect.appendChild(opt);
+    });
+
+    let target = null;
+    if (prev && list.some((v) => v.voiceURI === prev)) target = prev;
+    else if (state.settings.voiceURI && list.some((v) => v.voiceURI === state.settings.voiceURI)) target = state.settings.voiceURI;
+    else target = list[0].voiceURI;
+
+    el.voiceSelect.value = target;
+    state.settings.voiceURI = target;
+    saveSettings();
+  }
+
+  function refreshVoices() {
+    state.voices = window.speechSynthesis.getVoices() || [];
+    const langId = el.langSelect.value || "all";
+    state.filteredVoices = filterVoicesByLang(langId);
+    fillVoiceSelect(true);
+  }
+
+  function initVoices() {
+    if (!("speechSynthesis" in window)) {
+      toast("متصفحك لا يدعم تحويل النص إلى كلام (SpeechSynthesis).", "error");
+      el.playBtn.disabled = true;
+      el.previewBtn.disabled = true;
+      return;
+    }
+    populateLangSelect();
+    refreshVoices();
+
+    window.speechSynthesis.onvoiceschanged = () => {
+      refreshVoices();
+    };
+
+    let tries = 0;
+    const retry = setInterval(() => {
+      tries++;
+      if (window.speechSynthesis.getVoices().length > 0 || tries > 12) {
+        clearInterval(retry);
+        refreshVoices();
+      }
+    }, 300);
+  }
+
+  el.langSelect.addEventListener("change", () => {
+    state.settings.lang = el.langSelect.value;
+    saveSettings();
+    state.filteredVoices = filterVoicesByLang(state.settings.lang);
+    fillVoiceSelect(false);
+  });
+
+  el.voiceSelect.addEventListener("change", () => {
+    state.settings.voiceURI = el.voiceSelect.value;
+    saveSettings();
+  });
+
+  el.reloadVoicesBtn.addEventListener("click", () => {
+    if (!("speechSynthesis" in window)) {
+      toast("المتصفح لا يدعم النطق الصوتي.", "error");
+      return;
+    }
+    state.voices = window.speechSynthesis.getVoices() || [];
+    refreshVoices();
+    toast("تم إعادة تحميل الأصوات (" + state.voices.length + " صوت متاح).", "success");
+  });
+
+  function getSelectedVoice() {
+    const uri = el.voiceSelect.value;
+    return state.voices.find((v) => v.voiceURI === uri) || null;
+  }
+
+  /* ============================================================
+     SETTINGS UI
+     ============================================================ */
+  function updateSliderLabels() {
+    el.rateVal.textContent = Number(el.rateInput.value).toFixed(2);
+    el.pitchVal.textContent = Number(el.pitchInput.value).toFixed(2);
+    el.volumeVal.textContent = Math.round(Number(el.volumeInput.value) * 100) + "%";
+  }
+
+  function applySettingsToUI() {
+    el.rateInput.value = state.settings.rate;
+    el.pitchInput.value = state.settings.pitch;
+    el.volumeInput.value = state.settings.volume;
+    updateSliderLabels();
+  }
+
+  function bindSlider(slider, key) {
+    slider.addEventListener("input", () => {
+      state.settings[key] = parseFloat(slider.value);
+      updateSliderLabels();
+      saveSettings();
+    });
+  }
+
+  /* ============================================================
+     PLAYBACK
+     ============================================================ */
+  function splitIntoChunks(text) {
+    const normalized = text.replace(/\s+/g, " ").trim();
+    if (!normalized) return [];
+    const rawParts = normalized.match(/[^.!?]+[.!?]*/g) || [normalized];
+    const chunks = [];
+    rawParts.forEach((part) => {
+      let s = part.trim();
+      if (!s) return;
+      while (s.length > CHUNK_LIMIT) {
+        let cut = s.lastIndexOf(" ", CHUNK_LIMIT);
+        if (cut < CHUNK_LIMIT * 0.5) cut = CHUNK_LIMIT;
+        const piece = s.slice(0, cut).trim();
+        if (piece) chunks.push(piece);
+        s = s.slice(cut).trim();
+      }
+      if (s) chunks.push(s);
+    });
+    return chunks;
+  }
+
+  function setStatus(status) {
+    el.statusText.textContent = status;
+    el.statusDot.className = "status-dot " + status.toLowerCase();
+    const speaking = status === "Speaking";
+    const paused = status === "Paused";
+    el.pauseBtn.disabled = !speaking;
+    el.resumeBtn.disabled = !paused;
+    el.stopBtn.disabled = !(speaking || paused);
+    el.playBtn.disabled = speaking || paused;
+    el.replayBtn.disabled = false;
+    el.waveBox.classList.toggle("active", speaking);
+    el.waveBox.classList.toggle("paused", paused);
+  }
+
+  function createUtterance(text) {
+    const utt = new SpeechSynthesisUtterance(text);
+    const voice = getSelectedVoice();
+    if (voice) {
+      utt.voice = voice;
+      utt.lang = voice.lang;
+    } else {
+      utt.lang = state.settings.lang === "all" || state.settings.lang === "other" ? "en-US" : state.settings.lang;
+    }
+    utt.rate = state.settings.rate;
+    utt.pitch = state.settings.pitch;
+    utt.volume = state.settings.volume;
+    return utt;
+  }
+
+  function speakChunk(index) {
+    if (index >= state.chunks.length) {
+      state.isSpeaking = false;
+      state.isPaused = false;
+      setStatus("Ready");
+      addToHistory(el.textInput.value);
+      return;
+    }
+    state.currentChunk = index;
+    const utt = createUtterance(state.chunks[index]);
+    utt.onend = () => {
+      if (!state.isSpeaking) return;
+      speakChunk(index + 1);
+    };
+    utt.onerror = (e) => {
+      if (e.error === "interrupted" || e.error === "canceled") return;
+      console.warn("Speech error:", e.error);
+      if (e.error === "voice-unavailable") {
+        toast("الصوت المختار غير متوفر. جرّب صوتًا آخر.", "error");
+      } else if (e.error === "not-allowed") {
+        toast("المتصفح منع تشغيل الصوت. تفاعل مع الصفحة أولًا.", "error");
+      }
+      stopSpeaking(true);
+    };
+    window.speechSynthesis.speak(utt);
+  }
+
+  function startSpeaking(text) {
+    if (!("speechSynthesis" in window)) {
+      toast("المتصفح لا يدعم النطق الصوتي.", "error");
+      return;
+    }
+    const content = (text != null ? text : el.textInput.value).trim();
+    if (!content) {
+      toast("اكتب نصًا أولًا قبل الضغط على Play.", "error");
+      el.textInput.focus();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    setTimeout(() => {
+      state.chunks = splitIntoChunks(content);
+      state.currentChunk = 0;
+      state.isSpeaking = true;
+      state.isPaused = false;
+      setStatus("Speaking");
+      speakChunk(0);
+    }, 60);
+  }
+
+  function stopSpeaking(silent) {
+    window.speechSynthesis.cancel();
+    state.isSpeaking = false;
+    state.isPaused = false;
+    setStatus("Stopped");
+    if (!silent) toast("تم إيقاف النطق.", "info");
+    setTimeout(() => {
+      if (!state.isSpeaking) setStatus("Ready");
+    }, 1200);
+  }
+
+  el.playBtn.addEventListener("click", () => startSpeaking());
+  el.replayBtn.addEventListener("click", () => {
+    if (!el.textInput.value.trim()) {
+      toast("اكتب نصًا أولًا.", "error");
+      return;
+    }
+    startSpeaking();
+  });
+  el.pauseBtn.addEventListener("click", () => {
+    if (!state.isSpeaking) return;
+    window.speechSynthesis.pause();
+    state.isPaused = true;
+    setStatus("Paused");
+  });
+  el.resumeBtn.addEventListener("click", () => {
+    if (!state.isPaused) return;
+    window.speechSynthesis.resume();
+    state.isPaused = false;
+    setStatus("Speaking");
+  });
+  el.stopBtn.addEventListener("click", () => stopSpeaking(false));
+
+  /* ============================================================
+     PREVIEW VOICE
+     ============================================================ */
+  el.previewBtn.addEventListener("click", () => {
+    if (!("speechSynthesis" in window)) return toast("المتصفح لا يدعم النطق.", "error");
+    const voice = getSelectedVoice();
+    if (!voice) return toast("لا يوجد صوت متاح للتجربة.", "error");
+    window.speechSynthesis.cancel();
+    const utt = createUtterance("Hello, this is a preview of the selected voice.");
+    utt.onend = () => setStatus("Ready");
+    window.speechSynthesis.speak(utt);
+    toast("جارٍ تجربة الصوت: " + voice.name, "info");
+  });
+
+  /* ============================================================
+     SPEAK SELECTED TEXT
+     ============================================================ */
+  el.speakSelectedBtn.addEventListener("click", () => {
+    const start = el.textInput.selectionStart;
+    const end = el.textInput.selectionEnd;
+    if (start === end) {
+      toast("حدد كلمة أو جملة أولًا للاستماع إلى نطقها.", "error");
+      return;
+    }
+    const selected = el.textInput.value.slice(start, end).trim();
+    if (!selected) {
+      toast("النص المحدد فارغ.", "error");
+      return;
+    }
+    startSpeaking(selected);
+  });
+
+  /* ============================================================
+     INPUT EVENTS
+     ============================================================ */
+  el.textInput.addEventListener("input", updateCounters);
+  el.textInput.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      startSpeaking();
+    }
+  });
+
+  el.clearBtn.addEventListener("click", () => {
+    el.textInput.value = "";
+    updateCounters();
+    toast("تم مسح النص.", "info");
+    el.textInput.focus();
+  });
+
+  el.pasteBtn.addEventListener("click", async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) { toast("الحافظة فارغة.", "error"); return; }
+      el.textInput.value = text;
+      updateCounters();
+      toast("تم لصق النص.", "success");
+    } catch (err) {
+      toast("تعذر الوصول إلى الحافظة. الصق النص يدويًا.", "error");
+    }
+  });
+
+  /* ============================================================
+     SLIDER LISTENERS
+     ============================================================ */
+  bindSlider(el.rateInput, "rate");
+  bindSlider(el.pitchInput, "pitch");
+  bindSlider(el.volumeInput, "volume");
+
+  el.resetBtn.addEventListener("click", () => {
+    state.settings.rate = 1;
+    state.settings.pitch = 1;
+    state.settings.volume = 1;
+    applySettingsToUI();
+    saveSettings();
+    toast("تمت إعادة الإعدادات الافتراضية.", "success");
+  });
+
+  /* ============================================================
+     QUICK EXAMPLES
+     ============================================================ */
+  function renderExamples() {
+    el.examplesGrid.innerHTML = "";
+    examples.forEach((ex) => {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.type = "button";
+      btn.textContent = ex;
+      btn.title = "اضغط لاستخدام المثال";
+      btn.addEventListener("click", () => {
+        el.textInput.value = ex;
+        updateCounters();
+        toast("تم إدراج المثال. يمكنك تشغيله الآن.", "success");
+        el.textInput.focus();
+      });
+      el.examplesGrid.appendChild(btn);
+    });
+  }
+
+  /* ============================================================
+     HISTORY & FAVORITES
+     ============================================================ */
+  function addToHistory(text) {
+    const trimmed = (text || "").trim();
+    if (!trimmed) return;
+    state.history = state.history.filter((h) => h !== trimmed);
+    state.history.unshift(trimmed);
+    if (state.history.length > MAX_HISTORY) state.history = state.history.slice(0, MAX_HISTORY);
+    saveHistory();
+    renderLists();
+  }
+
+  function renderLists() {
+    el.histCount.textContent = state.history.length;
+    el.favCount.textContent = state.favorites.length;
+
+    el.historyList.innerHTML = "";
+    if (!state.history.length) {
+      el.historyList.innerHTML = '<div class="empty-msg">لا توجد نصوص في السجل بعد.</div>';
+    } else {
+      state.history.forEach((text, idx) => {
+        el.historyList.appendChild(createListItem(text, "history", idx));
+      });
+    }
+
+    el.favoritesList.innerHTML = "";
+    if (!state.favorites.length) {
+      el.favoritesList.innerHTML = '<div class="empty-msg">لا توجد عناصر في المفضلة بعد.</div>';
+    } else {
+      state.favorites.forEach((text, idx) => {
+        el.favoritesList.appendChild(createListItem(text, "favorites", idx));
+      });
+    }
+  }
+
+  function createListItem(text, listType, index) {
+    const item = document.createElement("div");
+    item.className = "list-item";
+    const span = document.createElement("span");
+    span.className = "txt";
+    span.textContent = text;
+    span.title = "اضغط لإعادة النص إلى صندوق الكتابة";
+    span.addEventListener("click", () => {
+      el.textInput.value = text;
+      updateCounters();
+      el.textInput.focus();
+      toast("تم إدراج النص من " + (listType === "history" ? "السجل" : "المفضلة") + ".", "success");
+    });
+    const del = document.createElement("button");
+    del.className = "mini-btn";
+    del.title = "حذف";
+    del.setAttribute("aria-label", "حذف");
+    del.innerHTML = '<i data-lucide="x"></i>';
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (listType === "history") {
+        state.history.splice(index, 1);
+        saveHistory();
+      } else {
+        state.favorites.splice(index, 1);
+        saveFavorites();
+      }
+      renderLists();
+      refreshIcons();
+      toast("تم الحذف.", "success");
+    });
+    item.appendChild(span);
+    item.appendChild(del);
+    return item;
+  }
+
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.activeTab = btn.dataset.tab;
+      el.historyList.classList.toggle("hidden", state.activeTab !== "history");
+      el.favoritesList.classList.toggle("hidden", state.activeTab !== "favorites");
+    });
+  });
+
+  el.clearListBtn.addEventListener("click", () => {
+    if (state.activeTab === "history") {
+      if (!state.history.length) return;
+      state.history = [];
+      saveHistory();
+      toast("تم مسح السجل بالكامل.", "success");
+    } else {
+      if (!state.favorites.length) return;
+      state.favorites = [];
+      saveFavorites();
+      toast("تم مسح المفضلة بالكامل.", "success");
+    }
+    renderLists();
+  });
+
+  el.favBtn.addEventListener("click", () => {
+    const text = el.textInput.value.trim();
+    if (!text) {
+      toast("اكتب نصًا أولًا لإضافته إلى المفضلة.", "error");
+      return;
+    }
+    if (state.favorites.includes(text)) {
+      toast("هذا النص موجود بالفعل في المفضلة.", "info");
+      return;
+    }
+    state.favorites.unshift(text);
+    saveFavorites();
+    renderLists();
+    toast("تمت الإضافة إلى المفضلة.", "success");
+  });
+
+  /* ============================================================
+     WAVE BARS
+     ============================================================ */
+  function buildWaveBars() {
+    el.waveBox.innerHTML = "";
+    const count = 32;
+    for (let i = 0; i < count; i++) {
+      const bar = document.createElement("span");
+      bar.className = "bar";
+      bar.style.animationDelay = (i * 0.045) + "s";
+      bar.style.animationDuration = (0.8 + Math.random() * 0.6) + "s";
+      el.waveBox.appendChild(bar);
+    }
+  }
+
+  /* ============================================================
+     MODALS
+     ============================================================ */
+  function openModal(modal) {
+    modal.classList.add("open");
+  }
+  function closeModal(modal) {
+    modal.classList.remove("open");
+  }
+
+  el.settingsBtn.addEventListener("click", () => {
+    openModal(el.settingsModal);
+    el.settingsBtn.classList.add("active");
+    // Refresh voices when opening settings (some browsers load them late)
+    if ("speechSynthesis" in window) {
+      const v = window.speechSynthesis.getVoices();
+      if (v.length && v.length !== state.voices.length) {
+        state.voices = v;
+        refreshVoices();
+      }
+    }
+  });
+
+  el.closeSettings.addEventListener("click", () => {
+    closeModal(el.settingsModal);
+    el.settingsBtn.classList.remove("active");
+  });
+
+  el.aboutBtn.addEventListener("click", () => openModal(el.aboutModal));
+  el.closeAbout.addEventListener("click", () => closeModal(el.aboutModal));
+
+  document.querySelectorAll(".modal-overlay").forEach((ov) => {
+    ov.addEventListener("click", (e) => {
+      if (e.target === ov) {
+        closeModal(ov);
+        if (ov === el.settingsModal) el.settingsBtn.classList.remove("active");
+      }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeModal(el.settingsModal);
+      closeModal(el.aboutModal);
+      el.settingsBtn.classList.remove("active");
+    }
+  });
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  function init() {
+    initTheme();
+    loadFromStorage();
+    applySettingsToUI();
+    updateCounters();
+    renderExamples();
+    renderLists();
+    buildWaveBars();
+    initVoices();
+    setStatus("Ready");
+    refreshIcons();
+
+    if (state.settings.voiceURI && state.voices.length) {
+      const v = state.voices.find((x) => x.voiceURI === state.settings.voiceURI);
+      if (v) {
+        const lower = (v.lang || "").toLowerCase().replace("_", "-");
+        const match = langGroups.find((g) => g.id === lower);
+        if (match && el.langSelect.value !== match.id) {
+          el.langSelect.value = match.id;
+          state.settings.lang = match.id;
+          state.filteredVoices = filterVoicesByLang(match.id);
+          fillVoiceSelect(true);
+        }
+      }
+    }
+  }
+
+  window.addEventListener("beforeunload", () => {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>
